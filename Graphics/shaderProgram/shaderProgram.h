@@ -1,0 +1,85 @@
+#pragma once
+
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <map>
+using namespace std;
+
+#include <GL_CORE/gl_core_4_3.h>
+#include <GLFW/glfw3.h>
+
+#include <glm/glm.hpp>
+
+
+class ShaderProgramException : public runtime_error {
+public:
+	ShaderProgramException(const string &msg) : runtime_error(msg) {}
+};
+
+namespace GLSLShader {
+	enum ShaderType {
+		VERTEX = GL_VERTEX_SHADER,
+		FRAGMENT = GL_FRAGMENT_SHADER,
+		GEOMETRY = GL_GEOMETRY_SHADER,
+		TESS_CONTROL = GL_TESS_CONTROL_SHADER,
+		TESS_EVALUATION = GL_TESS_EVALUATION_SHADER,
+		COMPUTE = GL_COMPUTE_SHADER
+	};
+}
+
+class ShaderProgram {
+private:
+	GLuint handle;
+	bool linked;
+	map<string, int> uniformLocations;
+
+	GLint getUniformLocation(const char* name);
+
+	bool fileExists(const string &filename);
+
+	ShaderProgram(const ShaderProgram &pro) {}
+	ShaderProgram &operator=(const ShaderProgram &pro) { return *this; }
+
+
+public:
+	ShaderProgram();
+	~ShaderProgram();
+
+	void compileShader(const char* filename);
+	void compileShader(const char* filename, GLSLShader::ShaderType type);
+
+	void link();
+	void validate();
+	void use();
+
+	GLuint getHandle();
+	bool isLinked();
+
+	void bindAttribLocation(GLuint location, const char* name);
+	void bindFragDataLocation(GLuint location, const char* name);
+
+	void setUniform(const char* name, float x, float y, float z);
+	void setUniform(const char* name, const glm::vec2 &v);
+	void setUniform(const char* name, const glm::vec3 &v);
+	void setUniform(const char* name, const glm::vec4 &v);
+	void setUniform(const char* name, const glm::mat3 &m);
+	void setUniform(const char* name, const glm::mat4 &m);
+	void setUniform(const char* name, float x);
+	void setUniform(const char* name, int x);
+	void setUniform(const char* name, bool x);
+	void setUniform(const char* name, GLuint x);
+
+	void findUniformLocations();
+
+	void printActiveUniforms();
+
+	void printActiveUniformBlocks();
+
+	void printActiveAttribs();
+
+	const char* getTypeString(GLenum type);
+
+
+
+};

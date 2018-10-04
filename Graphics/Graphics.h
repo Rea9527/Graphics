@@ -13,6 +13,10 @@ using namespace std;
 #include <GLFW/glfw3.h>
 
 
+// include user define files
+#include "shaderProgram/shaderProgram.h"
+
+
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
