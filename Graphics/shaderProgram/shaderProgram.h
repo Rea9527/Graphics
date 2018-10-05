@@ -1,8 +1,6 @@
 #pragma once
 
 #include <string>
-#include <fstream>
-#include <sstream>
 #include <map>
 using namespace std;
 
@@ -38,6 +36,8 @@ private:
 
 	bool fileExists(const string &filename);
 
+	string getExtension(const char* filename);
+
 	ShaderProgram(const ShaderProgram &pro) {}
 	ShaderProgram &operator=(const ShaderProgram &pro) { return *this; }
 
@@ -48,6 +48,7 @@ public:
 
 	void compileShader(const char* filename);
 	void compileShader(const char* filename, GLSLShader::ShaderType type);
+	void compileShader(const string &code, GLSLShader::ShaderType type, const char* filename);
 
 	void link();
 	void validate();
