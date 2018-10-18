@@ -16,6 +16,9 @@
     <Filter Include="Source Files\shaderProgram">
       <UniqueIdentifier>{26071091-93fc-494b-b929-b90b27eca28f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\medias">
+      <UniqueIdentifier>{369acaf3-843a-4df0-a7d1-edb6c4c31d29}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -44,5 +47,13 @@
     <ClCompile Include="shaderProgram\shaderProgram.cpp">
       <Filter>Source Files\shaderProgram</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="medias\fragShader.frag">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\vertexShader.vert">
+      <Filter>Source Files\medias</Filter>
+    </None>
   </ItemGroup>
 </Project>

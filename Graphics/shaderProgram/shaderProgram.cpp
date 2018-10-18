@@ -13,12 +13,12 @@ namespace GLSLShaderInfo {
 	};
 
 	struct shader_file_extension extensions[] = {
-		{".vs", GLSLShader::VERTEX},
-		{".tcs", GLSLShader::TESS_CONTROL},
-		{".tes", GLSLShader::TESS_EVALUATION},
-		{".gs", GLSLShader::GEOMETRY},
-		{".fs", GLSLShader::FRAGMENT},
-		{".cs", GLSLShader::COMPUTE}
+		{".vert", GLSLShader::VERTEX},
+		{".tesc", GLSLShader::TESS_CONTROL},
+		{".tese", GLSLShader::TESS_EVALUATION},
+		{".geom", GLSLShader::GEOMETRY},
+		{".frag", GLSLShader::FRAGMENT},
+		{".comp", GLSLShader::COMPUTE}
 	};
 }
 
@@ -140,6 +140,279 @@ void ShaderProgram::link() {
 	int status = 0;
 	glGetShaderiv(this->handle, GL_LINK_STATUS, &status);
 	if (status == GL_FALSE) {
+		// compile failed
+		int length = 0;
+		string log_string;
+		glGetShaderiv(this->handle, GL_INFO_LOG_LENGTH, &length);
+		if (length > 0) {
+			char* c_log = new char[length];
+			int written = 0;
+			glGetProgramInfoLog(handle, length, &written, c_log);
+			log_string = c_log;
+			delete[] c_log;
+		}
+
+		throw ShaderProgramException(string("Program linked failed: ") + log_string);
+	}
+	else {
+		this->findUniformLocations();
+		this->linked = true;
+	}
+}
+
+void ShaderProgram::use() {
+	if (this->handle <= 0 || isLinked == false) {
+		throw ShaderProgramException("Shader has not been linked.");
+	}
+
+	glUseProgram(this->handle);
+}
+
+void ShaderProgram::findUniformLocations() {
+	this->uniformLocations.clear();
+
+	GLint uniformsNum = 0;
+
+	// -------on Windows and Linux, not Apple
+	glGetProgramInterfaceiv(this->handle, GL_UNIFORM, GL_ACTIVE_RESOURCES, &uniformsNum);
+
+	GLenum properties[] = {GL_NAME_LENGTH, GL_TYPE, GL_LOCATION, GL_BLOCK_INDEX};
+
+	for (GLint i = 0; i < uniformsNum; i++) {
+		GLint results[4];
+
+		glGetProgramResourceiv(this->handle, GL_UNIFORM, i, 4, properties, 4, NULL, results);
+
+		// ignore uniform in block
+		if (results[3] != -1) continue;
+
+		GLint nameLen = results[0] + 1;
+		char *name = new char[nameLen];
+		glGetProgramResourceName(this->handle, GL_UNIFORM, i, nameLen, NULL, name);
+		uniformLocations[name] = results[2];
+		delete[] name;
+	}
+}
+
+
+GLuint ShaderProgram::getHandle() {
+	return this->handle;
+}
+
+bool ShaderProgram::isLinked() {
+	return isLinked;
+}
+
+void ShaderProgram::bindAttribLocation(GLuint location, const char* name) {
+	glBindAttribLocation(this->handle, location, name);
+}
+
+void ShaderProgram::bindFragDataLocation(GLuint location, const char* name) {
+	glBindFragDataLocation(this->handle, location, name);
+}
+
+void  ShaderProgram::setUniform(const char* name, float x, float y, float z) {
+	GLuint loc = this->getUniformLocation(name);
+	glUniform3f(loc, x, y, z);
+}
+
+void  ShaderProgram::setUniform(const char* name, const glm::vec2 &v) {
+	GLuint loc = this->getUniformLocation(name);
+	glUniform2f(loc, v.x, v.y);
+}
+
+void  ShaderProgram::setUniform(const char* name, const glm::vec3 &v) {
+	this->setUniform(name, v.x, v.y, v.z);
+}
+
+void  ShaderProgram::setUniform(const char* name, const glm::vec4 &v) {
+	GLuint loc = this->getUniformLocation(name);
+	glUniform4f(loc, v.x, v.y, v.z, v.w);
+}
+
+void  ShaderProgram::setUniform(const char* name, const glm::mat3 &m) {
+	GLuint loc = this->getUniformLocation(name);
+	glUniformMatrix3fv(loc, 1, GL_FALSE, &m[0][0]);
+}
+
+void  ShaderProgram::setUniform(const char* name, const glm::mat4 &m) {
+	GLuint loc = this->getUniformLocation(name);
+	glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);
+}
+
+void  ShaderProgram::setUniform(const char* name, float x) {
+	GLuint loc = this->getUniformLocation(name);
+	glUniform1f(loc, x);
+}
+
+void  ShaderProgram::setUniform(const char* name, int x) {
+	GLuint loc = this->getUniformLocation(name);
+	glUniform1i(loc, x);
+}
+
+void  ShaderProgram::setUniform(const char* name, bool x) {
+	GLuint loc = this->getUniformLocation(name);
+	glUniform1i(loc, x);
+}
+void  ShaderProgram::setUniform(const char* name, GLuint x) {
+	GLuint loc = this->getUniformLocation(name);
+	glUniform1ui(loc, x);
+}
+
+
+void ShaderProgram::printActiveUniforms() {
+	GLint uniformsNum = 0;
+
+	// -------on Windows and Linux, not Apple
+	glGetProgramInterfaceiv(this->handle, GL_UNIFORM, GL_ACTIVE_RESOURCES, &uniformsNum);
+
+	GLenum properties[] = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION, GL_BLOCK_INDEX };
+
+	printf("Active Uniforms: \n");
+	for (GLint i = 0; i < uniformsNum; i++) {
+		GLint results[4];
+
+		glGetProgramResourceiv(this->handle, GL_UNIFORM, i, 4, properties, 4, NULL, results);
+
+		// ignore uniform in block
+		if (results[3] != -1) continue;
+
+		GLint nameLen = results[0] + 1;
+		char *name = new char[nameLen];
+		glGetProgramResourceName(this->handle, GL_UNIFORM, i, nameLen, NULL, name);
+		printf("%-5d %s (%s)", results[2], name, getTypeString(results[1]));
+		delete[] name;
+	}
+}
+
+void ShaderProgram::printActiveUniformBlocks() {
+	GLint blocksNum;
+	glGetProgramInterfaceiv(this->handle, GL_UNIFORM_BLOCK, GL_ACTIVE_RESOURCES, &blocksNum);
+
+	GLenum blockProps[] = { GL_NUM_ACTIVE_VARIABLES, GL_NAME_LENGTH };
+	GLenum blockIndex[] = { GL_ACTIVE_VARIABLES };
+	GLenum props[] = { GL_NAME_LENGTH, GL_TYPE, GL_BLOCK_INDEX };
+
+	for (int block = 0; block < blocksNum; block++) {
+		GLint blockInfo[2];
+		glGetProgramResourceiv(this->handle, GL_UNIFORM_BLOCK, block, 2, blockProps, 2, NULL, blockInfo);
+		GLint uniformsNum = blockInfo[0];
+
+		char* blockName = new char[blockInfo[1] + 1];
+		glGetProgramResourceName(this->handle, GL_UNIFORM_BLOCK, block, blockInfo[1] + 1, NULL, blockName);
+		printf("Uniform block %s: \n", blockName);
+		delete[] blockName;
+
+		GLint *uniformIndicies = new GLint[uniformsNum];
+		glGetProgramResourceiv(this->handle, GL_UNIFORM_BLOCK, block, 1, blockIndex, uniformsNum, NULL, uniformIndicies);
+
+		for (int i = 0; i < uniformsNum; i++) {
+			GLint index = uniformIndicies[i];
+
+			GLint results[3];
+			glGetProgramResourceiv(this->handle, GL_UNIFORM, index, 3, props, 3, NULL, results);
+
+			int nameLen = results[0] + 1;
+			char* name = new char[nameLen];
+			glGetProgramResourceName(this->handle, GL_UNIFORM, index, nameLen, NULL, name);
+			printf("	%s (%s)\n", name, getTypeString(results[1]));
+			delete[] name;
+		}
+		delete[] uniformIndicies;
 
 	}
+}
+
+void ShaderProgram::printActiveAttribs() {
+	GLint numAttribs;
+	glGetProgramInterfaceiv(this->handle, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &numAttribs);
+
+	GLenum props[] = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION };
+	
+	printf("Active attribs: \n");
+	for (int i = 0; i < numAttribs; i++) {
+
+		int results[3];
+		glGetProgramResourceiv(this->handle, GL_PROGRAM_INPUT, i, 3, props, 3, NULL, results);
+		
+		int nameLen = results[0];
+		char* name = new char[nameLen];
+		glGetProgramResourceName(this->handle, GL_PROGRAM_INPUT, i, nameLen, NULL, name);
+		printf("%-5d %s (%s)\n", results[2], name, getTypeString(results[1]));
+		delete[] name;
+	}
+}
+
+const char* ShaderProgram::getTypeString(GLenum type) {
+	switch (type) {
+	case GL_FLOAT:
+		return "float";
+	case GL_FLOAT_VEC2:
+		return "vec2";
+	case GL_FLOAT_VEC3:
+		return "vec3";
+	case GL_FLOAT_VEC4:
+		return "vec4";
+	case GL_DOUBLE:
+		return "double";
+	case GL_INT:
+		return "int";
+	case GL_UNSIGNED_INT:
+		return "uint";
+	case GL_BOOL:
+		return "bool";
+	case GL_FLOAT_MAT2:
+		return "mat2";
+	case GL_FLOAT_MAT3:
+		return "mat3";
+	case GL_FLOAT_MAT4:
+		return "mat4";
+	default:
+		return "unknown";
+	}
+}
+
+void ShaderProgram::validate() {
+	if (!isLinked()) {
+		throw ShaderProgramException("Shader is not linked.");
+	}
+
+	glValidateProgram(this->handle);
+	GLint status;
+	glGetProgramiv(this->handle, GL_VALIDATE_STATUS, &status);
+
+	if (status == GL_FALSE) {
+		int length = 0;
+		string logString;
+
+		glGetProgramiv(handle, GL_INFO_LOG_LENGTH, &length);
+
+		if (length > 0) {
+			char *c_log = new char[length];
+			int written = 0;
+			glGetProgramInfoLog(handle, length, &written, c_log);
+			logString = c_log;
+			delete[] c_log;
+		}
+
+		throw ShaderProgramException(string("Program failed to validate\n") + logString);
+	}
+}
+
+int ShaderProgram::getUniformLocation(const char* name) {
+	auto loc = uniformLocations.find(name);
+
+	if (loc == uniformLocations.end()) {
+		uniformLocations[name] = glGetUniformLocation(this->handle, name);
+	}
+
+	return uniformLocations[name];
+}
+
+bool ShaderProgram::fileExists(const string &filename) {
+	struct stat info;
+	int ret = -1;
+
+	ret = stat(filename.c_str(), &info);
+	return ret == 0;
 }

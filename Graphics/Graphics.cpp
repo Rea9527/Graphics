@@ -7,7 +7,10 @@
 
 // The MAIN function, from here we start the application and run the game loop
 int main()
-{
+{	
+	//-----------------------------------------------------------------------------------------------------------------------------------------
+	// Initialization
+	//-----------------------------------------------------------------------------------------------------------------------------------------
 	// Init GLFW
 	glfwInit();
 	// Set all the required options for GLFW
@@ -38,29 +41,32 @@ int main()
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
+	//-----------------------------------------------------------------------------------------------------------------------------------------
+	// End of initialization
+	//-----------------------------------------------------------------------------------------------------------------------------------------
 
 
-	// Build and compile the shader programs (we ignored compile log checks for readability (if you do encounter issues, add the compile-checks!))
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	GLuint fragmentShaderOrange = glCreateShader(GL_FRAGMENT_SHADER); // The first fragment shader that outputs the color orange
-	GLuint fragmentShaderYellow = glCreateShader(GL_FRAGMENT_SHADER); // The second fragment shader that outputs the color yellow
-	GLuint shaderProgramOrange = glCreateProgram();
-	GLuint shaderProgramYellow = glCreateProgram(); // The second shader program
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-	glShaderSource(fragmentShaderOrange, 1, &fragmentShader1Source, NULL);
-	glCompileShader(fragmentShaderOrange);
-	glShaderSource(fragmentShaderYellow, 1, &fragmentShader2Source, NULL);
-	glCompileShader(fragmentShaderYellow);
-	// Link the first program object
-	glAttachShader(shaderProgramOrange, vertexShader);
-	glAttachShader(shaderProgramOrange, fragmentShaderOrange);
-	glLinkProgram(shaderProgramOrange);
-	// Then link the second program object using a different fragment shader (but same vertex shader) this time.
-	// This is perfectly allowed since the inputs and outputs of both the vertex and fragment shaders are equally matched.
-	glAttachShader(shaderProgramYellow, vertexShader);
-	glAttachShader(shaderProgramYellow, fragmentShaderYellow);
-	glLinkProgram(shaderProgramYellow);
+
+	//-----------------------------------------------------------------------------------------------------------------------------------------
+	// create shader program
+	//-----------------------------------------------------------------------------------------------------------------------------------------
+	ShaderProgram program;
+	try {
+		program.compileShader("vectexShader.vert");
+		program.compileShader("fragShader.frag");
+		program.link();
+
+		program.printActiveAttribs();
+		program.printActiveUniforms();
+	}
+	catch (ShaderProgramException &e) {
+
+	}
+
+	//-----------------------------------------------------------------------------------------------------------------------------------------
+	// End of creating program
+	//-----------------------------------------------------------------------------------------------------------------------------------------
+
 
 
 	// Set up vertex data (and buffer(s)) and attribute pointers
