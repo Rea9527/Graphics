@@ -26,7 +26,24 @@ namespace GLSLShaderInfo {
 ShaderProgram::ShaderProgram() : handle(0), linked(false) {}
 
 ShaderProgram::~ShaderProgram() {
-	// todo
+	if (this->handle == 0) return;
+
+	// Query the number of attached shaders
+	GLint numShaders = 0;
+	glGetProgramiv(handle, GL_ATTACHED_SHADERS, &numShaders);
+
+	// Get the shader names
+	GLuint *shaderNames = new GLuint[numShaders];
+	glGetAttachedShaders(handle, numShaders, NULL, shaderNames);
+
+	// Delete the shaders
+	for (int i = 0; i < numShaders; i++)
+		glDeleteShader(shaderNames[i]);
+
+	// Delete the program
+	glDeleteProgram(handle);
+
+	delete[] shaderNames;
 }
 
 // get the shader type and then compile shader using filename and type
@@ -40,8 +57,8 @@ void ShaderProgram::compileShader(const char* filename) {
 
 	for (int i = 0; i < ext_num; i++) {
 
-		if (ext == GLSLShaderInfo::extensions->ext) {
-			type = GLSLShaderInfo::extensions->type;
+		if (ext == GLSLShaderInfo::extensions[i].ext) {
+			type = GLSLShaderInfo::extensions[i].type;
 			match_found = true;
 			break;
 		}
@@ -138,12 +155,12 @@ void ShaderProgram::link() {
 	glLinkProgram(this->handle);
 
 	int status = 0;
-	glGetShaderiv(this->handle, GL_LINK_STATUS, &status);
+	glGetProgramiv(this->handle, GL_LINK_STATUS, &status);
 	if (status == GL_FALSE) {
 		// compile failed
 		int length = 0;
 		string log_string;
-		glGetShaderiv(this->handle, GL_INFO_LOG_LENGTH, &length);
+		glGetProgramiv(this->handle, GL_INFO_LOG_LENGTH, &length);
 		if (length > 0) {
 			char* c_log = new char[length];
 			int written = 0;
@@ -161,7 +178,7 @@ void ShaderProgram::link() {
 }
 
 void ShaderProgram::use() {
-	if (this->handle <= 0 || isLinked == false) {
+	if (this->handle <= 0 || linked == false) {
 		throw ShaderProgramException("Shader has not been linked.");
 	}
 
@@ -200,7 +217,7 @@ GLuint ShaderProgram::getHandle() {
 }
 
 bool ShaderProgram::isLinked() {
-	return isLinked;
+	return linked;
 }
 
 void ShaderProgram::bindAttribLocation(GLuint location, const char* name) {
@@ -407,6 +424,16 @@ int ShaderProgram::getUniformLocation(const char* name) {
 	}
 
 	return uniformLocations[name];
+}
+
+string ShaderProgram::getExtension(const char* filename) {
+	string filenameStr(filename);
+
+	size_t index = filenameStr.find_last_of('.');
+	if (index != string::npos) {
+		return filenameStr.substr(index, string::npos);
+	}
+	return "";
 }
 
 bool ShaderProgram::fileExists(const string &filename) {

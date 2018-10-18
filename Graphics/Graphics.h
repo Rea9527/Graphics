@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ using namespace std;
 
 
 // include user define files
-#include "shaderProgram/shaderProgram.h"
+#include "shaderProgram.h"
 
 
 // Function prototypes

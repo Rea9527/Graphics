@@ -52,17 +52,18 @@ int main()
 	//-----------------------------------------------------------------------------------------------------------------------------------------
 	ShaderProgram program;
 	try {
-		program.compileShader("vectexShader.vert");
-		program.compileShader("fragShader.frag");
+		program.compileShader("./medias/vertexShader.vert");
+		program.compileShader("./medias/fragShader.frag");
 		program.link();
+		program.validate();
 
 		program.printActiveAttribs();
 		program.printActiveUniforms();
 	}
 	catch (ShaderProgramException &e) {
-
+		cerr << e.what() << endl;
+		exit(EXIT_FAILURE);
 	}
-
 	//-----------------------------------------------------------------------------------------------------------------------------------------
 	// End of creating program
 	//-----------------------------------------------------------------------------------------------------------------------------------------
@@ -72,38 +73,28 @@ int main()
 	// Set up vertex data (and buffer(s)) and attribute pointers
 	// We add a new set of vertices to form a second triangle (a total of 6 vertices); the vertex attribute configuration remains the same (still one 3-float position vector per vertex)
 	GLfloat firstTriangle[] = {
-		-0.9f, -0.5f, 0.0f,  // Left 
-		-0.0f, -0.5f, 0.0f,  // Right
-		-0.45f, 0.5f, 0.0f,  // Top 
+		-0.9f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,  // Left
+		-0.0f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  // Right
+		-0.45f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f   // Top
 	};
-	GLfloat secondTriangle[] = {
-		0.0f, -0.5f, 0.0f,  // Left
-		0.9f, -0.5f, 0.0f,  // Right
-		0.45f, 0.5f, 0.0f   // Top 
-	};
-	GLuint VBOs[2], VAOs[2];
-	glGenVertexArrays(2, VAOs);
-	glGenBuffers(2, VBOs);
-	// ================================
+
+	GLuint VBO, VAO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
 	// First Triangle setup
-	// ===============================
-	glBindVertexArray(VAOs[0]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(firstTriangle), firstTriangle, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);   // Vertex attributes stay the same
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
-	glBindVertexArray(0);
-	// ================================
-	// Second Triangle setup
-	// ===============================
-	glBindVertexArray(VAOs[1]); // Note that we bind to a different VAO now
-	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]); // And a different VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(secondTriangle), secondTriangle, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0); // Because the vertex data is tightly packed we can also specify 0 as the vertex attribute's stride to let OpenGL figure it out.
-	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
 	glBindVertexArray(0);
 
-	// Game loop
+
+	//-----------------------------------------------------------------------------------------------------------------------------------------
+	// Main loop
+	//-----------------------------------------------------------------------------------------------------------------------------------------
 	while (!glfwWindowShouldClose(window))
 	{
 		// Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
@@ -115,27 +106,26 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// Now when we want to draw the triangle we first use the vertex and orange fragment shader from the first program.
-		glUseProgram(shaderProgramOrange);
+		program.use();
 		// Draw the first triangle using the data from our first VAO
-		glBindVertexArray(VAOs[0]);
+		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);   // This call should output an orange triangle
 											// Then we draw the second triangle using the data from the second VAO
 											// When we draw the second triangle we want to use a different shader program so we switch to the shader program with our yellow fragment shader.
-		glUseProgram(shaderProgramYellow);
-		glBindVertexArray(VAOs[1]);
-		glDrawArrays(GL_TRIANGLES, 0, 3);   // This call should output a yellow triangle
-		glBindVertexArray(0);
 
 		// Swap the screen buffers
 		glfwSwapBuffers(window);
 	}
 	// Properly de-allocate all resources once they've outlived their purpose
-	glDeleteVertexArrays(2, VAOs);
-	glDeleteBuffers(2, VBOs);
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
 	// Terminate GLFW, clearing any resources allocated by GLFW.
 	glfwTerminate();
 	return 0;
 }
+//-----------------------------------------------------------------------------------------------------------------------------------------
+// End of main loop
+//-----------------------------------------------------------------------------------------------------------------------------------------
 
 // Is called whenever a key is pressed/released via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)

@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\shaderProgram">
-      <UniqueIdentifier>{26071091-93fc-494b-b929-b90b27eca28f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\medias">
       <UniqueIdentifier>{369acaf3-843a-4df0-a7d1-edb6c4c31d29}</UniqueIdentifier>
     </Filter>
@@ -33,8 +30,8 @@
     <ClInclude Include="Graphics.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="shaderProgram\shaderProgram.h">
-      <Filter>Source Files\shaderProgram</Filter>
+    <ClInclude Include="shaderProgram.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -44,8 +41,8 @@
     <ClCompile Include="Graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="shaderProgram\shaderProgram.cpp">
-      <Filter>Source Files\shaderProgram</Filter>
+    <ClCompile Include="shaderProgram.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
