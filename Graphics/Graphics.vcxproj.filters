@@ -16,6 +16,9 @@
     <Filter Include="Source Files\medias">
       <UniqueIdentifier>{369acaf3-843a-4df0-a7d1-edb6c4c31d29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\scenes">
+      <UniqueIdentifier>{570aa0d8-f602-4306-b443-deda0fb03429}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -33,6 +36,21 @@
     <ClInclude Include="shaderProgram.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GLUtils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scenes\BasicScene.h">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -43,6 +61,12 @@
     </ClCompile>
     <ClCompile Include="shaderProgram.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GLUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scenes\BasicScene.cpp">
+      <Filter>Source Files\scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
