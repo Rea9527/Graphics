@@ -2,8 +2,12 @@
 
 // GL CORE
 #include <GL_CORE/gl_core_4_3.h>
+
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "../shaderProgram.h"
 #include "../Scene.h"
+#include "../Plane.h"
 
 class BasicScene : public Scene {
 
@@ -16,8 +20,12 @@ public:
 	void resize(int w, int h);
 
 private:
-	GLuint vao;
 	ShaderProgram prog;
 
+	Plane plane;
+
+	float angle;
+
+	void setMatrices();
 	void compile();
 };

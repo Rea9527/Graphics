@@ -39,7 +39,6 @@ public:
 		int num_failed = ogl_loaded - ogl_LOAD_SUCCEEDED;
 		cerr << "Number of functions that failed to load: " << num_failed << endl;
 		// get frame buffer size
-		int width, height;
 		glfwGetFramebufferSize(window, &frame_size_width, &frame_size_height);
 		glViewport(0, 0, frame_size_width, frame_size_height);
 	}

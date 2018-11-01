@@ -19,6 +19,9 @@
     <Filter Include="Source Files\scenes">
       <UniqueIdentifier>{570aa0d8-f602-4306-b443-deda0fb03429}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\medias\BasicScene">
+      <UniqueIdentifier>{43903645-e3c5-4d4f-a5c0-f8970efe278b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -42,14 +45,23 @@
     <ClInclude Include="Scene.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="BasicScene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GLUtils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="scenes\BasicScene.h">
       <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangleMesh.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Drawable.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +80,15 @@
     <ClCompile Include="scenes\BasicScene.cpp">
       <Filter>Source Files\scenes</Filter>
     </ClCompile>
+    <ClCompile Include="TriangleMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="medias\fragShader.frag">
@@ -75,6 +96,12 @@
     </None>
     <None Include="medias\vertexShader.vert">
       <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\BasicScene\plane.vert">
+      <Filter>Source Files\medias\BasicScene</Filter>
+    </None>
+    <None Include="medias\BasicScene\plane.frag">
+      <Filter>Source Files\medias\BasicScene</Filter>
     </None>
   </ItemGroup>
 </Project>

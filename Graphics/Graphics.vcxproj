@@ -152,19 +152,24 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BasicScene.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Drawable.h" />
     <ClInclude Include="GLUtils.h" />
     <ClInclude Include="Graphics.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="scenes\BasicScene.h" />
     <ClInclude Include="shaderProgram.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TriangleMesh.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="GLUtils.cpp" />
     <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="Plane.cpp" />
     <ClCompile Include="scenes\BasicScene.cpp" />
     <ClCompile Include="shaderProgram.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -173,8 +178,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TriangleMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="medias\BasicScene\plane.frag" />
+    <None Include="medias\BasicScene\plane.vert" />
     <None Include="medias\fragShader.frag" />
     <None Include="medias\vertexShader.vert" />
   </ItemGroup>
