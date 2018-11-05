@@ -23,8 +23,9 @@ void BasicScene::initScene() {
 
 }
 
-void BasicScene::update(float dt) {
 
+void BasicScene::update(float dt, Camera &camera) {
+	this->view = camera.getViewMat();
 }
 
 void BasicScene::render() {

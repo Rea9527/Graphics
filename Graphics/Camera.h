@@ -19,9 +19,13 @@ enum CameraState {
 
 class Camera {
 
+public:
+
 	Camera();
 	Camera(glm::vec3 pos, glm::vec3 up, GLfloat yaw, GLfloat pitch);
 
+	void init(glm::vec3 pos, glm::vec3 up, GLfloat yaw, GLfloat pitch);
+	void use();
 	// camera movement -> translate\rotate\zomm
 	void translate(CameraMovement moveDir, GLfloat deltaTime);
 	void rotate(GLfloat xoff, GLfloat yoff);

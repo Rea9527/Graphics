@@ -14,7 +14,7 @@ Camera::Camera() {
 }
 
 Camera::Camera(glm::vec3 pos, glm::vec3 up, GLfloat yaw, GLfloat pitch) {
-	this->STATE = ACTIVE;
+	this->STATE = DISABLE;
 	this->Pos = pos;
 	this->InitUp = up;
 	this->Yaw = yaw;
@@ -23,6 +23,22 @@ Camera::Camera(glm::vec3 pos, glm::vec3 up, GLfloat yaw, GLfloat pitch) {
 	this->Sensitivity = 0.25f;
 	this->Zoom = 45.0f;
 	this->updateCameraPos();
+}
+
+void Camera::init(glm::vec3 pos, glm::vec3 up, GLfloat yaw, GLfloat pitch) {
+	this->STATE = DISABLE;
+	this->Pos = pos;
+	this->InitUp = up;
+	this->Yaw = yaw;
+	this->Pitch = pitch;
+	this->Speed = 100.0f;
+	this->Sensitivity = 0.25f;
+	this->Zoom = 45.0f;
+	this->updateCameraPos();
+}
+
+void Camera::use() {
+	this->STATE = ACTIVE;
 }
 
 // camera movement -> translate\rotate\zomm

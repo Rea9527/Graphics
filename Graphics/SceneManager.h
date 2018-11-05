@@ -11,6 +11,7 @@ using namespace std;
 #include <GLFW/glfw3.h>
 
 #include "Scene.h"
+#include "Camera.h"
 #include "GLUtils.h"
 
 
@@ -41,13 +42,33 @@ public:
 		// get frame buffer size
 		glfwGetFramebufferSize(window, &frame_size_width, &frame_size_height);
 		glViewport(0, 0, frame_size_width, frame_size_height);
+
+		// camera
+		this->camera->init(glm::vec3(0.0f, 10.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), -20.f, 0.0f);
+		this->camera->setSensitivity(0.02);
+		this->deltaTime = 0.0f;
+		this->lastFrame = 0.0f;
+		this->lastX = frame_size_width / 2;
+		this->lastY = frame_size_height / 2;
+		this->firstMouse = true;
+
+
+		//set keycallback
+		//glfwSetWindowUserPointer(window, this);
+		glfwSetKeyCallback(window, key_callback);
+		glfwSetCursorPosCallback(window, mouse_callback);
+		glfwSetScrollCallback(window, scroll_callback);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 	}
 
 	int run(Scene &scene) {
+
 		scene.setDimensions(this->frame_size_width, this->frame_size_height);
 		scene.initScene();
 		scene.resize(this->frame_size_width, this->frame_size_height);
 		//main loop
+		camera->use();
 		this->mainLoop(this->window, scene);
 
 		//close window and stop glfw
@@ -61,14 +82,82 @@ private:
 	GLFWwindow *window;
 	int frame_size_width, frame_size_height;
 
+	//camera
+	static std::unique_ptr<Camera> camera;
+	static bool keys[1024];
+	static GLfloat deltaTime;
+	static GLfloat lastFrame;
+	static GLfloat lastX;
+	static GLfloat lastY;
+	static bool firstMouse;
+
 	
 	void mainLoop(GLFWwindow* window, Scene &scene) {
 		while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)) {
 			GLUtils::checkForOpenGLError(__FILE__, __LINE__);
-			scene.update(float(glfwGetTime()));
+			updateMovement();
+			scene.update(float(glfwGetTime()), *camera);
 			scene.render();
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 		}
 	}
+
+	inline static void updateMovement() {
+		GLfloat currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		if (keys[GLFW_KEY_W])
+			camera->translate(CAM_FOWARD, deltaTime);
+		else if (keys[GLFW_KEY_S])
+			camera->translate(CAM_BACKWARD, deltaTime);
+		else if (keys[GLFW_KEY_A])
+			camera->translate(CAM_LEFT, deltaTime);
+		else if (keys[GLFW_KEY_D])
+			camera->translate(CAM_RIGHT, deltaTime);
+
+	}
+
+	inline static auto key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) -> void {
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+			glfwSetWindowShouldClose(window, GLFW_TRUE);
+
+		if (action == GLFW_PRESS) {
+			keys[key] = true;
+		}
+		else if (action == GLFW_RELEASE) {
+			keys[key] = false;
+		}
+	}
+
+	inline static auto mouse_callback(GLFWwindow* window, double xpos, double ypos) -> void {
+		GLfloat offset_x, offset_y;
+		if (firstMouse) {
+			lastX = xpos;
+			lastY = ypos;
+			firstMouse = false;
+		}
+		offset_x = xpos - lastX;
+		offset_y = lastY - ypos;
+		lastX = xpos;
+		lastY = ypos;
+
+		camera->rotate(offset_x, offset_y);
+	}
+	inline static auto scroll_callback(GLFWwindow* window, double xoff, double yoff) -> void {
+		camera->zoom(yoff);
+	}
+
+
 };
+
+
+// camera
+std::unique_ptr<Camera> SceneManager::camera = std::unique_ptr<Camera>(new Camera());
+GLfloat SceneManager::deltaTime = 0.0f;
+GLfloat SceneManager::lastFrame = 0.0f;
+GLfloat SceneManager::lastX = 0.0f;
+GLfloat SceneManager::lastY = 0.0f;
+bool SceneManager::firstMouse = false;
+bool SceneManager::keys[1024] = {0};

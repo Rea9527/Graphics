@@ -6,6 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../shaderProgram.h"
+#include "../Camera.h"
+
 #include "../Scene.h"
 #include "../Plane.h"
 
@@ -15,9 +17,10 @@ public:
 	BasicScene();
 
 	void initScene();
-	void update(float t);
+	void update(float t, Camera &camera);
 	void render();
 	void resize(int w, int h);
+
 
 private:
 	ShaderProgram prog;
