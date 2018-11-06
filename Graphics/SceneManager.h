@@ -57,13 +57,11 @@ public:
 		glfwSetKeyCallback(window, key_callback);
 		glfwSetCursorPosCallback(window, mouse_callback);
 		glfwSetScrollCallback(window, scroll_callback);
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		
 		
 		// init GUI
 		ImGui_ImplGlfwGL3_Init(window, false);
-		
-
 	}
 
 	int run(Scene &scene) {

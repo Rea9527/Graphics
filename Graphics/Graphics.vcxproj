@@ -92,7 +92,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>E:\OpenGL\Graphics\Graphics\medias;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\OpenGL\Graphics\Graphics\medias\SceneBasic;E:\OpenGL\Graphics\Graphics\medias;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -200,9 +200,9 @@
     <None Include="imgui\stb_rect_pack.h.gch" />
     <None Include="imgui\stb_textedit.h.gch" />
     <None Include="imgui\stb_truetype.h.gch" />
-    <None Include="medias\BasicScene\plane.frag" />
-    <None Include="medias\BasicScene\plane.vert" />
     <None Include="medias\fragShader.frag" />
+    <None Include="medias\SceneBasic\plane.frag" />
+    <None Include="medias\SceneBasic\plane.vert" />
     <None Include="medias\vertexShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

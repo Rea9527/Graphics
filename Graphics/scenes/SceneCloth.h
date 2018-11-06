@@ -17,7 +17,7 @@ public:
 	void resize(int w, int h);
 
 private:
-	ShaderProgram program;
+	ShaderProgram prog;
 	
 	float angle;
 

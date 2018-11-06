@@ -17,15 +17,12 @@ void SceneBasic::initScene(int w, int h, Camera &camera) {
 
 	glEnable(GL_DEPTH_TEST);
 
-	camera.init(glm::vec3(0.5f, 10.0f, 4.9f), glm::vec3(0.0f, 1.0f, 0.0f), -20.f, 0.0f);
+	camera.init(glm::vec3(0.0f, 20.0f, 15.0f), glm::vec3(0.0f, 1.0f, 0.0f), -50.f, -90.0f);
 	this->view = camera.getViewMat();
 	this->projection = glm::perspective(glm::radians(camera.getZoom()), w / (float)h, 0.1f, 1000.0f);
 
-	this->angle = 0.957283f;
-
 	prog.setUniform("LightIntensity", glm::vec3(0.9f, 0.9f, 0.9f));
-	glm::vec4 lightPos = glm::vec4(10.0f * cos(angle), 10.0f, 10.0f * sin(angle), 1.0f);
-	prog.setUniform("LightPosition", view * lightPos);
+	prog.setUniform("LightPosition", glm::vec4(0.8f, 0.8f, 0.4f, 1.0f));
 
 	prog.setUniform("Kd", 0.7f, 0.7f, 0.7f);
 	prog.setUniform("Ka", 0.2f, 0.2f, 0.2f);
@@ -37,6 +34,7 @@ void SceneBasic::initScene(int w, int h, Camera &camera) {
 void SceneBasic::update(float dt, Camera &camera) {
 	this->view = camera.getViewMat();
 	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->win_width / (float)this->win_height, 0.1f, 1000.0f);
+
 }
 
 void SceneBasic::render() {

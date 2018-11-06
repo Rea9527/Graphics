@@ -148,12 +148,6 @@
     <None Include="medias\vertexShader.vert">
       <Filter>Source Files\medias</Filter>
     </None>
-    <None Include="medias\BasicScene\plane.vert">
-      <Filter>Source Files\medias\SceneBasic</Filter>
-    </None>
-    <None Include="medias\BasicScene\plane.frag">
-      <Filter>Source Files\medias\SceneBasic</Filter>
-    </None>
     <None Include="imgui\stb_rect_pack.h.gch">
       <Filter>Source Files\imgui</Filter>
     </None>
@@ -162,6 +156,12 @@
     </None>
     <None Include="imgui\stb_truetype.h.gch">
       <Filter>Source Files\imgui</Filter>
+    </None>
+    <None Include="medias\SceneBasic\plane.frag">
+      <Filter>Source Files\medias\SceneBasic</Filter>
+    </None>
+    <None Include="medias\SceneBasic\plane.vert">
+      <Filter>Source Files\medias\SceneBasic</Filter>
     </None>
   </ItemGroup>
 </Project>

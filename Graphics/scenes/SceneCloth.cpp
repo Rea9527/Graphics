@@ -14,6 +14,17 @@ void SceneCloth::initScene(int w, int h, Camera &camera) {
 	this->view = camera.getViewMat();
 	this->projection = glm::mat4(1.0f);
 
+	// set lights
+	this->prog.setUniform("LightIntensity", glm::vec3(0.9f, 0.9f, 0.9f));
+	this->prog.setUniform("LightPosition", glm::vec4());
+
+	this->prog.setUniform("Kd", 0.7f, 0.7f, 0.7f);
+	this->prog.setUniform("Ka", 0.2f, 0.2f, 0.2f);
+	this->prog.setUniform("Ks", 0.2f, 0.2f, 0.2f);
+	this->prog.setUniform("Shininess", 180.0f);
+}
+
+void SceneCloth::initBuffers() {
 
 }
 
@@ -26,11 +37,6 @@ void SceneCloth::render() {
 }
 
 void SceneCloth::resize(int w, int h) {
-
-}
-
-
-void SceneCloth::initBuffers() {
 
 }
 
