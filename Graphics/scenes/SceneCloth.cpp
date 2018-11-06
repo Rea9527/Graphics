@@ -12,11 +12,11 @@ void SceneCloth::initScene(int w, int h, Camera &camera) {
 
 	camera.init(glm::vec3(0.5f, 10.0f, 4.9f), glm::vec3(0.0f, 1.0f, 0.0f), -20.f, 0.0f);
 	this->view = camera.getViewMat();
-	this->projection = glm::mat4(1.0f);
+	this->projection = glm::perspective(glm::radians(camera.getZoom()), w / (float)h, 0.1f, 1000.0f);
 
 	// set lights
 	this->prog.setUniform("LightIntensity", glm::vec3(0.9f, 0.9f, 0.9f));
-	this->prog.setUniform("LightPosition", glm::vec4());
+	this->prog.setUniform("LightPosition", glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
 
 	this->prog.setUniform("Kd", 0.7f, 0.7f, 0.7f);
 	this->prog.setUniform("Ka", 0.2f, 0.2f, 0.2f);

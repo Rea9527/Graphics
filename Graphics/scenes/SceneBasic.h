@@ -25,8 +25,6 @@ private:
 
 	Plane plane;
 
-	float angle;
-
 	void setMatrices();
 	void compileAndLinkShaders();
 

@@ -17,7 +17,7 @@ public:
 	void resize(int w, int h);
 
 private:
-	ShaderProgram prog;
+	ShaderProgram prog, progCloth, progClothNorm;
 	
 	float angle;
 
