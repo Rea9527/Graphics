@@ -14,7 +14,7 @@ using namespace std;
 
 // include user define files
 #include "SceneManager.h"
-#include "scenes/BasicScene.h"
+#include "scenes/SceneBasic.h"
 
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);

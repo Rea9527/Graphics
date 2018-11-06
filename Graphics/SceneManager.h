@@ -13,6 +13,8 @@ using namespace std;
 #include "Scene.h"
 #include "Camera.h"
 #include "GLUtils.h"
+#include "GLGUI.h"
+
 
 
 class SceneManager {
@@ -44,8 +46,6 @@ public:
 		glViewport(0, 0, frame_size_width, frame_size_height);
 
 		// camera
-		this->camera->init(glm::vec3(0.0f, 10.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), -20.f, 0.0f);
-		this->camera->setSensitivity(0.02);
 		this->deltaTime = 0.0f;
 		this->lastFrame = 0.0f;
 		this->lastX = frame_size_width / 2;
@@ -54,23 +54,29 @@ public:
 
 
 		//set keycallback
-		//glfwSetWindowUserPointer(window, this);
 		glfwSetKeyCallback(window, key_callback);
 		glfwSetCursorPosCallback(window, mouse_callback);
 		glfwSetScrollCallback(window, scroll_callback);
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		
+		
+		// init GUI
+		ImGui_ImplGlfwGL3_Init(window, false);
+		
 
 	}
 
 	int run(Scene &scene) {
 
 		scene.setDimensions(this->frame_size_width, this->frame_size_height);
-		scene.initScene();
+		scene.initScene(this->frame_size_width, this->frame_size_height, *(camera));
 		scene.resize(this->frame_size_width, this->frame_size_height);
 		//main loop
 		camera->use();
 		this->mainLoop(this->window, scene);
 
+		// shut down GUI
+		ImGui_ImplGlfwGL3_Shutdown();
 		//close window and stop glfw
 		glfwTerminate();
 		
@@ -95,11 +101,11 @@ private:
 	void mainLoop(GLFWwindow* window, Scene &scene) {
 		while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)) {
 			GLUtils::checkForOpenGLError(__FILE__, __LINE__);
+			glfwPollEvents();
 			updateMovement();
 			scene.update(float(glfwGetTime()), *camera);
 			scene.render();
 			glfwSwapBuffers(window);
-			glfwPollEvents();
 		}
 	}
 

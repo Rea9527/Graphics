@@ -12,8 +12,8 @@ int main()
 	// Initialization
 	//=========================================================================================================================================
 	SceneManager manager(WIDTH, HEIGHT, "GLSL");
-
-	std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new BasicScene());
+	
+	std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneBasic());
 
 	return manager.run(*scene);
 	

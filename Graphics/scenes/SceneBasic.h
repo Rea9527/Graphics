@@ -1,28 +1,26 @@
 #pragma once
 
-// GL CORE
-#include <GL_CORE/gl_core_4_3.h>
-
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../shaderProgram.h"
-#include "../Camera.h"
 
 #include "../Scene.h"
 #include "../Plane.h"
+#include "../GLGUI.h"
 
-class BasicScene : public Scene {
+class SceneBasic : public Scene {
 
 public:
-	BasicScene();
+	SceneBasic();
 
-	void initScene();
+	void initScene(int w, int h, Camera &camera);
 	void update(float t, Camera &camera);
 	void render();
 	void resize(int w, int h);
 
 
 private:
+
 	ShaderProgram prog;
 
 	Plane plane;
@@ -30,5 +28,7 @@ private:
 	float angle;
 
 	void setMatrices();
-	void compile();
+	void compileAndLinkShaders();
+
+	void renderGUI();
 };

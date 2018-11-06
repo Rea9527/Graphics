@@ -1,7 +1,11 @@
 #pragma once
 
+// GL CORE
+#include <GL_CORE/gl_core_4_3.h>
+
 #include <glm/glm.hpp>
 #include "Camera.h"
+
 
 class Scene {
 
@@ -19,7 +23,7 @@ public:
 	}
 
 	// Compile the shader, create data, bind data to buffer...
-	virtual void initScene() = 0;
+	virtual void initScene(int w, int h, Camera &camera) = 0;
 	//
 	virtual void update(float t, Camera &camera) = 0;
 	//
@@ -34,4 +38,8 @@ protected:
 	glm::mat4 model, view, projection;
 
 	bool m_animate;
+
+	int win_width;
+	int win_height;
+
 };

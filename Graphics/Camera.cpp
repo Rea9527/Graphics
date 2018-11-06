@@ -1,5 +1,6 @@
 
 #include "Camera.h"
+#include <cstdio>
 
 Camera::Camera() {
 	this->STATE = ACTIVE;
@@ -7,8 +8,8 @@ Camera::Camera() {
 	this->InitUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	this->Yaw = 0.0f;
 	this->Pitch = 0.0f;
-	this->Speed = 100.0f;
-	this->Sensitivity = 0.25f;
+	this->Speed = 50.0f;
+	this->Sensitivity = 0.2f;
 	this->Zoom = 45.0f;
 	this->updateCameraPos();
 }
@@ -19,8 +20,8 @@ Camera::Camera(glm::vec3 pos, glm::vec3 up, GLfloat yaw, GLfloat pitch) {
 	this->InitUp = up;
 	this->Yaw = yaw;
 	this->Pitch = pitch;
-	this->Speed = 100.0f;
-	this->Sensitivity = 0.25f;
+	this->Speed = 50.0f;
+	this->Sensitivity = 0.2f;
 	this->Zoom = 45.0f;
 	this->updateCameraPos();
 }
@@ -73,12 +74,13 @@ void Camera::rotate(GLfloat xoff, GLfloat yoff) {
 
 void Camera::zoom(GLfloat yoff) {
 	if (STATE == DISABLE) return;
-	if (this->Zoom < 1.0f)
-		this->Zoom = 1.0f;
-	if (this->Zoom > 45.0f)
-		this->Zoom = 45.0f;
 	if (this->Zoom >= 1.0f && this->Zoom <= 45.0f)
 		this->Zoom -= yoff;
+	if (this->Zoom <= 1.0f)
+		this->Zoom = 1.0f;
+	if (this->Zoom >= 45.0f)
+		this->Zoom = 45.0f;
+	
 }
 
 void Camera::updateCameraPos() {
@@ -129,4 +131,8 @@ void Camera::setSpeed(GLfloat speed) {
 
 void Camera::setSensitivity(GLfloat sensitivity) {
 	this->Sensitivity = sensitivity;
+}
+
+float Camera::getZoom() {
+	return this->Zoom;
 }

@@ -19,8 +19,11 @@
     <Filter Include="Source Files\scenes">
       <UniqueIdentifier>{570aa0d8-f602-4306-b443-deda0fb03429}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\medias\BasicScene">
+    <Filter Include="Source Files\medias\SceneBasic">
       <UniqueIdentifier>{43903645-e3c5-4d4f-a5c0-f8970efe278b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\imgui">
+      <UniqueIdentifier>{18b4071b-f6b9-4894-888a-ccf8ea6a7a5b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,9 +51,6 @@
     <ClInclude Include="GLUtils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="scenes\BasicScene.h">
-      <Filter>Source Files\scenes</Filter>
-    </ClInclude>
     <ClInclude Include="TriangleMesh.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -62,6 +62,39 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scenes\SceneBasic.h">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="scenes\SceneSPH.h">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="GLGUI.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imconfig.h">
+      <Filter>Source Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui.h">
+      <Filter>Source Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_glfw_gl3.h">
+      <Filter>Source Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_internal.h">
+      <Filter>Source Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\stb_rect_pack.h">
+      <Filter>Source Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\stb_textedit.h">
+      <Filter>Source Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\stb_truetype.h">
+      <Filter>Source Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="scenes\SceneCloth.h">
+      <Filter>Source Files\scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -77,9 +110,6 @@
     <ClCompile Include="GLUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scenes\BasicScene.cpp">
-      <Filter>Source Files\scenes</Filter>
-    </ClCompile>
     <ClCompile Include="TriangleMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -88,6 +118,27 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scenes\SceneBasic.cpp">
+      <Filter>Source Files\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="scenes\SceneSPH.cpp">
+      <Filter>Source Files\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_demo.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_impl_glfw_gl3.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="scenes\SceneCloth.cpp">
+      <Filter>Source Files\scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -98,10 +149,19 @@
       <Filter>Source Files\medias</Filter>
     </None>
     <None Include="medias\BasicScene\plane.vert">
-      <Filter>Source Files\medias\BasicScene</Filter>
+      <Filter>Source Files\medias\SceneBasic</Filter>
     </None>
     <None Include="medias\BasicScene\plane.frag">
-      <Filter>Source Files\medias\BasicScene</Filter>
+      <Filter>Source Files\medias\SceneBasic</Filter>
+    </None>
+    <None Include="imgui\stb_rect_pack.h.gch">
+      <Filter>Source Files\imgui</Filter>
+    </None>
+    <None Include="imgui\stb_textedit.h.gch">
+      <Filter>Source Files\imgui</Filter>
+    </None>
+    <None Include="imgui\stb_truetype.h.gch">
+      <Filter>Source Files\imgui</Filter>
     </None>
   </ItemGroup>
 </Project>
