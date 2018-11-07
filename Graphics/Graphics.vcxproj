@@ -203,6 +203,10 @@
     <None Include="medias\fragShader.frag" />
     <None Include="medias\SceneBasic\plane.frag" />
     <None Include="medias\SceneBasic\plane.vert" />
+    <None Include="medias\SceneCloth\ads.frag" />
+    <None Include="medias\SceneCloth\ads.vert" />
+    <None Include="medias\SceneCloth\cloth.comp" />
+    <None Include="medias\SceneCloth\clothNorm.comp" />
     <None Include="medias\vertexShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

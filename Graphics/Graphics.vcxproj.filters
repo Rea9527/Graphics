@@ -25,6 +25,9 @@
     <Filter Include="Source Files\imgui">
       <UniqueIdentifier>{18b4071b-f6b9-4894-888a-ccf8ea6a7a5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\medias\SceneCloth">
+      <UniqueIdentifier>{d9937221-4ac9-4e59-8cfc-243355e1cd91}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -162,6 +165,18 @@
     </None>
     <None Include="medias\SceneBasic\plane.vert">
       <Filter>Source Files\medias\SceneBasic</Filter>
+    </None>
+    <None Include="medias\SceneCloth\ads.vert">
+      <Filter>Source Files\medias\SceneCloth</Filter>
+    </None>
+    <None Include="medias\SceneCloth\ads.frag">
+      <Filter>Source Files\medias\SceneCloth</Filter>
+    </None>
+    <None Include="medias\SceneCloth\cloth.comp">
+      <Filter>Source Files\medias\SceneCloth</Filter>
+    </None>
+    <None Include="medias\SceneCloth\clothNorm.comp">
+      <Filter>Source Files\medias\SceneCloth</Filter>
     </None>
   </ItemGroup>
 </Project>

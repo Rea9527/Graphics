@@ -1,14 +1,23 @@
 
 #include "SceneCloth.h"
 
-SceneCloth::SceneCloth() {}
+
+#define PRIM_RESTART 0xffffff
+
+SceneCloth::SceneCloth() : clothVAO(0), numElements(0),
+							nParticles(40, 40), clothSize(4.0f, 3.0f) {
+	
+}
 
 void SceneCloth::initScene(int w, int h, Camera &camera) {
 
-	this->compileAndLinkShaders();
-	this->initBuffers();
+	glEnable(GL_PRIMITIVE_RESTART);
+	glPrimitiveRestartIndex(PRIM_RESTART);
 
 	glEnable(GL_DEPTH_TEST);
+
+	this->compileAndLinkShaders();
+	this->initBuffers();
 
 	camera.init(glm::vec3(0.5f, 10.0f, 4.9f), glm::vec3(0.0f, 1.0f, 0.0f), -20.f, 0.0f);
 	this->view = camera.getViewMat();
@@ -26,25 +35,179 @@ void SceneCloth::initScene(int w, int h, Camera &camera) {
 
 void SceneCloth::initBuffers() {
 
+	// init particle poitions and velocity
+	// bind data to the buffer
+
+
+	vector<GLfloat> initPos, initTexc;
+	// init velocity to 0.0f
+	vector<GLfloat> initVel(nParticles.x * nParticles.y * 4, 0.0f);
+
+	float deltaX = this->clothSize.x / (this->nParticles.x - 1);
+	float deltaY = this->clothSize.y / (this->nParticles.y - 1);
+	float deltaS = 1.0f / (this->nParticles.x - 1);
+	float deltaT = 1.0f / (this->nParticles.y - 1);
+
+	// init particle position and texcoord
+	for (int i = 0; i < nParticles.y; i++) {
+		for (int j = 0; j < nParticles.x; j++) {
+			initPos.push_back(j * deltaX);
+			initPos.push_back(i * deltaY);
+			initPos.push_back(0.0f);
+			initPos.push_back(1.0f);
+
+			initTexc.push_back(j * deltaS);
+			initTexc.push_back(i * deltaT);
+		}
+	}
+
+	// each adjacent two rows form one triangle strip
+	vector<GLuint> el;
+	for (int row = 0; row < nParticles.x - 1; row++) {
+		for (int col = 0; col < nParticles.y; col++) {
+			el.push_back((row + 1) * nParticles.x + col);
+			el.push_back(row * nParticles.x + col);
+		}
+		el.push_back(PRIM_RESTART);
+	}
+	this->numElements = el.size();
+
+	// bind buffers
+	// double buffers for position and velocity, one buffer for element array, norm and texcood
+	GLuint bufs[7];
+	glGenBuffers(7, bufs);
+	this->posBufs[0] = bufs[0];
+	this->posBufs[1] = bufs[1];
+	this->velBufs[0] = bufs[2];
+	this->velBufs[1] = bufs[3];
+	this->normBuf = bufs[4];
+	this->texcBuf = bufs[5];
+	this->elBuf = bufs[6];
+
+	GLuint particles_num = nParticles.x * nParticles.y;
+	// position buffers
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, this->posBufs[0]);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, particles_num * 4 * sizeof(GLfloat), &initPos[0], GL_DYNAMIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, this->posBufs[1]);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, particles_num * 4 * sizeof(GLfloat), NULL, GL_DYNAMIC_DRAW);
+
+	// velocity buffers
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, this->velBufs[0]);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, particles_num * 4 * sizeof(GLfloat), &initVel[0], GL_DYNAMIC_COPY);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, this->velBufs[1]);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, particles_num * 4 * sizeof(GLfloat), NULL, GL_DYNAMIC_COPY);
+
+	// normal buffer
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, normBuf);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, particles_num * 4 * sizeof(GLfloat), NULL, GL_DYNAMIC_COPY);
+
+	// texcoord buffer
+	glBindBuffer(GL_ARRAY_BUFFER, texcBuf);
+	glBufferData(GL_ARRAY_BUFFER, initTexc.size() * sizeof(GLfloat), &initTexc[0], GL_STATIC_DRAW);
+
+	// element buffer
+	glBindBuffer(GL_ARRAY_BUFFER, elBuf);
+	glBufferData(GL_ARRAY_BUFFER, el.size() * sizeof(GLuint), &el[0], GL_DYNAMIC_COPY);
+
+
+	// generate VAO
+	glGenVertexArrays(1, &this->clothVAO);
+	glBindVertexArray(this->clothVAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, this->posBufs[0]);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, this->normBuf);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, this->texcBuf);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(2);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elBuf);
+
+	glBindVertexArray(0);
+
 }
 
 void SceneCloth::update(float dt, Camera &camera) {
+	this->view = camera.getViewMat();
+	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 1.0f, 1000.0f);
+
 
 }
 
 void SceneCloth::render() {
 
+	// cloth program
+	this->progCloth.use();
+	for (int i = 0; i < 1000; i++) {
+		glDispatchCompute(this->nParticles.x / 10, this->nParticles.y / 10, 1);
+		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+		// swap buffer for communication
+		this->readBuf = 1 - this->readBuf;
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, this->posBufs[this->readBuf]);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, this->posBufs[1 - this->readBuf]);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, this->posBufs[this->readBuf]);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, this->posBufs[1 - this->readBuf]);
+
+	}
+
+	// cloth normal program
+	this->progClothNorm.use();
+	glDispatchCompute(this->nParticles.x / 10, this->nParticles.y / 10, 1);
+	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+	// rendering program
+	// draw the scene
+	this->prog.use();
+	this->model = glm::mat4(1.0f);
+	setMatrices();
+	// draw the cloth
+	glBindVertexArray(clothVAO);
+	glDrawElements(GL_TRIANGLE_STRIP, this->numElements, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+
+
 }
 
 void SceneCloth::resize(int w, int h) {
-
+	glViewport(0, 0, w, h);
+	this->width = w;
+	this->height = h;
 }
 
 void SceneCloth::setMatrices() {
 
+	this->prog.use();
+	glm::mat4 mv = this->view * this->model;
+	glm::mat3 norm = glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]), glm::vec3(mv[2]));
+
+	this->prog.setUniform("ModelViewMatrix", mv);
+	this->prog.setUniform("NormalMatrix", norm);
+	this->prog.setUniform("MVP", this->projection * mv);
 }
 
 void SceneCloth::compileAndLinkShaders() {
+
+	try {
+		this->prog.compileShader("./medias/SceneCloth/ads.vert");
+		this->prog.compileShader("./medias/SceneCloth/ads.frag");
+		this->prog.link();
+
+		this->progCloth.compileShader("./medias/SceneCloth/cloth.comp");
+		this->progCloth.link();
+
+		this->progClothNorm.compileShader("./medias/SceneCloth/clothNorm.comp");
+		this->progClothNorm.link();
+	}
+	catch (ShaderProgramException &e) {
+		cerr << e.what() << endl;
+		exit(EXIT_FAILURE);
+	}
 
 }
 

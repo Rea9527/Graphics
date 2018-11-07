@@ -39,7 +39,4 @@ protected:
 
 	bool m_animate;
 
-	int win_width;
-	int win_height;
-
 };

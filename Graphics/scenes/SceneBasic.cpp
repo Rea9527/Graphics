@@ -9,8 +9,8 @@ SceneBasic::SceneBasic() : plane(10.0f, 10.0f, 100, 100){ }
 
 void SceneBasic::initScene(int w, int h, Camera &camera) {
 
-	this->win_width = w;
-	this->win_height = h;
+	this->width = w;
+	this->height = h;
 
 	// compile and link the shader
 	this->compileAndLinkShaders();
@@ -33,7 +33,7 @@ void SceneBasic::initScene(int w, int h, Camera &camera) {
 
 void SceneBasic::update(float dt, Camera &camera) {
 	this->view = camera.getViewMat();
-	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->win_width / (float)this->win_height, 0.1f, 1000.0f);
+	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
 
 }
 

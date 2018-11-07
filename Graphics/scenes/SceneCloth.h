@@ -1,5 +1,8 @@
 #pragma once
 
+#include <iostream>
+#include <vector>
+
 #include "../Scene.h"
 #include "../GLGUI.h"
 
@@ -18,8 +21,16 @@ public:
 
 private:
 	ShaderProgram prog, progCloth, progClothNorm;
-	
-	float angle;
+
+	GLuint readBuf;
+	GLuint posBufs[2], velBufs[2];
+	GLuint normBuf, texcBuf, elBuf;
+
+	GLuint clothVAO;
+	glm::vec2 nParticles;
+	glm::vec2 clothSize;
+	GLuint numElements;
+
 
 	void initBuffers();
 	void setMatrices();
