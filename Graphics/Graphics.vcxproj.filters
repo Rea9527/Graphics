@@ -28,6 +28,9 @@
     <Filter Include="Source Files\medias\SceneCloth">
       <UniqueIdentifier>{d9937221-4ac9-4e59-8cfc-243355e1cd91}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\stb">
+      <UniqueIdentifier>{b024c57d-ceb0-4cf6-aedc-5f896556a79f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -38,9 +41,6 @@
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="shaderProgram.h">
       <Filter>Source Files</Filter>
@@ -99,6 +99,12 @@
     <ClInclude Include="scenes\SceneCloth.h">
       <Filter>Source Files\scenes</Filter>
     </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_image.h">
+      <Filter>Source Files\stb</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -142,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="scenes\SceneCloth.cpp">
       <Filter>Source Files\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

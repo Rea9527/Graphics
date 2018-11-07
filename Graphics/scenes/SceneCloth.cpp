@@ -5,32 +5,45 @@
 #define PRIM_RESTART 0xffffff
 
 SceneCloth::SceneCloth() : clothVAO(0), numElements(0),
-							nParticles(40, 40), clothSize(4.0f, 3.0f) {
-	
-}
+							nParticles(40, 40), clothSize(4.0f, 3.0f),
+							time(0.0f), deltaT(0.0f), speed(200.0f), readBuf(0), plane(10.0f, 10.0f, 100, 100) { }
 
 void SceneCloth::initScene(int w, int h, Camera &camera) {
+	this->width = w;
+	this->height = h;
 
 	glEnable(GL_PRIMITIVE_RESTART);
 	glPrimitiveRestartIndex(PRIM_RESTART);
 
-	glEnable(GL_DEPTH_TEST);
-
 	this->compileAndLinkShaders();
 	this->initBuffers();
 
-	camera.init(glm::vec3(0.5f, 10.0f, 4.9f), glm::vec3(0.0f, 1.0f, 0.0f), -20.f, 0.0f);
+	glEnable(GL_DEPTH_TEST);
+
+	camera.init(glm::vec3(0.0f, 20.0f, 15.0f), glm::vec3(0.0f, 1.0f, 0.0f), -50.f, -90.0f);
 	this->view = camera.getViewMat();
 	this->projection = glm::perspective(glm::radians(camera.getZoom()), w / (float)h, 0.1f, 1000.0f);
 
 	// set lights
+	this->prog.use();
 	this->prog.setUniform("LightIntensity", glm::vec3(0.9f, 0.9f, 0.9f));
-	this->prog.setUniform("LightPosition", glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
+	this->prog.setUniform("LightPosition", glm::vec4(0.8f, 0.8f, 0.4f, 1.0f));
 
 	this->prog.setUniform("Kd", 0.7f, 0.7f, 0.7f);
 	this->prog.setUniform("Ka", 0.2f, 0.2f, 0.2f);
 	this->prog.setUniform("Ks", 0.2f, 0.2f, 0.2f);
 	this->prog.setUniform("Shininess", 180.0f);
+
+	// set cloth compute shader uniform
+	this->progCloth.use();
+	float dx = clothSize.x / (nParticles.x - 1);
+	float dy = clothSize.y / (nParticles.y - 1);
+	this->progCloth.setUniform("RestLenHoriz", dx);
+	this->progCloth.setUniform("RestLenVert", dy);
+	this->progCloth.setUniform("RestLenDiag", sqrtf(dx * dx + dy * dy));
+
+	glActiveTexture(GL_TEXTURE0);
+	Texture::loadTexture("./medias/textures/me_textile.png");
 }
 
 void SceneCloth::initBuffers() {
@@ -136,7 +149,13 @@ void SceneCloth::update(float dt, Camera &camera) {
 	this->view = camera.getViewMat();
 	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 1.0f, 1000.0f);
 
-
+	if (this->time == 0.0f) {
+		this->deltaT = 0.0f;
+	}
+	else {
+		this->deltaT = dt - this->time;
+	}
+	this->time = dt;
 }
 
 void SceneCloth::render() {
@@ -163,7 +182,16 @@ void SceneCloth::render() {
 
 	// rendering program
 	// draw the scene
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	this->renderGUI();
+
 	this->prog.use();
+
+	this->model = glm::mat4(1.0f);
+	this->model = glm::translate(model, glm::vec3(0.0f, -0.9f, 0.0f));
+	this->setMatrices();
+	this->plane.render();
+
 	this->model = glm::mat4(1.0f);
 	setMatrices();
 	// draw the cloth
@@ -194,14 +222,14 @@ void SceneCloth::setMatrices() {
 void SceneCloth::compileAndLinkShaders() {
 
 	try {
-		this->prog.compileShader("./medias/SceneCloth/ads.vert");
-		this->prog.compileShader("./medias/SceneCloth/ads.frag");
+		this->prog.compileShader("./medias/SceneCloth/ads.vert", GLSLShader::VERTEX);
+		this->prog.compileShader("./medias/SceneCloth/ads.frag", GLSLShader::FRAGMENT);
 		this->prog.link();
 
-		this->progCloth.compileShader("./medias/SceneCloth/cloth.comp");
+		this->progCloth.compileShader("./medias/SceneCloth/cloth.comp", GLSLShader::COMPUTE);
 		this->progCloth.link();
 
-		this->progClothNorm.compileShader("./medias/SceneCloth/clothNorm.comp");
+		this->progClothNorm.compileShader("./medias/SceneCloth/clothNorm.comp", GLSLShader::COMPUTE);
 		this->progClothNorm.link();
 	}
 	catch (ShaderProgramException &e) {
@@ -213,5 +241,19 @@ void SceneCloth::compileAndLinkShaders() {
 
 
 void SceneCloth::renderGUI() {
+	// add a new frame
+	ImGui_ImplGlfwGL3_NewFrame("Menu");
 
+	if (ImGui::BeginMainMenuBar()) {
+
+		if (ImGui::BeginMenu("Subdivision")) {
+			if (ImGui::MenuItem("Enable")) {}
+			if (ImGui::MenuItem("Disable")) {}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+
+	//render the frame
+	ImGui::Render();
 }

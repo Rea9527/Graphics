@@ -2,6 +2,7 @@
 
 in vec3 Position;
 in vec3 Normal;
+in vec2 TexCoord;
 
 uniform vec4 LightPosition;
 uniform vec3 LightIntensity;
@@ -10,6 +11,8 @@ uniform vec3 Kd;            // Diffuse reflectivity
 uniform vec3 Ka;            // Ambient reflectivity
 uniform vec3 Ks;            // Specular reflectivity
 uniform float Shininess;    // Specular shininess factor
+
+layout( binding = 0 ) uniform sampler2D Tex;
 
 layout( location = 0 ) out vec4 FragColor;
 
@@ -25,5 +28,6 @@ vec3 ads( ) {
 }
 
 void main() {
-    FragColor = vec4(ads(), 1.0);
+    vec4 texColor = texture( Tex, TexCoord );
+	FragColor = vec4(ads(), 1.0) * texColor;
 }

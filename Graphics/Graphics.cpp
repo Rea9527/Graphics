@@ -2,8 +2,24 @@
 //
 
 
-#include "Graphics.h"
+#include <iostream>
+#include <string>
+#include <vector>
 
+using namespace std;
+
+// GL CORE
+#include <GL_CORE/gl_core_4_3.h>
+// GLFW
+#include <GLFW/glfw3.h>
+
+// include user define files
+#include "SceneManager.h"
+#include "scenes/SceneBasic.h"
+#include "scenes/SceneCloth.h"
+
+// Window dimensions
+const GLuint WIDTH = 800, HEIGHT = 600;
 
 // The MAIN function, from here we start the application and run the game loop
 int main()
@@ -13,7 +29,8 @@ int main()
 	//=========================================================================================================================================
 	SceneManager manager(WIDTH, HEIGHT, "GLSL");
 	
-	std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneBasic());
+	//std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneBasic());
+	std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneCloth());
 
 	return manager.run(*scene);
 	
@@ -51,13 +68,4 @@ int main()
 //=========================================================================================================================================
 // End of main loop
 //=========================================================================================================================================
-
-
-
-// Is called whenever a key is pressed/released via GLFW
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
-{
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
-}
 

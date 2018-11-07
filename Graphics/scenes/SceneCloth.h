@@ -5,6 +5,8 @@
 
 #include "../Scene.h"
 #include "../GLGUI.h"
+#include "../Texture.h"
+#include "../Plane.h"
 
 #include "../shaderProgram.h"
 
@@ -26,11 +28,13 @@ private:
 	GLuint posBufs[2], velBufs[2];
 	GLuint normBuf, texcBuf, elBuf;
 
+	float time, deltaT, speed;
 	GLuint clothVAO;
 	glm::vec2 nParticles;
 	glm::vec2 clothSize;
 	GLuint numElements;
 
+	Plane plane;
 
 	void initBuffers();
 	void setMatrices();

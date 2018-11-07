@@ -4,3 +4,92 @@ layout (local_size_x = 10, local_size_y = 10 ) in;
 
 
 // uniforms
+uniform vec3 Gravity = vec3(0.0f, 10.0f, 0.0f);
+uniform float Mass = 0.1;
+uniform float invMass = 1.0 / 0.1;
+uniform float Stiffness = 2000.0;
+uniform float RestLenHoriz;
+uniform float RestLenVert;
+uniform float RestLenDiag;
+uniform float DeltaT = 0.000005;
+uniform float DampingFactor = 0.1;
+
+// buffer layout
+layout(std430, binding = 0) buffer PosIn { vec4 PositionIn[]; };
+layout(std430, binding = 1) buffer PosOut {vec4 PositionOut[]; };
+layout(std430, binding = 2) buffer VelIn { vec4 VelocityIn[]; };
+layout(std430, binding = 3) buffer VelOut { vec4 VelocityOut[]; };
+
+
+void main() {
+	
+	uvec3 nParticles = gl_NumWorkGroups * gl_WorkGroupSize;
+	uint idx = gl_GlobalInvocationID.y * nParticles.x + gl_GlobalInvocationID.x;
+
+	vec3 pos = vec3(PositionIn[idx]);
+	vec3 vel = vec3(VelocityIn[idx]);
+	vec3 R_pv;
+
+	//init force
+	vec3 force = Gravity * Mass;
+	
+	// compute force from eight neighbor
+	// 1. above
+	if (gl_GlobalInvocationID.y < nParticles.y - 1) {
+		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
+		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenVert); 
+	}
+	// 2. below
+	if (gl_GlobalInvocationID.y > 0) {
+		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
+		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenVert); 
+	}
+	// 3. left
+	if (gl_GlobalInvocationID.x > 0) {
+		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
+		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenHoriz); 
+	}
+	// 4. right
+	if (gl_GlobalInvocationID.x < nParticles.x - 1) {
+		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
+		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenHoriz); 
+	}
+	// 5. 4 diagonal particles
+	if (gl_GlobalInvocationID.x > 0 && gl_GlobalInvocationID.y > 0) {
+		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
+		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenDiag); 
+	}
+	if (gl_GlobalInvocationID.x > 0 && gl_GlobalInvocationID.y < nParticles.y - 1) {
+		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
+		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenDiag); 
+	}
+	if (gl_GlobalInvocationID.y > 0 && gl_GlobalInvocationID.x < nParticles.x - 1) {
+		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
+		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenDiag); 
+	}
+	if (gl_GlobalInvocationID.y < nParticles.y - 1 && gl_GlobalInvocationID.x < nParticles.x - 1) {
+		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
+		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenDiag); 
+	}
+
+	// add air damping to the cloth
+	force += -DampingFactor * vel;
+
+	// integration
+	vec3 acc = force * invMass;
+	vec3 accT = acc * DeltaT;
+	PositionOut[idx] = vec4(pos + vel * DeltaT + 0.5 * accT * DeltaT, 1.0);
+	VelocityOut[idx] = vec4(vel + accT, 0.0);
+
+	if( gl_GlobalInvocationID.y == nParticles.y - 1 && 
+      (gl_GlobalInvocationID.x == 0 || 
+       gl_GlobalInvocationID.x == nParticles.x / 4 ||
+       gl_GlobalInvocationID.x == nParticles.x * 2 / 4 ||
+       gl_GlobalInvocationID.x == nParticles.x * 3 / 4 ||
+       gl_GlobalInvocationID.x == nParticles.x - 1)) {
+    PositionOut[idx] = vec4(pos,1.0);
+    VelocityOut[idx] = vec4(0,0,0,0);
+  }
+
+
+}
