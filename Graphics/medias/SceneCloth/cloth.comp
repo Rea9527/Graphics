@@ -4,7 +4,7 @@ layout (local_size_x = 10, local_size_y = 10 ) in;
 
 
 // uniforms
-uniform vec3 Gravity = vec3(0.0f, 10.0f, 0.0f);
+uniform vec3 Gravity = vec3(0.0f, -10.0f, 0.0f);
 uniform float Mass = 0.1;
 uniform float invMass = 1.0 / 0.1;
 uniform float Stiffness = 2000.0;
@@ -41,34 +41,34 @@ void main() {
 	}
 	// 2. below
 	if (gl_GlobalInvocationID.y > 0) {
-		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
+		R_pv = PositionIn[idx - nParticles.x].xyz - pos;
 		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenVert); 
 	}
 	// 3. left
 	if (gl_GlobalInvocationID.x > 0) {
-		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
+		R_pv = PositionIn[idx - 1].xyz - pos;
 		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenHoriz); 
 	}
 	// 4. right
 	if (gl_GlobalInvocationID.x < nParticles.x - 1) {
-		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
+		R_pv = PositionIn[idx + 1].xyz - pos;
 		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenHoriz); 
 	}
 	// 5. 4 diagonal particles
 	if (gl_GlobalInvocationID.x > 0 && gl_GlobalInvocationID.y > 0) {
-		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
+		R_pv = PositionIn[idx - nParticles.x - 1].xyz - pos;
 		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenDiag); 
 	}
 	if (gl_GlobalInvocationID.x > 0 && gl_GlobalInvocationID.y < nParticles.y - 1) {
-		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
+		R_pv = PositionIn[idx + nParticles.x - 1].xyz - pos;
 		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenDiag); 
 	}
 	if (gl_GlobalInvocationID.y > 0 && gl_GlobalInvocationID.x < nParticles.x - 1) {
-		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
+		R_pv = PositionIn[idx + nParticles.x + 1].xyz - pos;
 		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenDiag); 
 	}
 	if (gl_GlobalInvocationID.y < nParticles.y - 1 && gl_GlobalInvocationID.x < nParticles.x - 1) {
-		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
+		R_pv = PositionIn[idx + nParticles.x + 1].xyz - pos;
 		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenDiag); 
 	}
 

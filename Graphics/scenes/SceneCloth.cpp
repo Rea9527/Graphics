@@ -50,7 +50,9 @@ void SceneCloth::initBuffers() {
 
 	// init particle poitions and velocity
 	// bind data to the buffer
-
+	glm::mat4 transf = glm::translate(glm::mat4(1.0), glm::vec3(0, clothSize.y, 0));
+	transf = glm::rotate(transf, glm::radians(-80.0f), glm::vec3(1, 0, 0));
+	transf = glm::translate(transf, glm::vec3(0, -clothSize.y, 0));
 
 	vector<GLfloat> initPos, initTexc;
 	// init velocity to 0.0f
@@ -61,12 +63,17 @@ void SceneCloth::initBuffers() {
 	float deltaS = 1.0f / (this->nParticles.x - 1);
 	float deltaT = 1.0f / (this->nParticles.y - 1);
 
+	glm::vec4 p(0.0f, 0.0f, 0.0f, 1.0f);
 	// init particle position and texcoord
 	for (int i = 0; i < nParticles.y; i++) {
 		for (int j = 0; j < nParticles.x; j++) {
-			initPos.push_back(j * deltaX);
-			initPos.push_back(i * deltaY);
-			initPos.push_back(0.0f);
+			p.x = deltaX * j;
+			p.y = deltaY * i;
+			p.z = 0.0f;
+			p = transf * p;
+			initPos.push_back(p.x);
+			initPos.push_back(p.y);
+			initPos.push_back(p.z);
 			initPos.push_back(1.0f);
 
 			initTexc.push_back(j * deltaS);
