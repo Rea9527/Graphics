@@ -20,7 +20,8 @@ void SceneCloth::initScene(int w, int h, Camera &camera) {
 
 	glEnable(GL_DEPTH_TEST);
 
-	camera.init(glm::vec3(0.0f, 20.0f, 15.0f), glm::vec3(0.0f, 1.0f, 0.0f), -50.f, -90.0f);
+	camera.init(glm::vec3(0.85f, 6.32f, -3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -40.f, -270.0f);
+	camera.setSpeed(50.0f);
 	this->view = camera.getViewMat();
 	this->projection = glm::perspective(glm::radians(camera.getZoom()), w / (float)h, 0.1f, 1000.0f);
 
@@ -83,8 +84,8 @@ void SceneCloth::initBuffers() {
 
 	// each adjacent two rows form one triangle strip
 	vector<GLuint> el;
-	for (int row = 0; row < nParticles.x - 1; row++) {
-		for (int col = 0; col < nParticles.y; col++) {
+	for (int row = 0; row < nParticles.y - 1; row++) {
+		for (int col = 0; col < nParticles.x; col++) {
 			el.push_back((row + 1) * nParticles.x + col);
 			el.push_back(row * nParticles.x + col);
 		}
@@ -156,6 +157,8 @@ void SceneCloth::update(float dt, Camera &camera) {
 	this->view = camera.getViewMat();
 	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 1.0f, 1000.0f);
 
+	//printf("%f, %f, %f, %f, %f", camera.getPos().x, camera.getPos().y, camera.getPos().z, camera.getPitch(), camera.getYaw());
+
 	if (this->time == 0.0f) {
 		this->deltaT = 0.0f;
 	}
@@ -200,7 +203,8 @@ void SceneCloth::render() {
 	this->plane.render();
 
 	this->model = glm::mat4(1.0f);
-	setMatrices();
+	this->model = glm::translate(this->model, glm::vec3(0.0f, this->clothSize.y, 0.0f));
+	this->setMatrices();
 	// draw the cloth
 	glBindVertexArray(clothVAO);
 	glDrawElements(GL_TRIANGLE_STRIP, this->numElements, GL_UNSIGNED_INT, 0);

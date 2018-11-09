@@ -16,4 +16,22 @@ class SceneSPH : public Scene {
 public:
 	SceneSPH();
 
+	void initScene(int w, int h, Camera &camera);
+	
+
+	void update(float dt, Camera &camera);
+	void render();
+	void resize(int w, int h);
+
+private:
+	ShaderProgram prog, progIntegrate, progPres, progForce;
+
+	GLuint nParticles;
+
+	void initBuffers();
+	void setMatrices();
+	void compileAndLinkShaders();
+
+	void renderGUI();
+
 };

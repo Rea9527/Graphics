@@ -11,7 +11,7 @@ uniform float Stiffness = 2000.0;
 uniform float RestLenHoriz;
 uniform float RestLenVert;
 uniform float RestLenDiag;
-uniform float DeltaT = 0.000005;
+uniform float DeltaT = 0.0000001;
 uniform float DampingFactor = 0.1;
 
 // buffer layout
@@ -28,49 +28,53 @@ void main() {
 
 	vec3 pos = vec3(PositionIn[idx]);
 	vec3 vel = vec3(VelocityIn[idx]);
-	vec3 R_pv;
+	vec3 r;
 
 	//init force
 	vec3 force = Gravity * Mass;
 	
-	// compute force from eight neighbor
-	// 1. above
-	if (gl_GlobalInvocationID.y < nParticles.y - 1) {
-		R_pv = PositionIn[idx + nParticles.x].xyz - pos;
-		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenVert); 
-	}
-	// 2. below
-	if (gl_GlobalInvocationID.y > 0) {
-		R_pv = PositionIn[idx - nParticles.x].xyz - pos;
-		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenVert); 
-	}
-	// 3. left
-	if (gl_GlobalInvocationID.x > 0) {
-		R_pv = PositionIn[idx - 1].xyz - pos;
-		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenHoriz); 
-	}
-	// 4. right
-	if (gl_GlobalInvocationID.x < nParticles.x - 1) {
-		R_pv = PositionIn[idx + 1].xyz - pos;
-		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenHoriz); 
-	}
-	// 5. 4 diagonal particles
-	if (gl_GlobalInvocationID.x > 0 && gl_GlobalInvocationID.y > 0) {
-		R_pv = PositionIn[idx - nParticles.x - 1].xyz - pos;
-		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenDiag); 
-	}
-	if (gl_GlobalInvocationID.x > 0 && gl_GlobalInvocationID.y < nParticles.y - 1) {
-		R_pv = PositionIn[idx + nParticles.x - 1].xyz - pos;
-		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenDiag); 
-	}
-	if (gl_GlobalInvocationID.y > 0 && gl_GlobalInvocationID.x < nParticles.x - 1) {
-		R_pv = PositionIn[idx + nParticles.x + 1].xyz - pos;
-		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenDiag); 
-	}
-	if (gl_GlobalInvocationID.y < nParticles.y - 1 && gl_GlobalInvocationID.x < nParticles.x - 1) {
-		R_pv = PositionIn[idx + nParticles.x + 1].xyz - pos;
-		force += Stiffness * normalize(R_pv) * (length(R_pv) - RestLenDiag); 
-	}
+	// Particle above
+    if( gl_GlobalInvocationID.y < nParticles.y - 1 ) {
+      r = PositionIn[idx + nParticles.x].xyz - pos;
+      force += normalize(r) * Stiffness * (length(r) - RestLenVert);
+    } 
+	// Below
+	if( gl_GlobalInvocationID.y > 0 ) {
+      r = PositionIn[idx - nParticles.x].xyz - pos;
+      force += normalize(r) * Stiffness * (length(r) - RestLenVert);
+    } 
+    // Left
+    if( gl_GlobalInvocationID.x > 0 ) {
+      r = PositionIn[idx-1].xyz - pos;
+      force += normalize(r) * Stiffness * (length(r) - RestLenHoriz);
+    } 
+    // Right
+    if( gl_GlobalInvocationID.x < nParticles.x - 1 ) {
+      r = PositionIn[idx + 1].xyz - pos;
+      force += normalize(r) * Stiffness * (length(r) - RestLenHoriz);
+    }
+
+    // Diagonals
+    // Upper-left
+    if( gl_GlobalInvocationID.x > 0 && gl_GlobalInvocationID.y < nParticles.y - 1 ) {
+      r = PositionIn[idx + nParticles.x - 1].xyz - pos;
+      force += normalize(r) * Stiffness * (length(r) - RestLenDiag);
+    }
+    // Upper-right
+    if( gl_GlobalInvocationID.x < nParticles.x - 1 && gl_GlobalInvocationID.y < nParticles.y - 1) {
+      r = PositionIn[idx + nParticles.x + 1].xyz - pos;
+      force += normalize(r) * Stiffness * (length(r) - RestLenDiag);
+    }
+    // lower -left
+    if( gl_GlobalInvocationID.x > 0 && gl_GlobalInvocationID.y > 0 ) {
+      r = PositionIn[idx - nParticles.x - 1].xyz - pos;
+      force += normalize(r) * Stiffness * (length(r) - RestLenDiag);
+    }
+    // lower-right
+    if( gl_GlobalInvocationID.x < nParticles.x - 1 && gl_GlobalInvocationID.y > 0 ) {
+      r = PositionIn[idx - nParticles.x + 1].xyz - pos;
+      force += normalize(r) * Stiffness * (length(r) - RestLenDiag);
+    }
 
 	// add air damping to the cloth
 	force += -DampingFactor * vel;
@@ -81,15 +85,16 @@ void main() {
 	PositionOut[idx] = vec4(pos + vel * DeltaT + 0.5 * accT * DeltaT, 1.0);
 	VelocityOut[idx] = vec4(vel + accT, 0.0);
 
-	if( gl_GlobalInvocationID.y == nParticles.y - 1 && 
+	if( gl_GlobalInvocationID.y == 0 && 
       (gl_GlobalInvocationID.x == 0 || 
        gl_GlobalInvocationID.x == nParticles.x / 4 ||
        gl_GlobalInvocationID.x == nParticles.x * 2 / 4 ||
        gl_GlobalInvocationID.x == nParticles.x * 3 / 4 ||
        gl_GlobalInvocationID.x == nParticles.x - 1)) {
-    PositionOut[idx] = vec4(pos,1.0);
-    VelocityOut[idx] = vec4(0,0,0,0);
-  }
+      PositionOut[idx] = vec4(pos,1.0);
+      VelocityOut[idx] = vec4(0,0,0,0);
+
+    }
 
 
 }
