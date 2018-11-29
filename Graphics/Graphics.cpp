@@ -17,6 +17,7 @@ using namespace std;
 #include "SceneManager.h"
 #include "scenes/SceneBasic.h"
 #include "scenes/SceneCloth.h"
+#include "scenes/SceneSPH.h"
 
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -29,8 +30,9 @@ int main()
 	//=========================================================================================================================================
 	SceneManager manager(WIDTH, HEIGHT, "GLSL");
 	
-	//std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneBasic());
-	std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneCloth());
+	std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneBasic());
+	//std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneCloth());
+	//std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneSPH());
 
 	return manager.run(*scene);
 	

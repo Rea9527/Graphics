@@ -28,6 +28,8 @@ namespace GLSLShader {
 
 class ShaderProgram {
 private:
+	string name;
+
 	GLuint handle;
 	bool linked;
 	map<string, int> uniformLocations;
@@ -44,6 +46,8 @@ private:
 
 public:
 	ShaderProgram();
+	ShaderProgram(string name);
+	//ShaderProgram(ShaderProgram &prog);
 	~ShaderProgram();
 
 	void compileShader(const char* filename);
@@ -55,6 +59,10 @@ public:
 	void use();
 
 	GLuint getHandle();
+
+	void setName(string mname);
+	string getName();
+
 	bool isLinked();
 
 	void bindAttribLocation(GLuint location, const char* name);

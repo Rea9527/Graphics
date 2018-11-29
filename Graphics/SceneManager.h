@@ -65,9 +65,9 @@ public:
 	}
 
 	int run(Scene &scene) {
-
+		GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 		scene.setDimensions(this->frame_size_width, this->frame_size_height);
-		scene.initScene(this->frame_size_width, this->frame_size_height, *(camera));
+		scene.initScene(*(camera));
 		scene.resize(this->frame_size_width, this->frame_size_height);
 		//main loop
 		camera->use();
@@ -98,7 +98,7 @@ private:
 	
 	void mainLoop(GLFWwindow* window, Scene &scene) {
 		while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)) {
-			GLUtils::checkForOpenGLError(__FILE__, __LINE__);
+			//GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 			glfwPollEvents();
 			updateMovement();
 			scene.update(float(glfwGetTime()), *camera);

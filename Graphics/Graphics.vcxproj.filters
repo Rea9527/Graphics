@@ -31,6 +31,9 @@
     <Filter Include="Source Files\stb">
       <UniqueIdentifier>{b024c57d-ceb0-4cf6-aedc-5f896556a79f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\medias\SceneSPH">
+      <UniqueIdentifier>{f0f9483f-f456-476d-b798-865d740aad68}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -105,6 +108,21 @@
     <ClInclude Include="stb\stb_image.h">
       <Filter>Source Files\stb</Filter>
     </ClInclude>
+    <ClInclude Include="teapot.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="teapotdata.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="teapotpatch.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameBuffer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferObject.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -152,14 +170,20 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="teapot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="teapotpatch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BufferObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="medias\fragShader.frag">
-      <Filter>Source Files\medias</Filter>
-    </None>
-    <None Include="medias\vertexShader.vert">
-      <Filter>Source Files\medias</Filter>
-    </None>
     <None Include="imgui\stb_rect_pack.h.gch">
       <Filter>Source Files\imgui</Filter>
     </None>
@@ -186,6 +210,39 @@
     </None>
     <None Include="medias\SceneCloth\clothNorm.comp">
       <Filter>Source Files\medias\SceneCloth</Filter>
+    </None>
+    <None Include="medias\SceneSPH\ads.vert">
+      <Filter>Source Files\medias\SceneSPH</Filter>
+    </None>
+    <None Include="medias\SceneSPH\ads.frag">
+      <Filter>Source Files\medias\SceneSPH</Filter>
+    </None>
+    <None Include="medias\SceneSPH\sphIntegration.comp">
+      <Filter>Source Files\medias\SceneSPH</Filter>
+    </None>
+    <None Include="medias\SceneSPH\sphForce.comp">
+      <Filter>Source Files\medias\SceneSPH</Filter>
+    </None>
+    <None Include="medias\SceneSPH\sphPressure.comp">
+      <Filter>Source Files\medias\SceneSPH</Filter>
+    </None>
+    <None Include="medias\adsShader.frag">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\adsShader.vert">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\toonShader.vert">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\toonShader.frag">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\emptyShader.frag">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\emptyShader.vert">
+      <Filter>Source Files\medias</Filter>
     </None>
   </ItemGroup>
 </Project>

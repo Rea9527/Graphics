@@ -85,7 +85,7 @@ void main() {
 	PositionOut[idx] = vec4(pos + vel * DeltaT + 0.5 * accT * DeltaT, 1.0);
 	VelocityOut[idx] = vec4(vel + accT, 0.0);
 
-	if( gl_GlobalInvocationID.y == 0 && 
+	if( gl_GlobalInvocationID.y == nParticles.y - 1 && 
       (gl_GlobalInvocationID.x == 0 || 
        gl_GlobalInvocationID.x == nParticles.x / 4 ||
        gl_GlobalInvocationID.x == nParticles.x * 2 / 4 ||

@@ -53,4 +53,6 @@ Plane::Plane(float xsize, float zsize, int xdivs, int zdivs, float smax, float t
 	}
 
 	this->initBuffers(&el, &p, &n, &tex);
+
 }
+

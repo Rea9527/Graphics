@@ -152,8 +152,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BufferObject.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Drawable.h" />
+    <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GLGUI.h" />
     <ClInclude Include="GLUtils.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -173,11 +175,16 @@
     <ClInclude Include="stb\stb_image.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="teapot.h" />
+    <ClInclude Include="teapotdata.h" />
+    <ClInclude Include="teapotpatch.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TriangleMesh.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BufferObject.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GLUtils.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -195,6 +202,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="teapot.cpp" />
+    <ClCompile Include="teapotpatch.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TriangleMesh.cpp" />
   </ItemGroup>
@@ -202,14 +211,23 @@
     <None Include="imgui\stb_rect_pack.h.gch" />
     <None Include="imgui\stb_textedit.h.gch" />
     <None Include="imgui\stb_truetype.h.gch" />
-    <None Include="medias\fragShader.frag" />
+    <None Include="medias\emptyShader.frag" />
+    <None Include="medias\adsShader.frag" />
+    <None Include="medias\adsShader.vert" />
     <None Include="medias\SceneBasic\plane.frag" />
     <None Include="medias\SceneBasic\plane.vert" />
     <None Include="medias\SceneCloth\ads.frag" />
     <None Include="medias\SceneCloth\ads.vert" />
     <None Include="medias\SceneCloth\cloth.comp" />
     <None Include="medias\SceneCloth\clothNorm.comp" />
-    <None Include="medias\vertexShader.vert" />
+    <None Include="medias\SceneSPH\ads.frag" />
+    <None Include="medias\SceneSPH\ads.vert" />
+    <None Include="medias\SceneSPH\sphForce.comp" />
+    <None Include="medias\SceneSPH\sphIntegration.comp" />
+    <None Include="medias\SceneSPH\sphPressure.comp" />
+    <None Include="medias\emptyShader.vert" />
+    <None Include="medias\toonShader.frag" />
+    <None Include="medias\toonShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

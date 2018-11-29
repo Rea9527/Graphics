@@ -84,6 +84,15 @@ void TriangleMesh::render() const {
 	glBindVertexArray(0);
 }
 
+void TriangleMesh::renderLines() const {
+
+	if (this->vao == 0) return;
+
+	glBindVertexArray(this->vao);
+	glDrawElements(GL_LINES, this->vertex_num, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
+
 
 TriangleMesh::~TriangleMesh() {
 	this->deleteBuffers();

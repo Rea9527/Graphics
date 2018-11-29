@@ -25,6 +25,13 @@ namespace GLSLShaderInfo {
 
 ShaderProgram::ShaderProgram() : handle(0), linked(false) {}
 
+ShaderProgram::ShaderProgram(string pname) : handle(0), linked(false), name(pname) { }
+//
+//ShaderProgram::ShaderProgram(ShaderProgram &prog) {
+//	this->handle = prog.handle;
+//	this->linked = prog.linked;
+//}
+
 ShaderProgram::~ShaderProgram() {
 	if (this->handle == 0) return;
 
@@ -442,4 +449,12 @@ bool ShaderProgram::fileExists(const string &filename) {
 
 	ret = stat(filename.c_str(), &info);
 	return ret == 0;
+}
+
+void ShaderProgram::setName(string mname) {
+	this->name = mname;
+}
+
+string ShaderProgram::getName() {
+	return this->name;
 }
