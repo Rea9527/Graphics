@@ -7,7 +7,7 @@
 
 
 
-class SceneHDR : public Scene {
+class SceneBloom : public Scene {
 
 public:
 	SceneHDR();
@@ -22,4 +22,9 @@ public:
 private:
 	map<string, ShaderProgram*> programsList;
 	ShaderProgram prog, progToon;
+
+
+	void setMatrices(string pname);
+	void compileAndLinkShaders();
+	void renderGUI();
 };
