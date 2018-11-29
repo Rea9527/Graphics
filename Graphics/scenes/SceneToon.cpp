@@ -6,7 +6,7 @@ using namespace std;
 
 
 SceneToon::SceneToon() : plane(100.0f, 100.0f, 10, 10), teapot(14, glm::mat4(1.0)), prog("adsShader"), progToon("toonShader"),
-								FBO(800, 600, true, true) { }
+								renderFBO(800, 600, true, true) { }
 
 void SceneToon::initScene(Camera &camera) {
 
@@ -15,7 +15,7 @@ void SceneToon::initScene(Camera &camera) {
 
 	glEnable(GL_DEPTH_TEST);
 
-	camera.init(glm::vec3(0.0f, 20.0f, 15.0f), glm::vec3(0.0f, 1.0f, 0.0f), -50.f, -90.0f);
+	camera.init(glm::vec3(0.0f, 20.0f, 30.0f), glm::vec3(0.0f, 1.0f, 0.0f), -80.f, -20.0f);
 	this->view = camera.getViewMat();
 	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
 
@@ -52,6 +52,7 @@ void SceneToon::update(float dt, Camera &camera) {
 	this->view = camera.getViewMat();
 	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
 
+	printf("%f, %f\n", camera.getYaw(), camera.getPitch());
 }
 
 void SceneToon::render() {
@@ -78,10 +79,22 @@ void SceneToon::render() {
 	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
 
+void SceneToon::shadingPass() {
+	this->renderFBO.bind();
+	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->shadingPassInx);
+
+	this->model = glm::mat4(1.0f);
+	this->model = glm::translate(model, glm::vec3(0.0, 1.0f, 0.0f));
+	this->setMatrices(this->progToon.getName());
+	this->teapot.render();
+
+	// GLUtils::checkForOpenGLError(__FILE__, __LINE__);
+}
+
 void SceneToon::filterPass() {
-	this->FBO.unbind();
+	this->renderFBO.unbind();
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, this->FBO.getRRTHandle());
+	glBindTexture(GL_TEXTURE_2D, this->renderFBO.getRRTHandle());
 
 	glDisable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -102,17 +115,6 @@ void SceneToon::filterPass() {
 
 }
 
-void SceneToon::shadingPass() {
-	this->FBO.bind();
-	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->shadingPassInx);
-
-	this->model = glm::mat4(1.0f);
-	this->model = glm::translate(model, glm::vec3(0.0, 1.0f, 0.0f));
-	this->setMatrices(this->progToon.getName());
-	this->teapot.render();
-
-	// GLUtils::checkForOpenGLError(__FILE__, __LINE__);
-}
 
 void SceneToon::renderGUI() {
 	// add a new frame

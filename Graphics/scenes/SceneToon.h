@@ -14,10 +14,10 @@
 
 #include "../GLUtils.h"
 
-class SceneBasic : public Scene {
+class SceneToon : public Scene {
 
 public:
-	SceneBasic();
+	SceneToon();
 
 	void initScene(Camera &camera);
 	void update(float t, Camera &camera);
@@ -29,7 +29,7 @@ private:
 	map<string, ShaderProgram*> programs;
 	ShaderProgram prog, progToon;
 
-	FrameBuffer FBO;
+	FrameBuffer renderFBO;
 	// quad for filterPass
 	GLuint quadVAO;
 
@@ -38,6 +38,7 @@ private:
 
 	void filterPass();
 	void shadingPass();
+
 	GLuint filterPassInx;
 	GLuint shadingPassInx;
 

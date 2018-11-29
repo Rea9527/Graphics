@@ -69,9 +69,6 @@
     <ClInclude Include="Camera.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="scenes\SceneBasic.h">
-      <Filter>Source Files\scenes</Filter>
-    </ClInclude>
     <ClInclude Include="scenes\SceneSPH.h">
       <Filter>Source Files\scenes</Filter>
     </ClInclude>
@@ -123,6 +120,9 @@
     <ClInclude Include="BufferObject.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="scenes\SceneToon.h">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -145,9 +145,6 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scenes\SceneBasic.cpp">
-      <Filter>Source Files\scenes</Filter>
     </ClCompile>
     <ClCompile Include="scenes\SceneSPH.cpp">
       <Filter>Source Files\scenes</Filter>
@@ -181,6 +178,9 @@
     </ClCompile>
     <ClCompile Include="BufferObject.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scenes\SceneToon.cpp">
+      <Filter>Source Files\scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

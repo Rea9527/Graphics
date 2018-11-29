@@ -15,7 +15,7 @@ using namespace std;
 
 // include user define files
 #include "SceneManager.h"
-#include "scenes/SceneBasic.h"
+#include "scenes/SceneToon.h"
 #include "scenes/SceneCloth.h"
 #include "scenes/SceneSPH.h"
 
@@ -30,7 +30,7 @@ int main()
 	//=========================================================================================================================================
 	SceneManager manager(WIDTH, HEIGHT, "GLSL");
 	
-	std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneBasic());
+	std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneToon());
 	//std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneCloth());
 	//std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneSPH());
 

@@ -72,7 +72,7 @@ vec4 filtering() {
 	float res = sx * sx + sy * sy;
 
 	if (res > edgeThreshold) return vec4(toonShading(),1.0f) + vec4(0.5);
-	else return vec4(0.0f, 0.0f, 0.0f, 0.0);
+	else return vec4(0.0f, 0.0f, 0.0f, 1.0);
 
 }
 
@@ -80,6 +80,7 @@ subroutine (RenderPassType)
 vec4 shading() {
 	return vec4(toonShading(), 1.0f);
 }
+
 
 void main() {
 	
