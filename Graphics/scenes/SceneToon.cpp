@@ -2,13 +2,13 @@
 #include <iostream>
 using namespace std;
 
-#include "SceneBasic.h"
+#include "SceneToon.h"
 
 
-SceneBasic::SceneBasic() : plane(100.0f, 100.0f, 10, 10), teapot(14, glm::mat4(1.0)), prog("adsShader"), progToon("toonShader"),
+SceneToon::SceneToon() : plane(100.0f, 100.0f, 10, 10), teapot(14, glm::mat4(1.0)), prog("adsShader"), progToon("toonShader"),
 								FBO(800, 600, true, true) { }
 
-void SceneBasic::initScene(Camera &camera) {
+void SceneToon::initScene(Camera &camera) {
 
 	// compile and link the shader
 	this->compileAndLinkShaders();
@@ -48,13 +48,13 @@ void SceneBasic::initScene(Camera &camera) {
 }
 
 
-void SceneBasic::update(float dt, Camera &camera) {
+void SceneToon::update(float dt, Camera &camera) {
 	this->view = camera.getViewMat();
 	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
 
 }
 
-void SceneBasic::render() {
+void SceneToon::render() {
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -78,7 +78,7 @@ void SceneBasic::render() {
 	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
 
-void SceneBasic::filterPass() {
+void SceneToon::filterPass() {
 	this->FBO.unbind();
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, this->FBO.getRRTHandle());
@@ -102,7 +102,7 @@ void SceneBasic::filterPass() {
 
 }
 
-void SceneBasic::shadingPass() {
+void SceneToon::shadingPass() {
 	this->FBO.bind();
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->shadingPassInx);
 
@@ -114,7 +114,7 @@ void SceneBasic::shadingPass() {
 	// GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
 
-void SceneBasic::renderGUI() {
+void SceneToon::renderGUI() {
 	// add a new frame
 	ImGui_ImplGlfwGL3_NewFrame("Menu");
 
@@ -132,7 +132,7 @@ void SceneBasic::renderGUI() {
 	ImGui::Render();
 }
 
-void SceneBasic::setMatrices(string pname) {
+void SceneToon::setMatrices(string pname) {
 	ShaderProgram* program = this->programs[pname];
 	glm::mat4 mv = this->view * this->model;
 	program->setUniform("ModelViewMatrix", mv);
@@ -141,14 +141,14 @@ void SceneBasic::setMatrices(string pname) {
 	program->setUniform("MVP", this->projection * mv);
 }
 
-void SceneBasic::resize(int w, int h) {
+void SceneToon::resize(int w, int h) {
 	glViewport(0, 0, w, h);
 	this->width = w;
 	this->height = h;
 	this->projection = glm::perspective(glm::radians(60.0f), (float)w / h, 0.3f, 100.0f);
 }
 
-void SceneBasic::compileAndLinkShaders() {
+void SceneToon::compileAndLinkShaders() {
 	try {
 		prog.compileShader("./medias/adsShader.vert", GLSLShader::VERTEX);
 		prog.compileShader("./medias/adsShader.frag", GLSLShader::FRAGMENT);
