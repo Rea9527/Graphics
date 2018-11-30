@@ -4,14 +4,19 @@
 #include "Scene.h"
 #include "Camera.h"
 #include "shaderProgram.h"
+#include "FrameBuffer.h"
+#include "BufferObject.h"
 
+#include "teapot.h"
+
+#include "GLUtils.h"
 
 
 class SceneBloom : public Scene {
 
 public:
-	SceneHDR();
-	~SceneHDR();
+	SceneBloom();
+	~SceneBloom();
 
 	void initScene(Camera &camera);
 	void update(float t, Camera &camera);
@@ -21,8 +26,21 @@ public:
 
 private:
 	map<string, ShaderProgram*> programsList;
-	ShaderProgram prog, progToon;
+	ShaderProgram prog;
 
+	Teapot teapot;
+
+	// frame buffer
+	FrameBuffer FBO;
+	GLuint quadVAO;
+
+	// five pass
+	GLuint renderPassInx, brightPassInx, verGaussPassInx, horGaussPassInx, tonePassInx;
+	void renderPass();
+	void brightPass();
+	void verGaussPass();
+	void horGaussPass();
+	void tonePass();
 
 	void setMatrices(string pname);
 	void compileAndLinkShaders();
