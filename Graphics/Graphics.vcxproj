@@ -167,6 +167,7 @@
     <ClInclude Include="imgui\stb_truetype.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneBloom.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="scenes\SceneToon.h" />
     <ClInclude Include="scenes\SceneCloth.h" />
@@ -192,6 +193,7 @@
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="SceneBloom.cpp" />
     <ClCompile Include="scenes\SceneToon.cpp" />
     <ClCompile Include="scenes\SceneCloth.cpp" />
     <ClCompile Include="scenes\SceneSPH.cpp" />
@@ -216,6 +218,8 @@
     <None Include="medias\adsShader.vert" />
     <None Include="medias\SceneBasic\plane.frag" />
     <None Include="medias\SceneBasic\plane.vert" />
+    <None Include="medias\SceneBloom\bloomShader.frag" />
+    <None Include="medias\SceneBloom\bloomShader.vert" />
     <None Include="medias\SceneCloth\ads.frag" />
     <None Include="medias\SceneCloth\ads.vert" />
     <None Include="medias\SceneCloth\cloth.comp" />

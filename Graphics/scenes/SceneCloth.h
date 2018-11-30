@@ -15,6 +15,7 @@ class SceneCloth : public Scene {
 
 public:
 	SceneCloth();
+	SceneCloth(int w, int h);
 
 	void initScene(Camera &camera);
 	void update(float dt, Camera &camera);
@@ -22,6 +23,8 @@ public:
 	void resize(int w, int h);
 
 private:
+	int width, height;
+
 	ShaderProgram prog, progCloth, progClothNorm;
 
 	GLuint readBuf;

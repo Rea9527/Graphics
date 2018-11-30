@@ -8,6 +8,10 @@ SceneCloth::SceneCloth() : clothVAO(0), numElements(0),
 							nParticles(40, 40), clothSize(4.0f, 3.0f),
 							time(0.0f), deltaT(0.0f), speed(200.0f), readBuf(0), plane(10.0f, 10.0f, 100, 100) { }
 
+SceneCloth::SceneCloth(int w, int h) : clothVAO(0), numElements(0),
+									nParticles(40, 40), clothSize(4.0f, 3.0f),
+									time(0.0f), deltaT(0.0f), speed(200.0f), readBuf(0), plane(10.0f, 10.0f, 100, 100), width(w), height(h) { }
+
 void SceneCloth::initScene(Camera &camera) {
 
 	glEnable(GL_PRIMITIVE_RESTART);

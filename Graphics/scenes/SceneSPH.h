@@ -17,6 +17,7 @@ class SceneSPH : public Scene {
 
 public:
 	SceneSPH();
+	SceneSPH(int w, int h);
 
 	void initScene(Camera &camera);
 	
@@ -26,6 +27,8 @@ public:
 	void resize(int w, int h);
 
 private:
+	int width, height;
+
 	ShaderProgram prog, progIntegrate, progPres, progForce;
 	GLuint sphVAO;
 

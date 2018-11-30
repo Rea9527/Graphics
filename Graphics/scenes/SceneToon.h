@@ -18,6 +18,7 @@ class SceneToon : public Scene {
 
 public:
 	SceneToon();
+	SceneToon(int w, int h);
 
 	void initScene(Camera &camera);
 	void update(float t, Camera &camera);
@@ -26,6 +27,8 @@ public:
 
 
 private:
+	int width, height;
+
 	map<string, ShaderProgram*> programs;
 	ShaderProgram prog, progToon;
 

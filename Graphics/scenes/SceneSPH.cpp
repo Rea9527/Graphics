@@ -8,6 +8,14 @@ SceneSPH::SceneSPH() : nParticles(glm::vec3(16, 16, 16)), initSize(glm::vec3(1.0
 	this->WORK_GROUP_NUM = (this->ParticleNum + WORK_GROUP_SIZE - 1) / WORK_GROUP_SIZE;
 }
 
+SceneSPH::SceneSPH(int w, int h) : nParticles(glm::vec3(16, 16, 16)), initSize(glm::vec3(1.0f, 1.0f, 1.0f)), 
+									sphVAO(0), WORK_GROUP_SIZE(64), plane(10.0f, 10.0f, 100, 100),
+									width(w), height(h) {
+
+	this->ParticleNum = nParticles.x * nParticles.y * nParticles.z;
+	this->WORK_GROUP_NUM = (this->ParticleNum + WORK_GROUP_SIZE - 1) / WORK_GROUP_SIZE;
+}
+
 void SceneSPH::initScene(Camera &camera) {
 
 	glEnable(GL_DEPTH_TEST);

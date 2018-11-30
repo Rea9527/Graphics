@@ -8,6 +8,9 @@ using namespace std;
 SceneToon::SceneToon() : plane(100.0f, 100.0f, 10, 10), teapot(14, glm::mat4(1.0)), prog("adsShader"), progToon("toonShader"),
 								renderFBO(800, 600, true, true) { }
 
+SceneToon::SceneToon(int w, int h) : plane(100.0f, 100.0f, 10, 10), teapot(14, glm::mat4(1.0)), prog("adsShader"), progToon("toonShader"),
+renderFBO(w, h, true, true), width(w), height(h) { }
+
 void SceneToon::initScene(Camera &camera) {
 
 	// compile and link the shader

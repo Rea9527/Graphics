@@ -16,6 +16,7 @@ class SceneBloom : public Scene {
 
 public:
 	SceneBloom();
+	SceneBloom(int w, int h);
 	~SceneBloom();
 
 	void initScene(Camera &camera);
@@ -25,6 +26,8 @@ public:
 
 
 private:
+	int width, height;
+
 	map<string, ShaderProgram*> programsList;
 	ShaderProgram prog;
 

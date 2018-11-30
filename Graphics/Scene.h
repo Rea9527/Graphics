@@ -10,10 +10,10 @@
 class Scene {
 
 public:
-	int width;
-	int height;
 
 	Scene() : width(800), height(600) {}
+	Scene(int w, int h) 
+		: width(w), height(h) {}
 
 	virtual ~Scene() {}
 
@@ -36,6 +36,9 @@ public:
 
 protected:
 	glm::mat4 model, view, projection;
+
+	int width;
+	int height;
 
 	bool m_animate;
 
