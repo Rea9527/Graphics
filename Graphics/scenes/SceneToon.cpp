@@ -19,8 +19,8 @@ void SceneToon::initScene(Camera &camera) {
 	glEnable(GL_DEPTH_TEST);
 
 	camera.init(glm::vec3(0.0f, 20.0f, 30.0f), glm::vec3(0.0f, 1.0f, 0.0f), -80.f, -20.0f);
-	this->view = camera.getViewMat();
-	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
+	//this->view = camera.getViewMat();
+	//this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
 
 	// generate a quad for the filter pass
 	this->quadVAO = BufferObject::genQuadBufferObject();
@@ -55,7 +55,7 @@ void SceneToon::update(float dt, Camera &camera) {
 	this->view = camera.getViewMat();
 	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
 
-	printf("%f, %f\n", camera.getYaw(), camera.getPitch());
+	//printf("%f, %f\n", camera.getYaw(), camera.getPitch());
 }
 
 void SceneToon::render() {
@@ -125,7 +125,7 @@ void SceneToon::renderGUI() {
 
 	if (ImGui::BeginMainMenuBar()) {
 
-		if (ImGui::BeginMenu("Subdivision")) {
+		if (ImGui::BeginMenu("View")) {
 			if (ImGui::MenuItem("Enable")) {}
 			if (ImGui::MenuItem("Disable")) {}
 			ImGui::EndMenu();
@@ -158,12 +158,12 @@ void SceneToon::compileAndLinkShaders() {
 		prog.compileShader("./medias/adsShader.vert", GLSLShader::VERTEX);
 		prog.compileShader("./medias/adsShader.frag", GLSLShader::FRAGMENT);
 		prog.link();
-		this->programs.insert(std::pair<string, ShaderProgram*> (string("adsShader"), &prog));
+		this->programs.insert(std::pair<string, ShaderProgram*> (prog.getName(), &prog));
 
 		progToon.compileShader("./medias/toonShader.vert", GLSLShader::VERTEX);
 		progToon.compileShader("./medias/toonShader.frag", GLSLShader::FRAGMENT);
 		progToon.link();
-		this->programs.insert(std::pair<string, ShaderProgram*>(string("toonShader"), &progToon));
+		this->programs.insert(std::pair<string, ShaderProgram*>(progToon.getName(), &progToon));
 	}
 	catch (ShaderProgramException & e) {
 		cerr << e.what() << endl;

@@ -1,15 +1,19 @@
 #pragma once
 
 
-#include "Scene.h"
-#include "Camera.h"
-#include "shaderProgram.h"
-#include "FrameBuffer.h"
-#include "BufferObject.h"
 
-#include "teapot.h"
+#include "../Scene.h"
+#include "../Camera.h"
+#include "../shaderProgram.h"
+#include "../FrameBuffer.h"
+#include "../BufferObject.h"
+#include "../Texture.h"
+#include "../SkyBox.h"
 
-#include "GLUtils.h"
+#include "../teapot.h"
+
+#include "../GLGUI.h"
+#include "../GLUtils.h"
 
 
 class SceneBloom : public Scene {
@@ -32,10 +36,14 @@ private:
 	ShaderProgram prog;
 
 	Teapot teapot;
+	SkyBox skybox;
 
 	// frame buffer
 	FrameBuffer FBO;
 	GLuint quadVAO;
+
+	//cube map id
+	GLuint cubeMapId;
 
 	// five pass
 	GLuint renderPassInx, brightPassInx, verGaussPassInx, horGaussPassInx, tonePassInx;

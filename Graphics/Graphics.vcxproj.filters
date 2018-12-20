@@ -34,9 +34,6 @@
     <Filter Include="Source Files\medias\SceneSPH">
       <UniqueIdentifier>{f0f9483f-f456-476d-b798-865d740aad68}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\medias\SceneBloom">
-      <UniqueIdentifier>{146d919a-dacf-47a9-9f79-928ae0625aaa}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -126,8 +123,11 @@
     <ClInclude Include="scenes\SceneToon.h">
       <Filter>Source Files\scenes</Filter>
     </ClInclude>
-    <ClInclude Include="SceneBloom.h">
+    <ClInclude Include="scenes\SceneBloom.h">
       <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -188,8 +188,11 @@
     <ClCompile Include="scenes\SceneToon.cpp">
       <Filter>Source Files\scenes</Filter>
     </ClCompile>
-    <ClCompile Include="SceneBloom.cpp">
+    <ClCompile Include="scenes\SceneBloom.cpp">
       <Filter>Source Files\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -253,11 +256,11 @@
     <None Include="medias\emptyShader.vert">
       <Filter>Source Files\medias</Filter>
     </None>
-    <None Include="medias\SceneBloom\bloomShader.vert">
-      <Filter>Source Files\medias\SceneBloom</Filter>
+    <None Include="medias\bloomShader.frag">
+      <Filter>Source Files\medias</Filter>
     </None>
-    <None Include="medias\SceneBloom\bloomShader.frag">
-      <Filter>Source Files\medias\SceneBloom</Filter>
+    <None Include="medias\bloomShader.vert">
+      <Filter>Source Files\medias</Filter>
     </None>
   </ItemGroup>
 </Project>
