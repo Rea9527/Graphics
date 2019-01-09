@@ -8,11 +8,14 @@ class FrameBuffer {
 
 public:
 
-	FrameBuffer(GLuint w, GLuint h, bool useDepth, bool fullscreen, GLuint rrtFormat = GL_RGBA8);
+	FrameBuffer();
+	FrameBuffer(GLuint w, GLuint h, bool useDepth, GLuint rrtFormat = GL_RGBA8);
 	~FrameBuffer();
 
+	void init(GLuint w, GLuint h, bool useDepth, GLuint rrtFormat = GL_RGBA8);
+
 	// return render texture target handle
-	GLuint getRRTHandle() const { return this->m_rrtHandle; }
+	GLuint getRTTHandle() const { return this->m_rttHandle; }
 
 	// bind FBO for rendering
 	void bind();
@@ -25,15 +28,14 @@ public:
 private:
 
 	GLuint m_handle;
-	GLuint m_rrtHandle;
+	GLuint m_rttHandle;
 	GLuint m_depthHandle;
-	GLuint m_rrtFormat;
+	GLuint m_rttFormat;
 
 	GLuint m_width;
 	GLuint m_height;
 
 	bool m_hasDepthBuf;
-	bool m_fullScreen;
 
 	// set up FBO
 	void setupFBO();

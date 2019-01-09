@@ -168,12 +168,14 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SceneShadow.h" />
     <ClInclude Include="scenes\SceneBloom.h" />
     <ClInclude Include="scenes\SceneToon.h" />
     <ClInclude Include="scenes\SceneCloth.h" />
     <ClInclude Include="scenes\SceneSPH.h" />
     <ClInclude Include="shaderProgram.h" />
     <ClInclude Include="SkyBox.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="stb\stb_image.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -194,12 +196,14 @@
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="SceneShadow.cpp" />
     <ClCompile Include="scenes\SceneBloom.cpp" />
     <ClCompile Include="scenes\SceneToon.cpp" />
     <ClCompile Include="scenes\SceneCloth.cpp" />
     <ClCompile Include="scenes\SceneSPH.cpp" />
     <ClCompile Include="shaderProgram.cpp" />
     <ClCompile Include="SkyBox.cpp" />
+    <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -232,6 +236,8 @@
     <None Include="medias\SceneSPH\sphIntegration.comp" />
     <None Include="medias\SceneSPH\sphPressure.comp" />
     <None Include="medias\emptyShader.vert" />
+    <None Include="medias\skyboxShader.frag" />
+    <None Include="medias\skyboxShader.vert" />
     <None Include="medias\toonShader.frag" />
     <None Include="medias\toonShader.vert" />
   </ItemGroup>

@@ -5,12 +5,13 @@
 #include "../Scene.h"
 #include "../Camera.h"
 #include "../shaderProgram.h"
-#include "../FrameBuffer.h"
 #include "../BufferObject.h"
 #include "../Texture.h"
 #include "../SkyBox.h"
 
 #include "../teapot.h"
+#include "../Sphere.h"
+#include "../Plane.h"
 
 #include "../GLGUI.h"
 #include "../GLUtils.h"
@@ -30,16 +31,26 @@ public:
 
 
 private:
-	int width, height;
+	GLuint width, height;
+
+	GLuint bloomBufWid, bloomBufHei;
 
 	map<string, ShaderProgram*> programsList;
-	ShaderProgram prog;
+	ShaderProgram progSkybox, progBloom;
 
+	Plane plane;
 	Teapot teapot;
+	Sphere sphere;
 	SkyBox skybox;
 
 	// frame buffer
-	FrameBuffer FBO;
+	GLuint hdrFBO, blurFBO;
+	GLuint rttHdr, rttBright, rttBlur;
+
+	//sampler
+	GLuint linearSampler, nearestSampler;
+
+	//FrameBuffer hdrFBO, blurFBO;
 	GLuint quadVAO;
 
 	//cube map id
@@ -52,6 +63,12 @@ private:
 	void verGaussPass();
 	void horGaussPass();
 	void tonePass();
+
+	// draw the scene in the render pass
+	void setupFBO();
+	void drawScene();
+	void computeLogAvgLuminance();
+	float gauss(int x, float sigma2);
 
 	void setMatrices(string pname);
 	void compileAndLinkShaders();

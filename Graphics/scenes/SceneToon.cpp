@@ -97,7 +97,7 @@ void SceneToon::shadingPass() {
 void SceneToon::filterPass() {
 	this->renderFBO.unbind();
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, this->renderFBO.getRRTHandle());
+	glBindTexture(GL_TEXTURE_2D, this->renderFBO.getRTTHandle());
 
 	glDisable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT);

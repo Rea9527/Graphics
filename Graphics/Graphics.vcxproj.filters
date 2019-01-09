@@ -129,6 +129,12 @@
     <ClInclude Include="SkyBox.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneShadow.h">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -193,6 +199,12 @@
     </ClCompile>
     <ClCompile Include="SkyBox.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneShadow.cpp">
+      <Filter>Source Files\scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -260,6 +272,12 @@
       <Filter>Source Files\medias</Filter>
     </None>
     <None Include="medias\bloomShader.vert">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\skyboxShader.vert">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\skyboxShader.frag">
       <Filter>Source Files\medias</Filter>
     </None>
   </ItemGroup>
