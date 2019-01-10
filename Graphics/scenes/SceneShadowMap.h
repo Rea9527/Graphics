@@ -5,6 +5,7 @@
 #include "../shaderProgram.h"
 #include "../BufferObject.h"
 #include "../Texture.h"
+#include "../Frustum.h"
 
 #include "../teapot.h"
 #include "../Sphere.h"
@@ -30,6 +31,8 @@ public:
 private:
 	int width, height;
 
+	Frustum lightFrustum;
+
 	Plane plane;
 	Teapot teapot;
 	Sphere sphere;
@@ -42,14 +45,20 @@ private:
 	GLuint FBO;
 	GLuint shadowTex;
 
+	// subroutines index
+	GLuint recordPassInx, shadowPassInx;
+
 	// shadow para
+	GLuint shadowmapWidth, shadowmapHeight;
 	glm::mat4 shadowBias;
+	glm::mat4 lightBPV;
 
 
 	// func
 	void compileAndLinkShaders();
-	void setMatrics(string name);
+	void setMatrices(string name);
 	void renderGUI();
+	void drawScene();
 
 	void setupFBO();
 	

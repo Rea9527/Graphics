@@ -348,6 +348,7 @@ void SceneBloom::setMatrices(string pname) {
 		glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]), glm::vec3(mv[2])));
 	program->setUniform("MVP", this->projection * mv);
 }
+
 void SceneBloom::compileAndLinkShaders() {
 	try {
 		this->progSkybox.compileShader("./medias/skyboxShader.vert", GLSLShader::VERTEX);

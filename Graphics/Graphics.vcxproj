@@ -156,6 +156,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="GLGUI.h" />
     <ClInclude Include="GLUtils.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -168,8 +169,8 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="SceneShadow.h" />
     <ClInclude Include="scenes\SceneBloom.h" />
+    <ClInclude Include="scenes\SceneShadowMap.h" />
     <ClInclude Include="scenes\SceneToon.h" />
     <ClInclude Include="scenes\SceneCloth.h" />
     <ClInclude Include="scenes\SceneSPH.h" />
@@ -189,6 +190,7 @@
     <ClCompile Include="BufferObject.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GLUtils.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -196,8 +198,8 @@
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="Plane.cpp" />
-    <ClCompile Include="SceneShadow.cpp" />
     <ClCompile Include="scenes\SceneBloom.cpp" />
+    <ClCompile Include="scenes\SceneShadowMap.cpp" />
     <ClCompile Include="scenes\SceneToon.cpp" />
     <ClCompile Include="scenes\SceneCloth.cpp" />
     <ClCompile Include="scenes\SceneSPH.cpp" />

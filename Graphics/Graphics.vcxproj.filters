@@ -132,8 +132,11 @@
     <ClInclude Include="Sphere.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="SceneShadow.h">
+    <ClInclude Include="scenes\SceneShadowMap.h">
       <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -203,8 +206,11 @@
     <ClCompile Include="Sphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SceneShadow.cpp">
+    <ClCompile Include="scenes\SceneShadowMap.cpp">
       <Filter>Source Files\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
