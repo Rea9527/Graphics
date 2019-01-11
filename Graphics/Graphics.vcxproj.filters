@@ -286,5 +286,11 @@
     <None Include="medias\skyboxShader.frag">
       <Filter>Source Files\medias</Filter>
     </None>
+    <None Include="medias\shadowMapShader.vert">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\shadowMapShader.frag">
+      <Filter>Source Files\medias</Filter>
+    </None>
   </ItemGroup>
 </Project>

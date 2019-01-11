@@ -26,9 +26,12 @@ void SceneShadowMap::initScene() {
 	this->setupFBO();
 
 	// get subroutines index
+	this->prog.use();
+
 	GLuint handle = this->prog.getHandle();
 	this->recordPassInx = glGetSubroutineIndex(handle, GL_FRAGMENT_SHADER, "recordPass");
 	this->shadowPassInx = glGetSubroutineIndex(handle, GL_FRAGMENT_SHADER, "shadowPass");
+
 
 	// shadow bias matrix to alter clip coordinates between 0 to 1
 	this->shadowBias = mat4(vec4(0.5f, 0.0f, 0.0f, 0.0f),
@@ -38,15 +41,16 @@ void SceneShadowMap::initScene() {
 							);
 
 	// light frustum settings
-	vec3 lightPos = vec3(8.0f, 8.0f, 5.0f);
+	vec3 lightPos = vec3(8.0f, 8.0f, 8.0f);
 	this->lightFrustum.orient(lightPos, vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
 	this->lightFrustum.setPerspective(50.0f, 1.0f, 1.0f, 25.0f);
 	this->lightBPV = this->shadowBias * this->lightFrustum.getProjectionMatrix() * this->lightFrustum.getViewMatrix();
 
 	// set uniforms
-	this->prog.setUniform("Light.Intensity", vec3(0.8f, 0.8f, 0.8f));
+	this->prog.setUniform("Light.Intensity", vec3(0.5f, 0.5f, 0.5f));
 	this->prog.setUniform("shadowMap", 0);
 
+	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
 
 void SceneShadowMap::setupFBO() {
@@ -97,12 +101,16 @@ void SceneShadowMap::update(float dt) {
 void SceneShadowMap::render() {
 	this->prog.use();
 
+	glEnable(GL_DEPTH_TEST);
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+
 	// pass 1 - record depth pass
 	this->view = lightFrustum.getViewMatrix();
 	this->projection = lightFrustum.getProjectionMatrix();
 
-	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->recordPassInx);
 	glBindFramebuffer(GL_FRAMEBUFFER, this->FBO);
+	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->recordPassInx);
+	
 	glViewport(0, 0, this->shadowmapWidth, this->shadowmapHeight);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -117,14 +125,30 @@ void SceneShadowMap::render() {
 	glCullFace(GL_BACK);
 	glFlush();
 
-
 	// pass 2 - shadow shading pass
+	Camera* camera = Camera::getInstance();
+	this->view = camera->getViewMat();
+	this->projection = glm::perspective(glm::radians(camera->getZoom()), (float)this->width / this->height, 0.3f, 100.0f);
+	this->prog.setUniform("Light.Position", this->view * vec4(this->lightFrustum.getOrigin(), 1.0f));
 	
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDisable(GL_POLYGON_OFFSET_FILL);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, width, height);
+	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &shadowPassInx);
+
+	//glBindVertexArray(this->quadVAO);
+	//glDrawArrays(GL_TRIANGLES, 0, 6);
+	//glBindVertexArray(0);
+
+	this->drawScene();
+
+	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
 
 void SceneShadowMap::drawScene() {
 
-	this->prog.setUniform("Material.Ka", glm::vec3(0.05, 0.05, 0.05));
+	this->prog.setUniform("Material.Ka", glm::vec3(1.0, 0.2, 0.2));
 	this->prog.setUniform("Material.Kd", glm::vec3(0.25, 0.25, 0.25));
 	this->prog.setUniform("Material.Ks", glm::vec3(0.0, 0.0, 0.0));
 	this->prog.setUniform("Material.Shininess", 1.0f);
@@ -144,7 +168,7 @@ void SceneShadowMap::drawScene() {
 	
 	this->prog.setUniform("Material.Ka", glm::vec3(0.2, 0.2, 0.2));
 	this->prog.setUniform("Material.Ks", glm::vec3(0.2, 0.2, 0.2));
-	this->prog.setUniform("Material.Shininess", 25.0f);
+	this->prog.setUniform("Material.Shininess", 50.0f);
 	// render teapot
 	this->prog.setUniform("Material.Kd", glm::vec3(0.4f, 0.9f, 0.4f));
 	this->model = glm::translate(glm::mat4(1.0f), glm::vec3(-5.0f, -5.0f, 0.0f));
@@ -174,16 +198,18 @@ void SceneShadowMap::setMatrices(string name) {
 	program->setUniform("NormalMatrix",
 		glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]), glm::vec3(mv[2])));
 	program->setUniform("MVP", this->projection * mv);
-
+	program->setUniform("ShadowMatrix", this->lightBPV * this->model);
 }
 
 void SceneShadowMap::compileAndLinkShaders() {
 
 	try {
-		this->prog.compileShader("./medias/shadowShader.vert", GLSLShader::VERTEX);
-		this->prog.compileShader("./medias/shadowShader.frag", GLSLShader::FRAGMENT);
+		this->prog.compileShader("./medias/shadowMapShader.vert", GLSLShader::VERTEX);
+		this->prog.compileShader("./medias/shadowMapShader.frag", GLSLShader::FRAGMENT);
 		this->prog.link();
 		this->programsList.insert(std::pair<string, ShaderProgram*>(this->prog.getName(), &this->prog));
+
+		GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 	}
 	catch (ShaderProgramException e) {
 		cerr << e.what() << endl;

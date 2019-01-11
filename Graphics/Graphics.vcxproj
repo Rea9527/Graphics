@@ -238,6 +238,8 @@
     <None Include="medias\SceneSPH\sphIntegration.comp" />
     <None Include="medias\SceneSPH\sphPressure.comp" />
     <None Include="medias\emptyShader.vert" />
+    <None Include="medias\shadowMapShader.frag" />
+    <None Include="medias\shadowMapShader.vert" />
     <None Include="medias\skyboxShader.frag" />
     <None Include="medias\skyboxShader.vert" />
     <None Include="medias\toonShader.frag" />

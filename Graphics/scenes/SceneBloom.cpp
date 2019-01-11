@@ -37,6 +37,11 @@ void SceneBloom::initScene() {
 	this->horGaussPassInx = glGetSubroutineIndex(handle, GL_FRAGMENT_SHADER, "horGaussPass");
 	this->tonePassInx = glGetSubroutineIndex(handle, GL_FRAGMENT_SHADER, "tonePass");
 
+	GLint n;
+	n = glGetSubroutineUniformLocation(handle, GL_FRAGMENT_SHADER, "bloomPass");
+
+	printf("%d, %d, %d\n", n, this->renderPassInx, this->brightPassInx);
+
 	this->progBloom.setUniform("LumThresh", 1.7f);
 
 	// compute the gaussian weights and set the uniforms

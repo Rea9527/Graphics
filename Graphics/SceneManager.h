@@ -70,7 +70,7 @@ public:
 		scene.initScene();
 		scene.resize(this->frame_size_width, this->frame_size_height);
 		//main loop
-		camera->use();
+		Camera::getInstance()->use();
 		this->mainLoop(this->window, scene);
 
 		// shut down GUI
@@ -87,7 +87,6 @@ private:
 	int frame_size_width, frame_size_height;
 
 	//camera
-	static Camera* camera;
 	static bool keys[1024];
 	static GLfloat deltaTime;
 	static GLfloat lastFrame;
@@ -111,6 +110,8 @@ private:
 		GLfloat currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+
+		Camera* camera = Camera::getInstance();
 
 		if (keys[GLFW_KEY_W])
 			camera->translate(CAM_FOWARD, deltaTime);
@@ -147,9 +148,11 @@ private:
 		lastX = xpos;
 		lastY = ypos;
 
+		Camera* camera = Camera::getInstance();
 		camera->rotate(offset_x, offset_y);
 	}
 	inline static auto scroll_callback(GLFWwindow* window, double xoff, double yoff) -> void {
+		Camera* camera = Camera::getInstance();
 		camera->zoom(yoff);
 	}
 
@@ -158,7 +161,6 @@ private:
 
 
 // camera
-Camera* SceneManager::camera = Camera::getInstance();
 GLfloat SceneManager::deltaTime = 0.0f;
 GLfloat SceneManager::lastFrame = 0.0f;
 GLfloat SceneManager::lastX = 0.0f;
