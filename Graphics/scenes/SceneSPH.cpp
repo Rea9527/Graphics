@@ -16,7 +16,7 @@ SceneSPH::SceneSPH(int w, int h) : nParticles(glm::vec3(16, 16, 16)), initSize(g
 	this->WORK_GROUP_NUM = (this->ParticleNum + WORK_GROUP_SIZE - 1) / WORK_GROUP_SIZE;
 }
 
-void SceneSPH::initScene(Camera &camera) {
+void SceneSPH::initScene() {
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_PROGRAM_POINT_SIZE);
@@ -24,10 +24,9 @@ void SceneSPH::initScene(Camera &camera) {
 	this->compileAndLinkShaders();
 	this->initBuffers();
 
-	camera.init(glm::vec3(0.0, 5.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), 60.0f, 0.0f);
-	camera.setSpeed(50);
-	this->view = camera.getViewMat();
-	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
+	Camera* camera = Camera::getInstance();
+	camera->init(glm::vec3(0.0, 5.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), 60.0f, 0.0f);
+	camera->setSpeed(50);
 
 	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 	// bind light uniforms
@@ -131,9 +130,10 @@ void SceneSPH::initBuffers() {
 
 }
 
-void SceneSPH::update(float dt, Camera &camera) {
-	this->view = camera.getViewMat();
-	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
+void SceneSPH::update(float dt) {
+	Camera* camera = Camera::getInstance();
+	this->view = camera->getViewMat();
+	this->projection = glm::perspective(glm::radians(camera->getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
 
 }
 

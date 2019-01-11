@@ -12,11 +12,12 @@ SceneShadowMap::SceneShadowMap(int w, int h) : plane(20.0f, 10.0f, 1, 1), teapot
 										prog("shadowShader"), shadowmapWidth(512), shadowmapHeight(512), width(w), height(h) {}
 
 
-void SceneShadowMap::initScene(Camera &camera) {
+void SceneShadowMap::initScene() {
 	
 	this->compileAndLinkShaders();
 
-	camera.init(glm::vec3(0, 0.0, 30.0), glm::vec3(0, 1.0, 0), -90, 0);
+	Camera* camera = Camera::getInstance();
+	camera->init(glm::vec3(0, 0.0, 30.0), glm::vec3(0, 1.0, 0), -90, 0);
 
 	// create quad
 	this->quadVAO = BufferObject::genQuadBufferObject();
@@ -87,9 +88,10 @@ void SceneShadowMap::setupFBO() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void SceneShadowMap::update(float dt, Camera &camera) {
-	this->view = camera.getViewMat();
-	this->projection = glm::perspective(glm::radians(60.0f), (float)this->width / this->height, 0.3f, 100.0f);
+void SceneShadowMap::update(float dt) {
+	Camera* camera = Camera::getInstance();
+	this->view = camera->getViewMat();
+	this->projection = glm::perspective(glm::radians(camera->getZoom()), (float)this->width / this->height, 0.3f, 100.0f);
 }
 
 void SceneShadowMap::render() {

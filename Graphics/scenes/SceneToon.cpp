@@ -11,14 +11,15 @@ SceneToon::SceneToon() : plane(100.0f, 100.0f, 10, 10), teapot(14, glm::mat4(1.0
 SceneToon::SceneToon(int w, int h) : plane(100.0f, 100.0f, 10, 10), teapot(14, glm::mat4(1.0)), prog("adsShader"), progToon("toonShader"),
 renderFBO(w, h, true, true), width(w), height(h) { }
 
-void SceneToon::initScene(Camera &camera) {
+void SceneToon::initScene() {
 
 	// compile and link the shader
 	this->compileAndLinkShaders();
 
 	glEnable(GL_DEPTH_TEST);
 
-	camera.init(glm::vec3(0.0f, 20.0f, 30.0f), glm::vec3(0.0f, 1.0f, 0.0f), -80.f, -20.0f);
+	Camera* camera = Camera::getInstance();
+	camera->init(glm::vec3(0.0f, 20.0f, 30.0f), glm::vec3(0.0f, 1.0f, 0.0f), -80.f, -20.0f);
 	//this->view = camera.getViewMat();
 	//this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
 
@@ -51,9 +52,10 @@ void SceneToon::initScene(Camera &camera) {
 }
 
 
-void SceneToon::update(float dt, Camera &camera) {
-	this->view = camera.getViewMat();
-	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
+void SceneToon::update(float dt) {
+	Camera* camera = Camera::getInstance();
+	this->view = camera->getViewMat();
+	this->projection = glm::perspective(glm::radians(camera->getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
 
 	//printf("%f, %f\n", camera.getYaw(), camera.getPitch());
 }

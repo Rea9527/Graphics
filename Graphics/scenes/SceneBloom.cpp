@@ -11,14 +11,15 @@ SceneBloom::SceneBloom(int w, int h) : plane(20.0f, 10.0f, 1, 1), teapot(12, glm
 
 SceneBloom::~SceneBloom() {}
 
-void SceneBloom::initScene(Camera &camera) {
+void SceneBloom::initScene() {
 
 	this->compileAndLinkShaders();
 
 	this->bloomBufWid = this->width / 2;
 	this->bloomBufHei = this->height / 2;
 
-	camera.init(glm::vec3(0, 0.0, 30.0), glm::vec3(0, 1.0, 0), -90, 0);
+	Camera* camera = Camera::getInstance();
+	camera->init(glm::vec3(0, 0.0, 30.0), glm::vec3(0, 1.0, 0), -90, 0);
 	
 	// create quad for store texture
 	this->quadVAO = BufferObject::genQuadBufferObject();
@@ -138,9 +139,10 @@ void SceneBloom::setupFBO() {
 
 }
 
-void SceneBloom::update(float t, Camera &camera) {
-	this->view = camera.getViewMat();
-	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
+void SceneBloom::update(float t) {
+	Camera* camera = Camera::getInstance();
+	this->view = camera->getViewMat();
+	this->projection = glm::perspective(glm::radians(camera->getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
 }
 
 void SceneBloom::render() {

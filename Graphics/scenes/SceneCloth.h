@@ -17,8 +17,8 @@ public:
 	SceneCloth();
 	SceneCloth(int w, int h);
 
-	void initScene(Camera &camera);
-	void update(float dt, Camera &camera);
+	void initScene();
+	void update(float dt);
 	void render();
 	void resize(int w, int h);
 

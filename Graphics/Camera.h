@@ -17,12 +17,12 @@ enum CameraState {
 	ACTIVE
 };
 
+
+// Singleton design pattern for Camera class
 class Camera {
 
 public:
-
-	Camera();
-	Camera(glm::vec3 pos, glm::vec3 up, GLfloat yaw, GLfloat pitch);
+	static Camera* getInstance();
 
 	void init(glm::vec3 pos, glm::vec3 up, GLfloat yaw, GLfloat pitch);
 	void use();
@@ -48,8 +48,20 @@ public:
 
 	void disable();
 
+public:
+
+	Camera(Camera const&) = delete;
+	void operator=(Camera const&) = delete;
+
 private:
+
+	Camera() { };
+
 	void updateCameraPos();
+
+private:
+
+	static Camera* m_camera;
 
 	GLboolean STATE;
 
@@ -66,4 +78,5 @@ private:
 	glm::vec3 Up;
 	glm::vec3 Right;
 	glm::vec3 InitUp;
+
 };

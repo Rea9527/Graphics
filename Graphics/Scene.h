@@ -25,9 +25,9 @@ public:
 	}
 
 	// Compile the shader, create data, bind data to buffer...
-	virtual void initScene(Camera &camera) = 0;
+	virtual void initScene() = 0;
 	//
-	virtual void update(float t, Camera &camera) = 0;
+	virtual void update(float t) = 0;
 	//
 	virtual void render() = 0;
 	//

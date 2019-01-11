@@ -2,28 +2,16 @@
 #include "Camera.h"
 #include <cstdio>
 
-Camera::Camera() {
-	this->STATE = ACTIVE;
-	this->Pos = glm::vec3(0.0f, 0.0f, 4.0f);
-	this->InitUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	this->Yaw = 0.0f;
-	this->Pitch = 0.0f;
-	this->Speed = 50.0f;
-	this->Sensitivity = 0.2f;
-	this->Zoom = 45.0f;
-	this->updateCameraPos();
-}
 
-Camera::Camera(glm::vec3 pos, glm::vec3 up, GLfloat yaw, GLfloat pitch) {
-	this->STATE = DISABLE;
-	this->Pos = pos;
-	this->InitUp = up;
-	this->Yaw = yaw;
-	this->Pitch = pitch;
-	this->Speed = 50.0f;
-	this->Sensitivity = 0.2f;
-	this->Zoom = 45.0f;
-	this->updateCameraPos();
+Camera* Camera::m_camera = NULL;
+
+Camera* Camera::getInstance() {
+	if (m_camera == NULL) {
+		static Camera static_instance;
+		m_camera = &static_instance;
+
+	}
+	return m_camera;
 }
 
 void Camera::init(glm::vec3 pos, glm::vec3 up, GLfloat yaw, GLfloat pitch) {

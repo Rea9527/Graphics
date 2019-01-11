@@ -12,7 +12,7 @@ SceneCloth::SceneCloth(int w, int h) : clothVAO(0), numElements(0),
 									nParticles(40, 40), clothSize(4.0f, 3.0f),
 									time(0.0f), deltaT(0.0f), speed(200.0f), readBuf(0), plane(10.0f, 10.0f, 100, 100), width(w), height(h) { }
 
-void SceneCloth::initScene(Camera &camera) {
+void SceneCloth::initScene() {
 
 	glEnable(GL_PRIMITIVE_RESTART);
 	glPrimitiveRestartIndex(PRIM_RESTART);
@@ -22,10 +22,9 @@ void SceneCloth::initScene(Camera &camera) {
 
 	glEnable(GL_DEPTH_TEST);
 
-	camera.init(glm::vec3(0.85f, 6.32f, -3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -40.f, -270.0f);
-	camera.setSpeed(50.0f);
-	this->view = camera.getViewMat();
-	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 0.1f, 1000.0f);
+	Camera* camera = Camera::getInstance();
+	camera->init(glm::vec3(0.85f, 6.32f, -3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -40.f, -270.0f);
+	camera->setSpeed(50.0f);
 
 	// set lights
 	this->prog.use();
@@ -155,9 +154,10 @@ void SceneCloth::initBuffers() {
 
 }
 
-void SceneCloth::update(float dt, Camera &camera) {
-	this->view = camera.getViewMat();
-	this->projection = glm::perspective(glm::radians(camera.getZoom()), this->width / (float)this->height, 1.0f, 1000.0f);
+void SceneCloth::update(float dt) {
+	Camera* camera = Camera::getInstance();
+	this->view = camera->getViewMat();
+	this->projection = glm::perspective(glm::radians(camera->getZoom()), this->width / (float)this->height, 1.0f, 1000.0f);
 
 	//printf("%f, %f, %f, %f, %f", camera.getPos().x, camera.getPos().y, camera.getPos().z, camera.getPitch(), camera.getYaw());
 

@@ -20,8 +20,8 @@ public:
 	SceneToon();
 	SceneToon(int w, int h);
 
-	void initScene(Camera &camera);
-	void update(float t, Camera &camera);
+	void initScene();
+	void update(float t);
 	void render();
 	void resize(int w, int h);
 

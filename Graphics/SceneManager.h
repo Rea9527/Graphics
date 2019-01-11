@@ -67,7 +67,7 @@ public:
 	int run(Scene &scene) {
 		GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 		scene.setDimensions(this->frame_size_width, this->frame_size_height);
-		scene.initScene(*(camera));
+		scene.initScene();
 		scene.resize(this->frame_size_width, this->frame_size_height);
 		//main loop
 		camera->use();
@@ -87,7 +87,7 @@ private:
 	int frame_size_width, frame_size_height;
 
 	//camera
-	static std::unique_ptr<Camera> camera;
+	static Camera* camera;
 	static bool keys[1024];
 	static GLfloat deltaTime;
 	static GLfloat lastFrame;
@@ -101,7 +101,7 @@ private:
 			//GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 			glfwPollEvents();
 			updateMovement();
-			scene.update(float(glfwGetTime()), *camera);
+			scene.update(float(glfwGetTime()));
 			scene.render();
 			glfwSwapBuffers(window);
 		}
@@ -158,7 +158,7 @@ private:
 
 
 // camera
-std::unique_ptr<Camera> SceneManager::camera = std::unique_ptr<Camera>(new Camera());
+Camera* SceneManager::camera = Camera::getInstance();
 GLfloat SceneManager::deltaTime = 0.0f;
 GLfloat SceneManager::lastFrame = 0.0f;
 GLfloat SceneManager::lastX = 0.0f;
