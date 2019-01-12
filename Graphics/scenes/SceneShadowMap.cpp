@@ -5,10 +5,10 @@ using glm::vec3;
 using glm::mat4;
 using glm::mat3;
 
-SceneShadowMap::SceneShadowMap() : plane(20.0f, 10.0f, 1, 1), teapot(12, glm::mat4(1.0)), sphere(2.0f, 50, 50),
+SceneShadowMap::SceneShadowMap() : plane(40.0f, 20.0f, 1, 1), teapot(12, glm::mat4(1.0)), sphere(2.0f, 50, 50),
 								 shadowmapWidth(512), shadowmapHeight(512), prog("shadowShader") {}
 
-SceneShadowMap::SceneShadowMap(int w, int h) : plane(20.0f, 10.0f, 1, 1), teapot(12, glm::mat4(1.0)), sphere(2.0f, 50, 50),
+SceneShadowMap::SceneShadowMap(int w, int h) : plane(40.0f, 20.0f, 1, 1), teapot(12, glm::mat4(1.0)), sphere(2.0f, 50, 50),
 										prog("shadowShader"), shadowmapWidth(512), shadowmapHeight(512), width(w), height(h) {}
 
 
@@ -41,7 +41,7 @@ void SceneShadowMap::initScene() {
 							);
 
 	// light frustum settings
-	vec3 lightPos = vec3(8.0f, 8.0f, 8.0f);
+	vec3 lightPos = vec3(0.0f, 10.0f, 15.0f);
 	this->lightFrustum.orient(lightPos, vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
 	this->lightFrustum.setPerspective(50.0f, 1.0f, 1.0f, 25.0f);
 	this->lightBPV = this->shadowBias * this->lightFrustum.getProjectionMatrix() * this->lightFrustum.getViewMatrix();
@@ -156,11 +156,11 @@ void SceneShadowMap::drawScene() {
 	// render planes
 	// bottom plane
 	this->model = glm::mat4(1.0f);
-	this->model = glm::translate(this->model, glm::vec3(0.0f, -5.0f, 0.0f));
+	this->model = glm::translate(this->model, glm::vec3(0.0f, -10.0f, 0.0f));
 	this->setMatrices(this->prog.getName());
 	this->plane.render();
 	// back plane
-	this->model = glm::translate(this->model, glm::vec3(0.0f, 5.0f, -5.0f));
+	this->model = glm::translate(this->model, glm::vec3(0.0f, 10.0f, -10.0f));
 	this->model = glm::rotate(this->model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	this->setMatrices(this->prog.getName());
 	this->plane.render();
@@ -168,17 +168,17 @@ void SceneShadowMap::drawScene() {
 	
 	this->prog.setUniform("Material.Ka", glm::vec3(0.2, 0.2, 0.2));
 	this->prog.setUniform("Material.Ks", glm::vec3(0.2, 0.2, 0.2));
-	this->prog.setUniform("Material.Shininess", 50.0f);
+	this->prog.setUniform("Material.Shininess", 2.0f);
 	// render teapot
 	this->prog.setUniform("Material.Kd", glm::vec3(0.4f, 0.9f, 0.4f));
-	this->model = glm::translate(glm::mat4(1.0f), glm::vec3(-5.0f, -5.0f, 0.0f));
+	this->model = glm::translate(glm::mat4(1.0f), glm::vec3(-10.0f, -10.0f, 0.0f));
 	this->model = glm::rotate(this->model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	this->setMatrices(this->prog.getName());
 	this->teapot.render();
 
 	// render sphere
 	this->prog.setUniform("Material.Kd", glm::vec3(0.4f, 0.4f, 0.9f));
-	this->model = glm::translate(glm::mat4(1.0f), glm::vec3(5.0f, -3.0f, 0.0f));
+	this->model = glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, -8.0f, 0.0f));
 	this->setMatrices(this->prog.getName());
 	this->sphere.render();
 }

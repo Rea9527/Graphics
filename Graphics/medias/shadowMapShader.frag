@@ -61,12 +61,9 @@ void shadowPass() {
 
 	// shadow == 0, then shadowCoord.z > shadowMap value, and not pass the depth test(GL_LESS), that is the fragment is under the shadow(further and behind)
 	FragColor = vec4(diffAndSpec * shadow + ambient, 1.0f);
-	//FragColor = Color;
 
 	// Gamma correct
     FragColor = pow( FragColor, vec4(1.0 / 2.2) );
-
-	//FragColor = texture(shadowMap, TexCoord) + vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
 }
 
