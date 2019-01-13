@@ -43,7 +43,7 @@ void SceneShadowMap::initScene() {
 	// light frustum settings
 	vec3 lightPos = vec3(0.0f, 10.0f, 15.0f);
 	this->lightFrustum.orient(lightPos, vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
-	this->lightFrustum.setPerspective(50.0f, 1.0f, 1.0f, 25.0f);
+	this->lightFrustum.setPerspective(60.0f, 1.0f, 1.0f, 1000.0f);
 	this->lightBPV = this->shadowBias * this->lightFrustum.getProjectionMatrix() * this->lightFrustum.getViewMatrix();
 
 	// set uniforms
