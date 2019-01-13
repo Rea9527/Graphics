@@ -54,12 +54,15 @@ void shadowPass() {
 	vec3 ambient = Light.Intensity * Material.Ka;
 	vec3 diffAndSpec = diffuseAndSpecPhongShading();
 
-	float shadow = 1.0f;
-	if (ShadowCoord.z >= 0.0) {
-		shadow = textureProj(shadowMap, ShadowCoord);
-	}
+	float sum = 0.0;
 
-	// shadow == 0, then shadowCoord.z > shadowMap value, and not pass the depth test(GL_LESS), that is the fragment is under the shadow(further and behind)
+	sum += textureProjOffset(shadowMap, ShadowCoord, ivec2(-1, -1));
+	sum += textureProjOffset(shadowMap, ShadowCoord, ivec2(-1, 1));
+	sum += textureProjOffset(shadowMap, ShadowCoord, ivec2(1, -1));
+	sum += textureProjOffset(shadowMap, ShadowCoord, ivec2(1, 1));
+
+	float shadow = sum * 0.25;
+
 	FragColor = vec4(diffAndSpec * shadow + ambient, 1.0f);
 
 	// Gamma correct
