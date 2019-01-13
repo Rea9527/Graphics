@@ -54,6 +54,15 @@ void shadowPass() {
 	vec3 ambient = Light.Intensity * Material.Ka;
 	vec3 diffAndSpec = diffuseAndSpecPhongShading();
 
+
+	// ------------------Simple shadow mapping------------------
+//	float shadow = 1.0;
+//	if (ShadowCoord.z >= 0.0f ) {
+//		shadow = textureProj(shadowMap, ShadowCoord);
+//	}
+
+
+	// ------------------Shadow with PCF------------------------
 	float sum = 0.0;
 
 	sum += textureProjOffset(shadowMap, ShadowCoord, ivec2(-1, -1));
