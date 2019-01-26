@@ -187,8 +187,8 @@ void SceneShadowMap::resize(int w, int h) {
 	this->width = w;
 	this->height = h;
 	glViewport(0, 0, w, h);
-	// should adjust according to camera TODO
-	this->projection = glm::perspective(glm::radians(60.0f), (float)w / h, 0.3f, 100.0f);
+	// should adjust according to camera 
+	this->projection = glm::perspective(glm::radians(Camera::getInstance()->getZoom()), (float)w / h, 0.3f, 100.0f);
 }
 
 void SceneShadowMap::setMatrices(string name) {
