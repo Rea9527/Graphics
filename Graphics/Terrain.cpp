@@ -46,18 +46,20 @@ void Terrain::generateTerrain(string heightMapPath) {
 	for (int i = 0; i < this->m_vertex_countz; i++) {
 		int pointerZ = i * m_vertex_countx;
 		for (int j = 0; j < this->m_vertex_countx; j++) {
-			int ptr = pointerZ + j;
+			int ptr = (pointerZ + j) * 3;
+			int ptrh = pointerZ + j;
 			// position
-			p[ptr + 0] = (GLfloat)j / (m_vertex_countx - 1) / m_size;
-			GLfloat height = heightMapPath == "" ? 1.0f : this->computeHeight(i, j, data);
-			this->m_heights[ptr] = height;
+			p[ptr + 0] = (GLfloat)j / (m_vertex_countx - 1) * m_size;
+			GLfloat height = heightMapPath == "" ? 0.0f : this->computeHeight(i, j, data);
+			this->m_heights[ptrh] = height;
 			p[ptr + 1] = height;
-			p[ptr + 2] = (GLfloat)i / (m_vertex_countz - 1) / m_size;
+			p[ptr + 2] = (GLfloat)i / (m_vertex_countz - 1) * m_size;
 			// normal
 			vec3 normal = heightMapPath == "" ? vec3(0.0f, 1.0f, 0.0f) : this->computeNormal(i, j, data);
 			n[ptr + 0] = normal.x;
 			n[ptr + 1] = normal.y;
 			n[ptr + 2] = normal.z;
+			ptr = (pointerZ + j) * 2;
 			// texcoord
 			tc[ptr + 0] = (GLfloat)j / (m_vertex_countx - 1);
 			tc[ptr + 1] = (GLfloat)i / (m_vertex_countz - 1);

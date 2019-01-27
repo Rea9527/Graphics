@@ -165,6 +165,12 @@ void SceneShadowMap::drawScene() {
 	this->setMatrices(this->prog.getName());
 	this->plane.render();
 
+	// terrain
+	this->prog.setUniform("Material.Kd", glm::vec3(0.7f, 0.4f, 0.9f));
+	this->model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -15.0f, 0.0f));
+	this->setMatrices(this->prog.getName());
+	this->terrain.render();
+
 	
 	this->prog.setUniform("Material.Ka", glm::vec3(0.2, 0.2, 0.2));
 	this->prog.setUniform("Material.Ks", glm::vec3(0.2, 0.2, 0.2));
@@ -182,10 +188,6 @@ void SceneShadowMap::drawScene() {
 	this->setMatrices(this->prog.getName());
 	this->sphere.render();
 
-	this->prog.setUniform("Material.Kd", glm::vec3(0.7f, 0.4f, 0.9f));
-	this->model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-	this->setMatrices(this->prog.getName());
-	this->terrain.render();
 }
 
 void SceneShadowMap::resize(int w, int h) {
