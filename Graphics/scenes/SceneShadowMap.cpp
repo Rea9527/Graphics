@@ -181,6 +181,11 @@ void SceneShadowMap::drawScene() {
 	this->model = glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, -8.0f, 0.0f));
 	this->setMatrices(this->prog.getName());
 	this->sphere.render();
+
+	this->prog.setUniform("Material.Kd", glm::vec3(0.7f, 0.4f, 0.9f));
+	this->model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+	this->setMatrices(this->prog.getName());
+	this->terrain.render();
 }
 
 void SceneShadowMap::resize(int w, int h) {

@@ -166,11 +166,13 @@
     <ClInclude Include="imgui\stb_rect_pack.h" />
     <ClInclude Include="imgui\stb_textedit.h" />
     <ClInclude Include="imgui\stb_truetype.h" />
+    <ClInclude Include="MultiTexTerrain.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="scenes\SceneBloom.h" />
     <ClInclude Include="scenes\SceneShadowMap.h" />
+    <ClInclude Include="scenes\SceneTerrain.h" />
     <ClInclude Include="scenes\SceneToon.h" />
     <ClInclude Include="scenes\SceneCloth.h" />
     <ClInclude Include="scenes\SceneSPH.h" />
@@ -183,6 +185,7 @@
     <ClInclude Include="teapot.h" />
     <ClInclude Include="teapotdata.h" />
     <ClInclude Include="teapotpatch.h" />
+    <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TriangleMesh.h" />
   </ItemGroup>
@@ -197,9 +200,11 @@
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_impl_glfw_gl3.cpp" />
+    <ClCompile Include="MultiTexTerrain.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="scenes\SceneBloom.cpp" />
     <ClCompile Include="scenes\SceneShadowMap.cpp" />
+    <ClCompile Include="scenes\SceneTerrain.cpp" />
     <ClCompile Include="scenes\SceneToon.cpp" />
     <ClCompile Include="scenes\SceneCloth.cpp" />
     <ClCompile Include="scenes\SceneSPH.cpp" />
@@ -214,6 +219,7 @@
     </ClCompile>
     <ClCompile Include="teapot.cpp" />
     <ClCompile Include="teapotpatch.cpp" />
+    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TriangleMesh.cpp" />
   </ItemGroup>

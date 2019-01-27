@@ -14,6 +14,8 @@
 #include "../GLGUI.h"
 #include "../GLUtils.h"
 
+#include "../Terrain.h"
+
 
 class SceneShadowMap : public Scene {
 
@@ -33,6 +35,7 @@ private:
 
 	Frustum lightFrustum;
 
+	Terrain terrain;
 	Plane plane;
 	Teapot teapot;
 	Sphere sphere;

@@ -34,6 +34,9 @@
     <Filter Include="Source Files\medias\SceneSPH">
       <UniqueIdentifier>{f0f9483f-f456-476d-b798-865d740aad68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\renderers">
+      <UniqueIdentifier>{0ffc0fc0-5df3-4ba5-ba35-a960eafcb681}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -138,6 +141,15 @@
     <ClInclude Include="Frustum.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="scenes\SceneTerrain.h">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiTexTerrain.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -210,6 +222,15 @@
       <Filter>Source Files\scenes</Filter>
     </ClCompile>
     <ClCompile Include="Frustum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scenes\SceneTerrain.cpp">
+      <Filter>Source Files\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiTexTerrain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

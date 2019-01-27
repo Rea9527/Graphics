@@ -2,9 +2,6 @@
 
 #include "TriangleMesh.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
-
 #include <vector>
 #include <string>
 
@@ -41,9 +38,9 @@ protected:
 	GLint m_x, m_z;
 	
 	// heights generated from height map
-	vector<vector<GLfloat>> m_heights;
+	vector<GLfloat> m_heights;
 	// heights of each gridX and each gridZ for retrieving height faster, precomputed
-	vector<vector<GLfloat>> m_heights_grid;
+	//vector<vector<GLfloat>> m_heights_grid;
 
 	
 	// generate the terrain vertices, normals and texcoords

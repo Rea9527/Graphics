@@ -1,23 +1,20 @@
 
 #include "Terrain.h"
 
+#include "stb/stb_image.h"
 
-Terrain::Terrain() {
+Terrain::Terrain() : m_vertex_countx(256), m_vertex_countz(256), m_heights(m_vertex_countz*m_vertex_countx, 0) {
 
-	this->m_vertex_countx = 256;
-	this->m_vertex_countz = 256;
 	this->m_size = 1600;
 	this->m_max_height = 60;
 	this->m_max_pcolor_value = 256 * 256 * 256;
 
 	this->generateTerrain();
-
 }
 
-Terrain::Terrain(GLuint gridX, GLuint gridZ, string heightMapPath, GLuint texId) {
+Terrain::Terrain(GLuint gridX, GLuint gridZ, string heightMapPath, GLuint texId)
+	: m_vertex_countx(256), m_vertex_countz(256), m_heights(m_vertex_countz*m_vertex_countx, 0) {
 
-	this->m_vertex_countx = 256;
-	this->m_vertex_countz = 256;
 	this->m_size = 1600;
 	this->m_max_height = 100;
 	this->m_max_pcolor_value = 256 * 256 * 256;
@@ -34,8 +31,10 @@ void Terrain::generateTerrain(string heightMapPath) {
 
 	int width, height, bytesPerPixel;
 	unsigned char* data = stbi_load(heightMapPath.c_str(), &width, &height, &bytesPerPixel, 3);
-	this->m_vertex_countx = width;
-	this->m_vertex_countz = height;
+	this->m_vertex_countx = heightMapPath == "" ? this->m_vertex_countx : width;
+	this->m_vertex_countz = heightMapPath == "" ? this->m_vertex_countz : height;
+
+	this->m_heights.resize(m_vertex_countx*m_vertex_countz);
 
 	GLuint total_vertex_count = this->m_vertex_countx * this->m_vertex_countz;
 	vector<GLfloat> p(total_vertex_count * 3);
@@ -50,12 +49,12 @@ void Terrain::generateTerrain(string heightMapPath) {
 			int ptr = pointerZ + j;
 			// position
 			p[ptr + 0] = (GLfloat)j / (m_vertex_countx - 1) / m_size;
-			GLfloat height = heightMapPath == "" ? this->computeHeight(i, j, data) : 1.0f;
-			this->m_heights[i][j] = height;
+			GLfloat height = heightMapPath == "" ? 1.0f : this->computeHeight(i, j, data);
+			this->m_heights[ptr] = height;
 			p[ptr + 1] = height;
 			p[ptr + 2] = (GLfloat)i / (m_vertex_countz - 1) / m_size;
 			// normal
-			vec3 normal = heightMapPath == "" ? this->computeNormal(i, j, data) : vec3(0.0f, 1.0f, 0.0f);
+			vec3 normal = heightMapPath == "" ? vec3(0.0f, 1.0f, 0.0f) : this->computeNormal(i, j, data);
 			n[ptr + 0] = normal.x;
 			n[ptr + 1] = normal.y;
 			n[ptr + 2] = normal.z;
@@ -102,11 +101,12 @@ GLfloat Terrain::getHeight(GLfloat worldX, GLfloat worldZ) {
 	GLfloat coordZ = fmod(terrainZ, gridSquareSizeZ) / gridSquareSizeZ;
 
 	GLfloat result;
+	GLint indexZX = gridZ * this->m_vertex_countx + gridX, indexZ1X = (gridZ+1) * this->m_vertex_countx + gridX;
 	if (coordX < (1 - coordZ)) {
-		result = this->baryCentric(glm::vec3(0, m_heights[gridX][gridZ], 0), glm::vec3(1, m_heights[gridX + 1][gridZ], 0), glm::vec3(0, m_heights[gridX][gridZ + 1], 1), glm::vec2(coordX, coordZ));
+		result = this->baryCentric(glm::vec3(0, m_heights[indexZX], 0), glm::vec3(1, m_heights[indexZX+1], 0), glm::vec3(0, m_heights[indexZ1X], 1), glm::vec2(coordX, coordZ));
 	}
 	else {
-		result = this->baryCentric(glm::vec3(1, m_heights[gridX + 1][gridZ], 0), glm::vec3(1, m_heights[gridX + 1][gridZ + 1], 1), glm::vec3(0, m_heights[gridX][gridZ + 1], 1), glm::vec2(coordX, coordZ));
+		result = this->baryCentric(glm::vec3(1, m_heights[indexZX+1], 0), glm::vec3(1, m_heights[indexZ1X+1], 1), glm::vec3(0, m_heights[indexZ1X], 1), glm::vec2(coordX, coordZ));
 	}
 
 	return result;
