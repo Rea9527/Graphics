@@ -248,6 +248,8 @@
     <None Include="medias\shadowMapShader.vert" />
     <None Include="medias\skyboxShader.frag" />
     <None Include="medias\skyboxShader.vert" />
+    <None Include="medias\terrainShader.frag" />
+    <None Include="medias\terrainShader.vert" />
     <None Include="medias\toonShader.frag" />
     <None Include="medias\toonShader.vert" />
   </ItemGroup>

@@ -313,5 +313,11 @@
     <None Include="medias\shadowMapShader.frag">
       <Filter>Source Files\medias</Filter>
     </None>
+    <None Include="medias\terrainShader.vert">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\terrainShader.frag">
+      <Filter>Source Files\medias</Filter>
+    </None>
   </ItemGroup>
 </Project>

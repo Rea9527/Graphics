@@ -9,20 +9,19 @@ Terrain::Terrain() : m_vertex_countx(256), m_vertex_countz(256), m_heights(m_ver
 	this->m_max_height = 60;
 	this->m_max_pcolor_value = 256 * 256 * 256;
 
+	this->m_texId = -1;
+
 	this->generateTerrain();
 }
 
-Terrain::Terrain(GLuint gridX, GLuint gridZ, string heightMapPath, GLuint texId)
+Terrain::Terrain(GLuint size, string heightMapPath, GLuint texId)
 	: m_vertex_countx(256), m_vertex_countz(256), m_heights(m_vertex_countz*m_vertex_countx, 0) {
 
-	this->m_size = 1600;
+	this->m_size = size;
 	this->m_max_height = 100;
 	this->m_max_pcolor_value = 256 * 256 * 256;
 	
 	this->m_texId = texId;
-
-	this->m_x = gridX * this->m_size;
-	this->m_z = gridZ * this->m_size;
 
 	this->generateTerrain(heightMapPath);
 }
@@ -31,6 +30,7 @@ void Terrain::generateTerrain(string heightMapPath) {
 
 	int width, height, bytesPerPixel;
 	unsigned char* data = stbi_load(heightMapPath.c_str(), &width, &height, &bytesPerPixel, 3);
+	unsigned char(*pixels)[256][3] = (unsigned char(*)[256][3]) data;
 	this->m_vertex_countx = heightMapPath == "" ? this->m_vertex_countx : width;
 	this->m_vertex_countz = heightMapPath == "" ? this->m_vertex_countz : height;
 
@@ -50,12 +50,12 @@ void Terrain::generateTerrain(string heightMapPath) {
 			int ptrh = pointerZ + j;
 			// position
 			p[ptr + 0] = (GLfloat)j / (m_vertex_countx - 1) * m_size;
-			GLfloat height = heightMapPath == "" ? 0.0f : this->computeHeight(i, j, data);
+			GLfloat height = heightMapPath == "" ? 0.0f : this->computeHeight(i, j, pixels);
 			this->m_heights[ptrh] = height;
 			p[ptr + 1] = height;
 			p[ptr + 2] = (GLfloat)i / (m_vertex_countz - 1) * m_size;
 			// normal
-			vec3 normal = heightMapPath == "" ? vec3(0.0f, 1.0f, 0.0f) : this->computeNormal(i, j, data);
+			vec3 normal = heightMapPath == "" ? vec3(0.0f, 1.0f, 0.0f) : this->computeNormal(i, j, pixels);
 			n[ptr + 0] = normal.x;
 			n[ptr + 1] = normal.y;
 			n[ptr + 2] = normal.z;
@@ -140,14 +140,17 @@ float Terrain::baryCentric(vec3 p1, vec3 p2, vec3 p3, vec2 pos) {
 
 
 
-float Terrain::computeHeight(int z, int x, unsigned char* pixels) {
+float Terrain::computeHeight(int z, int x, unsigned char(*pixels)[256][3]) {
 
 	if (z < 0 || z >= m_vertex_countz || x < 0 || x >= m_vertex_countx) return 0;
 
-	int k = z * x * 3 + x * 3;
-	float r = (float)pixels[k + 0];
-	float g = (float)pixels[k + 1];
-	float b = (float)pixels[k + 2];
+	//int k = z * x * 3 + x * 3;
+	//float r = (float)pixels[k + 0];
+	//float g = (float)pixels[k + 1];
+	//float b = (float)pixels[k + 2];
+	float r = (float)pixels[z][x][0];
+	float g = (float)pixels[z][x][1];
+	float b = (float)pixels[z][x][2];
 
 	float hei = ((r * 256 + g) * 256 + b);
 	hei /= this->m_max_pcolor_value;
@@ -157,7 +160,7 @@ float Terrain::computeHeight(int z, int x, unsigned char* pixels) {
 	
 }
 
-vec3 Terrain::computeNormal(int z, int x, unsigned char* pixels) {
+vec3 Terrain::computeNormal(int z, int x, unsigned char(*pixels)[256][3]) {
 	float heightL = computeHeight(z - 1, x, pixels);
 	float heightR = computeHeight(z + 1, x, pixels);
 	float heightU = computeHeight(z, x - 1, pixels);
@@ -170,4 +173,8 @@ vec3 Terrain::computeNormal(int z, int x, unsigned char* pixels) {
 
 GLuint Terrain::getTextureId() {
 	return this->m_texId;
+}
+
+GLuint Terrain::getSize() {
+	return this->m_size;
 }
