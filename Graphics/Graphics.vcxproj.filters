@@ -147,9 +147,6 @@
     <ClInclude Include="Terrain.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="MultiTexTerrain.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -228,9 +225,6 @@
       <Filter>Source Files\scenes</Filter>
     </ClCompile>
     <ClCompile Include="Terrain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MultiTexTerrain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -317,6 +311,12 @@
       <Filter>Source Files\medias</Filter>
     </None>
     <None Include="medias\terrainShader.frag">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\terrainMtShader.vert">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\terrainMtShader.frag">
       <Filter>Source Files\medias</Filter>
     </None>
   </ItemGroup>

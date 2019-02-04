@@ -166,7 +166,6 @@
     <ClInclude Include="imgui\stb_rect_pack.h" />
     <ClInclude Include="imgui\stb_textedit.h" />
     <ClInclude Include="imgui\stb_truetype.h" />
-    <ClInclude Include="MultiTexTerrain.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
@@ -200,7 +199,6 @@
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_impl_glfw_gl3.cpp" />
-    <ClCompile Include="MultiTexTerrain.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="scenes\SceneBloom.cpp" />
     <ClCompile Include="scenes\SceneShadowMap.cpp" />
@@ -248,6 +246,8 @@
     <None Include="medias\shadowMapShader.vert" />
     <None Include="medias\skyboxShader.frag" />
     <None Include="medias\skyboxShader.vert" />
+    <None Include="medias\terrainMtShader.frag" />
+    <None Include="medias\terrainMtShader.vert" />
     <None Include="medias\terrainShader.frag" />
     <None Include="medias\terrainShader.vert" />
     <None Include="medias\toonShader.frag" />

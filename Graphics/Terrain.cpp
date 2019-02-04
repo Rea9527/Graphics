@@ -14,14 +14,13 @@ Terrain::Terrain() : m_vertex_countx(256), m_vertex_countz(256), m_heights(m_ver
 	this->generateTerrain();
 }
 
-Terrain::Terrain(GLuint size, string heightMapPath, GLuint texId)
+Terrain::Terrain(GLuint size, string heightMapPath, bool multiTex)
 	: m_vertex_countx(256), m_vertex_countz(256), m_heights(m_vertex_countz*m_vertex_countx, 0) {
-
 	this->m_size = size;
 	this->m_max_height = 100;
 	this->m_max_pcolor_value = 256 * 256 * 256;
-	
-	this->m_texId = texId;
+
+	this->m_multiTex = multiTex;
 
 	this->generateTerrain(heightMapPath);
 }
@@ -161,12 +160,12 @@ float Terrain::computeHeight(int z, int x, unsigned char(*pixels)[256][3]) {
 }
 
 vec3 Terrain::computeNormal(int z, int x, unsigned char(*pixels)[256][3]) {
-	float heightL = computeHeight(z - 1, x, pixels);
-	float heightR = computeHeight(z + 1, x, pixels);
-	float heightU = computeHeight(z, x - 1, pixels);
-	float heightD = computeHeight(z, x + 1, pixels);
+	float heightL = computeHeight(z, x-1, pixels);
+	float heightR = computeHeight(z, x+1, pixels);
+	float heightU = computeHeight(z-1, x, pixels);
+	float heightD = computeHeight(z+1, x, pixels);
 
-	glm::vec3 normal = glm::vec3(heightD - heightU, 2.0f, heightL - heightR);
+	glm::vec3 normal = glm::vec3(heightL - heightR, 2.0f, heightD - heightU);
 	normal = glm::normalize(normal);
 	return normal;
 }

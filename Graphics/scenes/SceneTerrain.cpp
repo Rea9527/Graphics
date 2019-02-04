@@ -2,10 +2,10 @@
 #include "SceneTerrain.h"
 
 
-SceneTerrain::SceneTerrain() : m_terrain(1200, "./medias/terrain/heightMap.jpg"), m_teapot(20, mat4(1.0f)), m_sphere(2.0, 50, 50),
+SceneTerrain::SceneTerrain() : m_terrain(1200, "./medias/terrain/heightMap.png", true), m_teapot(20, mat4(1.0f)), m_sphere(2.0, 50, 50),
 							prog("terrainShader") { }
 
-SceneTerrain::SceneTerrain(int w, int h) : Scene(w, h), m_terrain(1200, "./medias/terrain/heightMap.jpg"), m_teapot(20, mat4(1.0f)), m_sphere(2.0, 50, 50),
+SceneTerrain::SceneTerrain(int w, int h) : Scene(w, h), m_terrain(1200, "./medias/terrain/heightMap.png", true), m_teapot(20, mat4(1.0f)), m_sphere(2.0, 50, 50),
 							prog("terrainShader") { }
 
 
@@ -19,7 +19,20 @@ void SceneTerrain::initScene() {
 
 	this->prog.use();
 	this->prog.setUniform("Light.Direction", vec4(1.0f, -1.0f, 0.0f, 1.0f));
-	this->prog.setUniform("Light.Intensity", vec3(0.7f, 0.7f, 0.7f));
+	this->prog.setUniform("Light.Intensity", vec3(0.5f, 0.5f, 0.5f));
+
+	// set textures
+	glActiveTexture(GL_TEXTURE0);
+	Texture::loadTexture("./medias/terrain/sand1024.jpg");
+	glActiveTexture(GL_TEXTURE1);
+	Texture::loadTexture("./medias/terrain/flowers.png");
+	glActiveTexture(GL_TEXTURE2);
+	Texture::loadTexture("./medias/terrain/mud.png");
+	glActiveTexture(GL_TEXTURE3);
+	Texture::loadTexture("./medias/terrain/path.png");
+	glActiveTexture(GL_TEXTURE4);
+	Texture::loadTexture("./medias/terrain/blendMap.png");
+
 	
 }
 
@@ -32,18 +45,20 @@ void SceneTerrain::render() {
 	glClearColor(0.5, 0.5, 0.5, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 	this->drawScene();
 	
 }
 
 void SceneTerrain::drawScene() {
 	this->prog.use();
-	this->prog.setUniform("Material.Ka", vec3(0.5f, 0.5f, 0.5f));
+	this->prog.setUniform("Material.Ka", vec3(0.3f, 0.3f, 0.3f));
 	this->prog.setUniform("Material.Ks", vec3(0.0f, 0.0f, 0.0f));
-	this->prog.setUniform("Material.Shininess", 50.0f);
+	this->prog.setUniform("Material.Shininess", 10.0f);
 
 	// render terrain
-	this->prog.setUniform("Material.Kd", vec3(0.5f, 0.2f, 0.2f));
+	this->prog.setUniform("Material.Kd", vec3(0.4f, 0.4f, 0.4f));
 	this->model = glm::translate(glm::mat4(1.0f), vec3(-800, 0, -800));
 	this->setMatrices(prog.getName());
 	this->m_terrain.render();
@@ -71,8 +86,8 @@ void SceneTerrain::setMatrices(string name) {
 void SceneTerrain::compileAndLinkShaders() {
 
 	try {
-		this->prog.compileShader("./medias/terrainShader.vert", GLSLShader::VERTEX);
-		this->prog.compileShader("./medias/terrainShader.frag", GLSLShader::FRAGMENT);
+		this->prog.compileShader("./medias/terrainMtShader.vert", GLSLShader::VERTEX);
+		this->prog.compileShader("./medias/terrainMtShader.frag", GLSLShader::FRAGMENT);
 		this->prog.link();
 		this->programsList.insert(std::pair<string, ShaderProgram*>(this->prog.getName(), &(this->prog)));
 	}

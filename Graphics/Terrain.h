@@ -16,7 +16,7 @@ class Terrain : public TriangleMesh {
 public:
 	
 	Terrain();
-	Terrain(GLuint size, string heightMapPath = "", GLuint texId = -1);
+	Terrain(GLuint size, string heightMapPath = "", bool multiTex = false);
 	
 
 	virtual GLfloat getHeight(GLfloat worldX, GLfloat worldZ);
@@ -36,6 +36,10 @@ protected:
 	GLint m_max_height;
 	// 4. Max pixel color value of height map (0-256, RGB, then max = 256 * 256 * 256), for generating the heights from height map
 	GLint m_max_pcolor_value;
+
+	// multi-textures terrain
+	bool m_multiTex;
+	GLuint rTexId, gTexId, bTexId, bgTexId, blendMapId;
 	
 	// heights generated from height map
 	vector<GLfloat> m_heights;
