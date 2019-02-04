@@ -18,16 +18,16 @@ void SceneTerrain::initScene() {
 	camera->init(glm::vec3(0.0, 80.0, 20.0), glm::vec3(0, 1.0, 0), -90, 0);
 
 	this->prog.use();
-	this->prog.setUniform("Light.Direction", vec4(1.0f, -1.0f, 0.0f, 1.0f));
-	this->prog.setUniform("Light.Intensity", vec3(0.5f, 0.5f, 0.5f));
+	this->prog.setUniform("Light.Position", vec4(100.0f, 200.0f, 100.0f, 1.0f));
+	this->prog.setUniform("Light.Intensity", vec3(0.9f, 0.9f, 0.9f));
 
 	// set textures
 	glActiveTexture(GL_TEXTURE0);
-	Texture::loadTexture("./medias/terrain/sand1024.jpg");
-	glActiveTexture(GL_TEXTURE1);
 	Texture::loadTexture("./medias/terrain/flowers.png");
-	glActiveTexture(GL_TEXTURE2);
+	glActiveTexture(GL_TEXTURE1);
 	Texture::loadTexture("./medias/terrain/mud.png");
+	glActiveTexture(GL_TEXTURE2);
+	Texture::loadTexture("./medias/terrain/sand.jpg");
 	glActiveTexture(GL_TEXTURE3);
 	Texture::loadTexture("./medias/terrain/path.png");
 	glActiveTexture(GL_TEXTURE4);
@@ -53,12 +53,12 @@ void SceneTerrain::render() {
 
 void SceneTerrain::drawScene() {
 	this->prog.use();
-	this->prog.setUniform("Material.Ka", vec3(0.3f, 0.3f, 0.3f));
+	this->prog.setUniform("Material.Ka", vec3(0.5f, 0.5f, 0.5f));
 	this->prog.setUniform("Material.Ks", vec3(0.0f, 0.0f, 0.0f));
-	this->prog.setUniform("Material.Shininess", 10.0f);
+	this->prog.setUniform("Material.Shininess", 1.0f);
 
 	// render terrain
-	this->prog.setUniform("Material.Kd", vec3(0.4f, 0.4f, 0.4f));
+	this->prog.setUniform("Material.Kd", vec3(0.7f, 0.7f, 0.7f));
 	this->model = glm::translate(glm::mat4(1.0f), vec3(-800, 0, -800));
 	this->setMatrices(prog.getName());
 	this->m_terrain.render();

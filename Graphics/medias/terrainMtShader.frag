@@ -5,7 +5,7 @@ layout (location = 1) in vec3 Normal;
 layout (location = 2) in vec2 TexCoord;
 
 uniform struct LightInfo {
-	vec4 Direction;
+	vec4 Position;
 	vec3 Intensity;
 
 } Light;
@@ -44,16 +44,17 @@ vec4 blend() {
 
 
 vec3 ads( ) {
-    vec3 s = normalize( vec3(-Light.Direction));
+    vec3 s = normalize( vec3(Light.Position));
     vec3 v = normalize(vec3(-Position));
     vec3 h = normalize( v + s );
 
     return
         Light.Intensity * (Material.Ka +
-						  Material.Kd * max( dot(s, Normal), 0.0 ) +
-						 Material. Ks * pow( max( dot(h, Normal), 0.0 ), Material.Shininess ) );
+						   Material.Kd * max( dot(s, Normal), 0.0 ) +
+						   Material.Ks * pow( max( dot(h, Normal), 0.0 ), Material.Shininess ) );
+
 }
 
 void main() {
-    FragColor = blend() + vec4(ads(), 1.0);
+    FragColor = blend() * vec4(ads(), 1.0);
 }
