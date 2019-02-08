@@ -27,10 +27,6 @@ ShaderProgram::ShaderProgram() : handle(0), linked(false) {}
 
 ShaderProgram::ShaderProgram(string pname) : handle(0), linked(false), name(pname) { }
 //
-//ShaderProgram::ShaderProgram(ShaderProgram &prog) {
-//	this->handle = prog.handle;
-//	this->linked = prog.linked;
-//}
 
 ShaderProgram::~ShaderProgram() {
 	if (this->handle == 0) return;

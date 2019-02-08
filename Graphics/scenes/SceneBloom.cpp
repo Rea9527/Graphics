@@ -89,7 +89,7 @@ void SceneBloom::initScene() {
 	this->progSkybox.use();
 	// bind cubemap texture
 	glActiveTexture(GL_TEXTURE0);
-	Texture::loadCubeMap("./medias/textures/cubemap_night/night");
+	Loader::loadCubeMap("./medias/textures/cubemap_night/night");
 
 	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }

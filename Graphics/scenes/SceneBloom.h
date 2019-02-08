@@ -6,7 +6,7 @@
 #include "../Camera.h"
 #include "../shaderProgram.h"
 #include "../BufferObject.h"
-#include "../Texture.h"
+#include "../Loader.h"
 #include "../SkyBox.h"
 
 #include "../teapot.h"

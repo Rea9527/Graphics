@@ -23,15 +23,15 @@ void SceneTerrain::initScene() {
 
 	// set textures
 	glActiveTexture(GL_TEXTURE0);
-	Texture::loadTexture("./medias/terrain/flowers.png");
+	Loader::loadTexture("./medias/terrain/flowers.png");
 	glActiveTexture(GL_TEXTURE1);
-	Texture::loadTexture("./medias/terrain/mud.png");
+	Loader::loadTexture("./medias/terrain/mud.png");
 	glActiveTexture(GL_TEXTURE2);
-	Texture::loadTexture("./medias/terrain/sand.jpg");
+	Loader::loadTexture("./medias/terrain/sand.jpg");
 	glActiveTexture(GL_TEXTURE3);
-	Texture::loadTexture("./medias/terrain/path.png");
+	Loader::loadTexture("./medias/terrain/path.png");
 	glActiveTexture(GL_TEXTURE4);
-	Texture::loadTexture("./medias/terrain/blendMap.png");
+	Loader::loadTexture("./medias/terrain/blendMap.png");
 
 	
 }

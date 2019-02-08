@@ -5,7 +5,7 @@
 
 #include "../Scene.h"
 #include "../GLGUI.h"
-#include "../Texture.h"
+#include "../Loader.h"
 #include "../Plane.h"
 
 #include "../shaderProgram.h"

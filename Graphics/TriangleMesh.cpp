@@ -84,12 +84,13 @@ void TriangleMesh::render() const {
 	glBindVertexArray(0);
 }
 
-void TriangleMesh::renderLines() const {
+
+void TriangleMesh::renderInstances(GLuint count) const {
 
 	if (this->vao == 0) return;
 
 	glBindVertexArray(this->vao);
-	glDrawElements(GL_LINES, this->vertex_num, GL_UNSIGNED_INT, 0);
+	glDrawElementsInstanced(GL_TRIANGLES, GLsizei(this->vertex_num), GL_UNSIGNED_INT, 0, count);
 	glBindVertexArray(0);
 }
 

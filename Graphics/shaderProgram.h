@@ -40,14 +40,12 @@ private:
 
 	string getExtension(const char* filename);
 
-	ShaderProgram(const ShaderProgram &pro) {}
 	ShaderProgram &operator=(const ShaderProgram &pro) { return *this; }
 
 
 public:
 	ShaderProgram();
 	ShaderProgram(string name);
-	//ShaderProgram(ShaderProgram &prog);
 	~ShaderProgram();
 
 	void compileShader(const char* filename);

@@ -13,7 +13,7 @@ class TriangleMesh : public Drawable {
 public:
 	virtual ~TriangleMesh();
 	virtual void render() const;
-	virtual void renderLines() const;
+	virtual void renderInstances(GLuint count) const;
 	GLuint getVAO() { return this->vao; }
 
 protected:

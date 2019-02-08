@@ -4,7 +4,7 @@
 #include "../Camera.h"
 #include "../shaderProgram.h"
 #include "../BufferObject.h"
-#include "../Texture.h"
+#include "../Loader.h"
 #include "../Frustum.h"
 
 #include "../teapot.h"
