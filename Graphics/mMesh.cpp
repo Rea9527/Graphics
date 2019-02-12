@@ -1,16 +1,16 @@
 
 #include "mMesh.h"
 
-mMesh::mMesh(vector<GLfloat> *pos, vector<GLfloat> *normals, vector<GLfloat> *texcoords, 
-			vector<GLuint> *indices, vector<Texture> textures, vector<Material> materials)
+mMesh::mMesh(vector<GLfloat> pos, vector<GLfloat> normals, vector<GLfloat> texcoords, 
+			vector<GLuint> indices, vector<Texture> textures, vector<Material> materials)
 				: m_textures(textures), m_materials(materials) {
 
-	this->initBuffers(indices, pos, normals, texcoords);
+	this->initBuffers(&indices, &pos, &normals, &texcoords);
 	
 	
 }
 
-// TODO materials and textures
+// materials and textures
 void mMesh::prepare(ShaderProgram prog) const {
 	GLuint diffuseNr = 1;
 	GLuint specularNr = 1;

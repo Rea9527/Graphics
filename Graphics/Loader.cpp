@@ -8,14 +8,6 @@ GLuint Loader::loadTexture(const std::string & fName) {
 	int width, height, bytesPerPix;
 	unsigned char * data = Loader::loadPixels(fName, width, height, bytesPerPix);
 
-	GLenum format = 3;
-	if (bytesPerPix == 1)
-		format = GL_RED;
-	else if (bytesPerPix == 3)
-		format = GL_RGB;
-	else if (bytesPerPix == 4)
-		format = GL_RGBA;
-
 
 	if (data != nullptr) {
 		GLuint tex;

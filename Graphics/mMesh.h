@@ -32,7 +32,7 @@ public:
 	vector<Texture> m_textures;
 	vector<Material> m_materials;
 
-	mMesh(vector<GLfloat> *pos, vector<GLfloat> *normals, vector<GLfloat> *texcoords, vector<GLuint> *indices, vector<Texture> textures, vector<Material> materials);
+	mMesh(vector<GLfloat> pos, vector<GLfloat> normals, vector<GLfloat> texcoords, vector<GLuint> indices, vector<Texture> textures, vector<Material> materials);
 
 	void prepare(ShaderProgram prog) const;
 	void finish() const;

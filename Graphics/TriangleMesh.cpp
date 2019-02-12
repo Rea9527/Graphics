@@ -96,7 +96,7 @@ void TriangleMesh::renderInstances(GLuint count) const {
 
 
 TriangleMesh::~TriangleMesh() {
-	this->deleteBuffers();
+	//this->deleteBuffers();
 }
 
 

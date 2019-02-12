@@ -337,5 +337,11 @@
     <None Include="medias\terrainMtShader.frag">
       <Filter>Source Files\medias</Filter>
     </None>
+    <None Include="medias\modelShader.vert">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\modelShader.frag">
+      <Filter>Source Files\medias</Filter>
+    </None>
   </ItemGroup>
 </Project>

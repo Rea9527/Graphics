@@ -25,6 +25,41 @@ Terrain::Terrain(GLuint size, string heightMapPath, bool multiTex)
 	this->generateTerrain(heightMapPath);
 }
 
+void Terrain::render() const {
+
+	if (this->vao == 0) return;
+
+	if (this->m_multiTex == true) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, this->bgTexId);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, this->rTexId);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, this->gTexId);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, this->bTexId);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, this->blendMapId);
+	}
+
+	glBindVertexArray(this->vao);
+	glDrawElements(GL_TRIANGLES, this->vertex_num, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+
+	if (this->m_multiTex == true) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+}
+
 void Terrain::generateTerrain(string heightMapPath) {
 
 	int width, height, bytesPerPixel;
@@ -176,4 +211,29 @@ GLuint Terrain::getTextureId() {
 
 GLuint Terrain::getSize() {
 	return this->m_size;
+}
+
+
+void Terrain::setMultiTexIds(GLuint bgId, GLuint rId, GLuint gId, GLuint bId, GLuint blendId) {
+	this->bgTexId = bgId;
+	this->rTexId = rId;
+	this->gTexId = gId;
+	this->bTexId = bId;
+	this->blendMapId = blendId;
+}
+
+GLuint Terrain::_bgTexId() {
+	return this->bgTexId;
+}
+GLuint Terrain::_rTexId() {
+	return this->rTexId;
+}
+GLuint Terrain::_gTexId() {
+	return this->gTexId;
+}
+GLuint Terrain::_bTexId() {
+	return this->bTexId;
+}
+GLuint Terrain::_blendMapId() {
+	return this->blendMapId;
 }

@@ -18,11 +18,19 @@ public:
 	Terrain();
 	Terrain(GLuint size, string heightMapPath = "", bool multiTex = false);
 	
+	void render() const;
 
 	virtual GLfloat getHeight(GLfloat worldX, GLfloat worldZ);
 
 	virtual GLuint getSize();
 	
+	void setMultiTexIds(GLuint bgId, GLuint rId, GLuint gId, GLuint bId, GLuint blendId);
+
+	GLuint _bgTexId();
+	GLuint _rTexId();
+	GLuint _gTexId();
+	GLuint _bTexId();
+	GLuint _blendMapId();
 	GLuint getTextureId();
 
 protected:

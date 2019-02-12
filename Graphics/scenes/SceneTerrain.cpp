@@ -3,10 +3,12 @@
 
 
 SceneTerrain::SceneTerrain() : m_terrain(1200, "./medias/terrain/heightMap.png", true), m_teapot(20, mat4(1.0f)), m_sphere(2.0, 50, 50),
-							prog("terrainShader") { }
+								m_gumTree("./medias/trees/gum_tree1.obj"),
+								progModel("modelShader"), prog("terrainShader") { }
 
 SceneTerrain::SceneTerrain(int w, int h) : Scene(w, h), m_terrain(1200, "./medias/terrain/heightMap.png", true), m_teapot(20, mat4(1.0f)), m_sphere(2.0, 50, 50),
-							prog("terrainShader") { }
+								m_gumTree("./medias/trees/gum_tree1.obj"),
+								progModel("modelShader"), prog("terrainShader") { }
 
 
 void SceneTerrain::initScene() {
@@ -21,18 +23,14 @@ void SceneTerrain::initScene() {
 	this->prog.setUniform("Light.Position", vec4(100.0f, 200.0f, 100.0f, 1.0f));
 	this->prog.setUniform("Light.Intensity", vec3(0.9f, 0.9f, 0.9f));
 
+	GLuint bgid, rid, gid, bid, blendid;
 	// set textures
-	glActiveTexture(GL_TEXTURE0);
-	Loader::loadTexture("./medias/terrain/flowers.png");
-	glActiveTexture(GL_TEXTURE1);
-	Loader::loadTexture("./medias/terrain/mud.png");
-	glActiveTexture(GL_TEXTURE2);
-	Loader::loadTexture("./medias/terrain/sand.jpg");
-	glActiveTexture(GL_TEXTURE3);
-	Loader::loadTexture("./medias/terrain/path.png");
-	glActiveTexture(GL_TEXTURE4);
-	Loader::loadTexture("./medias/terrain/blendMap.png");
-
+	bgid = Loader::loadTexture("./medias/terrain/flowers.png");
+	rid = Loader::loadTexture("./medias/terrain/mud.png");
+	gid = Loader::loadTexture("./medias/terrain/sand.jpg");
+	bid = Loader::loadTexture("./medias/terrain/path.png");
+	blendid = Loader::loadTexture("./medias/terrain/blendMap.png");
+	this->m_terrain.setMultiTexIds(bgid, rid, gid, bid, blendid);
 	
 }
 
@@ -63,7 +61,12 @@ void SceneTerrain::drawScene() {
 	this->setMatrices(prog.getName());
 	this->m_terrain.render();
 
-	// render 
+	// render gum tree
+	this->progModel.use();
+	this->model = glm::translate(glm::mat4(1.0f), vec3(0.0, 50.0, 0.0));
+	this->setMatrices(progModel.getName());
+	this->m_gumTree.render(this->progModel);
+
 
 }
 
@@ -90,6 +93,11 @@ void SceneTerrain::compileAndLinkShaders() {
 		this->prog.compileShader("./medias/terrainMtShader.frag", GLSLShader::FRAGMENT);
 		this->prog.link();
 		this->programsList.insert(std::pair<string, ShaderProgram*>(this->prog.getName(), &(this->prog)));
+
+		this->progModel.compileShader("./medias/modelShader.vert", GLSLShader::VERTEX);
+		this->progModel.compileShader("./medias/modelShader.frag", GLSLShader::FRAGMENT);
+		this->progModel.link();
+		this->programsList.insert(std::pair<string, ShaderProgram*>(this->progModel.getName(), &(this->progModel)));
 	}
 	catch (ShaderProgramException e) {
 		cerr << e.what() << endl;

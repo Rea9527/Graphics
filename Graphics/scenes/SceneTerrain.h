@@ -9,6 +9,7 @@
 #include "../teapot.h"
 #include "../Sphere.h"
 #include "../Plane.h"
+#include "../Model.h"
 
 #include "../GLGUI.h"
 #include "../GLUtils.h"
@@ -32,11 +33,13 @@ public:
 private:
 
 	map<string, ShaderProgram*> programsList;
-	ShaderProgram prog;
+	ShaderProgram prog, progModel;
+
 
 	Terrain m_terrain;
 	Sphere m_sphere;
 	Teapot m_teapot;
+	Model m_gumTree;
 
 	// func
 	void compileAndLinkShaders();

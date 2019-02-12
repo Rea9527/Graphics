@@ -92,6 +92,7 @@ mMesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 
 		aiColor4D color;
 		Material material;
+		material.shininess = 32.0f;
 		if (AI_SUCCESS == aiGetMaterialColor(AiMaterial, AI_MATKEY_COLOR_AMBIENT, &color)) {
 			material.ambient.r = color.r;
 			material.ambient.g = color.g;
@@ -131,7 +132,7 @@ mMesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 		textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 	}
 
-	return mMesh(&p, &n, &tc, &el, textures, materials);
+	return mMesh(p, n, tc, el, textures, materials);
 }
 
 vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName) {
