@@ -45,7 +45,7 @@ void SceneCloth::initScene() {
 	this->progCloth.setUniform("RestLenDiag", sqrtf(dx * dx + dy * dy));
 
 	glActiveTexture(GL_TEXTURE0);
-	Loader::loadTexture("./medias/textures/me_textile.png");
+	Loader::loadTexture("./medias/textures/me_textile.png", GL_CLAMP_TO_EDGE);
 }
 
 void SceneCloth::initBuffers() {

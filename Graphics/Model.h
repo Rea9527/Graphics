@@ -18,8 +18,8 @@ class Model {
 public:
 	Model(string path);
 
-	void render(ShaderProgram prog) const;
-	void renderInstances(ShaderProgram prog, GLuint count) const;
+	void render(GLuint handle) const;
+	void renderInstances(GLuint handle, GLuint count) const;
 
 private:
 	vector<mMesh> m_meshes;

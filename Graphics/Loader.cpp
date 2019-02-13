@@ -4,7 +4,7 @@
 #include "stb/stb_image.h"
 
 /*static*/
-GLuint Loader::loadTexture(const std::string & fName) {
+GLuint Loader::loadTexture(const std::string & fName, GLint wrapMode) {
 	int width, height, bytesPerPix;
 	unsigned char * data = Loader::loadPixels(fName, width, height, bytesPerPix);
 
@@ -23,8 +23,8 @@ GLuint Loader::loadTexture(const std::string & fName) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
 
 		stbi_image_free(data);
 		return tex;

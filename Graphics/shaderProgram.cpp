@@ -186,6 +186,7 @@ void ShaderProgram::use() {
 	}
 
 	glUseProgram(this->handle);
+	
 }
 
 void ShaderProgram::findUniformLocations() {

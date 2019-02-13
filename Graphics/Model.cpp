@@ -5,19 +5,19 @@ Model::Model(string path) {
 	this->loadModel(path);
 }
 
-void Model::render(ShaderProgram prog) const {
+void Model::render(GLuint handle) const {
 
 	for (GLuint i = 0; i < this->m_meshes.size(); i++) {
-		this->m_meshes[i].prepare(prog);
+		this->m_meshes[i].prepare(handle);
 		this->m_meshes[i].render();
 		this->m_meshes[i].finish();
 	}
 }
 
-void Model::renderInstances(ShaderProgram prog, GLuint count) const {
+void Model::renderInstances(GLuint handle, GLuint count) const {
 
 	for (GLuint i = 0; i < this->m_meshes.size(); i++) {
-		this->m_meshes[i].prepare(prog);
+		this->m_meshes[i].prepare(handle);
 		this->m_meshes[i].renderInstances(count);
 		this->m_meshes[i].finish();
 	}
@@ -51,30 +51,33 @@ void Model::processNode(aiNode *node, const aiScene *scene) {
 }
 
 mMesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
-	vector<GLfloat> p;
-	vector<GLfloat> n;
-	vector<GLfloat> tc;
-	vector<GLuint> el;
+	vector<GLfloat> p(3 * mesh->mNumVertices);
+	vector<GLfloat> n(3 * mesh->mNumVertices);
+	vector<GLfloat> tc(2 * mesh->mNumVertices);
+	vector<GLuint> el(6 * (mesh->mNumVertices-1) * (mesh->mNumVertices - 1));
 	vector<Material> materials;
 	vector<Texture> textures;
 
+	GLuint vindex = 0;
 	for (GLuint i = 0; i < mesh->mNumVertices; i++) {
+		GLuint j = i * 3;
 		// position
-		p.push_back(mesh->mVertices[i].x);
-		p.push_back(mesh->mVertices[i].y);
-		p.push_back(mesh->mVertices[i].z);
+		p[j + 0] = mesh->mVertices[i].x;
+		p[j + 1] = mesh->mVertices[i].y;
+		p[j + 2] = mesh->mVertices[i].z;
 		// normal
-		n.push_back(mesh->mNormals[i].x);
-		n.push_back(mesh->mNormals[i].y);
-		n.push_back(mesh->mNormals[i].z);
+		n[j + 0] = mesh->mNormals[i].x;
+		n[j + 1] = mesh->mNormals[i].y;
+		n[j + 2] = mesh->mNormals[i].z;
 		// texcoords
+		j = i * 2;
 		if (mesh->mTextureCoords[0]) {
-			tc.push_back(mesh->mTextureCoords[0][i].x);
-			tc.push_back(mesh->mTextureCoords[0][i].y);
+			tc[j + 0] = mesh->mTextureCoords[0][i].x;
+			tc[j + 1] = mesh->mTextureCoords[0][i].y;
 		}
 		else {
-			tc.push_back(0.0f);
-			tc.push_back(0.0f);
+			tc[j + 0] = 0.0f;
+			tc[j + 1] = 0.0f;
 		}
 	}
 
@@ -153,7 +156,7 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type,
 		if (!skip) {
 			Texture texture;
 			string spath = string(path.C_Str());
-			texture.id = Loader::loadTexture(this->m_dir + '/' + spath);
+			texture.id = Loader::loadTexture(this->m_dir + '/' + spath, GL_REPEAT);
 			texture.type = typeName;
 			texture.path = spath;
 			textures.push_back(texture);

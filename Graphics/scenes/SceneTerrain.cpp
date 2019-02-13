@@ -23,13 +23,17 @@ void SceneTerrain::initScene() {
 	this->prog.setUniform("Light.Position", vec4(100.0f, 200.0f, 100.0f, 1.0f));
 	this->prog.setUniform("Light.Intensity", vec3(0.9f, 0.9f, 0.9f));
 
+	this->progModel.use();
+	this->prog.setUniform("Light.Position", vec4(100.0f, 200.0f, 100.0f, 1.0f));
+	this->prog.setUniform("Light.Intensity", vec3(0.9f, 0.9f, 0.9f));
+
 	GLuint bgid, rid, gid, bid, blendid;
 	// set textures
-	bgid = Loader::loadTexture("./medias/terrain/flowers.png");
-	rid = Loader::loadTexture("./medias/terrain/mud.png");
-	gid = Loader::loadTexture("./medias/terrain/sand.jpg");
-	bid = Loader::loadTexture("./medias/terrain/path.png");
-	blendid = Loader::loadTexture("./medias/terrain/blendMap.png");
+	bgid = Loader::loadTexture("./medias/terrain/flowers.png", GL_REPEAT);
+	rid = Loader::loadTexture("./medias/terrain/mud.png", GL_REPEAT);
+	gid = Loader::loadTexture("./medias/terrain/sand.jpg", GL_REPEAT);
+	bid = Loader::loadTexture("./medias/terrain/path.png", GL_REPEAT);
+	blendid = Loader::loadTexture("./medias/terrain/blendMap.png", GL_REPEAT);
 	this->m_terrain.setMultiTexIds(bgid, rid, gid, bid, blendid);
 	
 }
@@ -50,6 +54,7 @@ void SceneTerrain::render() {
 }
 
 void SceneTerrain::drawScene() {
+	glDisable(GL_BLEND);
 	this->prog.use();
 	this->prog.setUniform("Material.Ka", vec3(0.5f, 0.5f, 0.5f));
 	this->prog.setUniform("Material.Ks", vec3(0.0f, 0.0f, 0.0f));
@@ -61,13 +66,15 @@ void SceneTerrain::drawScene() {
 	this->setMatrices(prog.getName());
 	this->m_terrain.render();
 
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	// render gum tree
 	this->progModel.use();
 	this->model = glm::translate(glm::mat4(1.0f), vec3(0.0, 50.0, 0.0));
 	this->setMatrices(progModel.getName());
-	this->m_gumTree.render(this->progModel);
-
-
+	this->m_gumTree.render(this->progModel.getHandle());
+	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
 
 void SceneTerrain::resize(int w, int h) {
@@ -98,6 +105,8 @@ void SceneTerrain::compileAndLinkShaders() {
 		this->progModel.compileShader("./medias/modelShader.frag", GLSLShader::FRAGMENT);
 		this->progModel.link();
 		this->programsList.insert(std::pair<string, ShaderProgram*>(this->progModel.getName(), &(this->progModel)));
+
+		GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 	}
 	catch (ShaderProgramException e) {
 		cerr << e.what() << endl;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "TriangleMesh.h"
-#include "shaderProgram.h"
 #include "Texture.h"
 
 #include <assimp/Importer.hpp>
@@ -34,7 +33,7 @@ public:
 
 	mMesh(vector<GLfloat> pos, vector<GLfloat> normals, vector<GLfloat> texcoords, vector<GLuint> indices, vector<Texture> textures, vector<Material> materials);
 
-	void prepare(ShaderProgram prog) const;
+	void prepare(GLuint handle) const;
 	void finish() const;
 
 };

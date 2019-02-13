@@ -7,6 +7,8 @@ using namespace std;
 #include <GL_CORE/gl_core_4_3.h>
 #include <GLFW/glfw3.h>
 
+#include "GLUtils.h"
+
 #include <glm/glm.hpp>
 
 
@@ -40,6 +42,7 @@ private:
 
 	string getExtension(const char* filename);
 
+	ShaderProgram(const ShaderProgram &pro) = delete;
 	ShaderProgram &operator=(const ShaderProgram &pro) { return *this; }
 
 

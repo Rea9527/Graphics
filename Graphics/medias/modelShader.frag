@@ -18,6 +18,7 @@ struct LightMaterial {
 };
 uniform LightMaterial Material;
 
+layout(binding=0) uniform sampler2D texture_diffuse1;
 
 layout( location = 0 ) out vec4 FragColor;
 
@@ -33,5 +34,7 @@ vec3 ads( ) {
 }
 
 void main() {
-    FragColor = vec4(ads(), 1.0);
+	vec4 texColor = texture(texture_diffuse1, TexCoord);
+    FragColor = texColor * vec4(ads(), 1.0);
+	//FragColor = vec4(1.0f);
 }
