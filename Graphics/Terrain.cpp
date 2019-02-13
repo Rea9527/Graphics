@@ -151,25 +151,25 @@ GLfloat Terrain::getHeight(GLfloat worldX, GLfloat worldZ) {
 
 float Terrain::baryCentric(vec3 p1, vec3 p2, vec3 p3, vec2 pos) {
 	// 1
-	GLfloat det = (p2.z - p3.z) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.z - p3.z);
-	GLfloat l1 = ((p2.z - p3.z) * (pos.x - p3.x) + (p3.x - p2.x) * (pos.y - p3.z)) / det;
-	GLfloat l2 = ((p3.z - p1.z) * (pos.x - p3.x) + (p1.x - p3.x) * (pos.y - p3.z)) / det;
-	GLfloat l3 = 1.0f - l1 - l2;
-	return l1 * p1.y + l2 * p2.y + l3 * p3.y;
+	//GLfloat det = (p2.z - p3.z) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.z - p3.z);
+	//GLfloat l1 = ((p2.z - p3.z) * (pos.x - p3.x) + (p3.x - p2.x) * (pos.y - p3.z)) / det;
+	//GLfloat l2 = ((p3.z - p1.z) * (pos.x - p3.x) + (p1.x - p3.x) * (pos.y - p3.z)) / det;
+	//GLfloat l3 = 1.0f - l1 - l2;
+	//return l1 * p1.y + l2 * p2.y + l3 * p3.y;
 
 	// 2
-	//vec2 v0 = vec2(p1.x - p3.x, p1.z - p3.z), v1 = vec2(p2.x - p3.x, p2.z - p3.z), v2 = vec2(pos.x - p3.x, pos.y - p3.z);
-	//GLfloat d00 = glm::dot(v0, v0);
-	//GLfloat d01 = glm::dot(v0, v1);
-	//GLfloat d11 = glm::dot(v1, v1);
-	//GLfloat d20 = glm::dot(v2, v0);
-	//GLfloat d21 = glm::dot(v2, v1);
-	//
-	//GLfloat denom = d00 * d11 + d01 * d01;
-	//GLfloat v = (d11 * d20 - d01 * d21) / denom;
-	//GLfloat w = (d00 * d21 - d01 * d20) / denom;
-	//GLfloat u = 1.0f - v - w;
-	//return u * p1.y + v * p2.y + w * p3.y;
+	vec2 v0 = vec2(p1.x - p3.x, p1.z - p3.z), v1 = vec2(p2.x - p3.x, p2.z - p3.z), v2 = vec2(pos.x - p3.x, pos.y - p3.z);
+	GLfloat d00 = glm::dot(v0, v0);
+	GLfloat d01 = glm::dot(v0, v1);
+	GLfloat d11 = glm::dot(v1, v1);
+	GLfloat d20 = glm::dot(v2, v0);
+	GLfloat d21 = glm::dot(v2, v1);
+	
+	GLfloat denom = d00 * d11 + d01 * d01;
+	GLfloat v = (d11 * d20 - d01 * d21) / denom;
+	GLfloat w = (d00 * d21 - d01 * d20) / denom;
+	GLfloat u = 1.0f - v - w;
+	return u * p1.y + v * p2.y + w * p3.y;
 }
 
 

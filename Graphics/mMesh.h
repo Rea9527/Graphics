@@ -36,4 +36,6 @@ public:
 	void prepare(GLuint handle) const;
 	void finish() const;
 
+	void mMesh::loadInstance(glm::mat4 *modelMatrixs, int count);
+
 };

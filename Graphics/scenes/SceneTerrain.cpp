@@ -20,12 +20,12 @@ void SceneTerrain::initScene() {
 	camera->init(glm::vec3(0.0, 80.0, 20.0), glm::vec3(0, 1.0, 0), -90, 0);
 
 	this->prog.use();
-	this->prog.setUniform("Light.Position", vec4(100.0f, 200.0f, 100.0f, 1.0f));
+	this->prog.setUniform("Light.Direction", vec4(-1.0f, -1.0f, -1.0f, 1.0f));
 	this->prog.setUniform("Light.Intensity", vec3(0.9f, 0.9f, 0.9f));
-
+	
 	this->progModel.use();
-	this->prog.setUniform("Light.Position", vec4(100.0f, 200.0f, 100.0f, 1.0f));
-	this->prog.setUniform("Light.Intensity", vec3(0.9f, 0.9f, 0.9f));
+	this->progModel.setUniform("Light.Direction", vec4(-1.0f, -1.0f, -1.0f, 1.0f));
+	this->progModel.setUniform("Light.Intensity", vec3(0.9f, 0.9f, 0.9f));
 
 	GLuint bgid, rid, gid, bid, blendid;
 	// set textures
@@ -36,6 +36,7 @@ void SceneTerrain::initScene() {
 	blendid = Loader::loadTexture("./medias/terrain/blendMap.png", GL_REPEAT);
 	this->m_terrain.setMultiTexIds(bgid, rid, gid, bid, blendid);
 	
+	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
 
 void SceneTerrain::update(float dt) {
@@ -44,12 +45,15 @@ void SceneTerrain::update(float dt) {
 }
 
 void SceneTerrain::render() {
+
 	glClearColor(0.5, 0.5, 0.5, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	this->drawScene();
+
+	this->renderGUI();
 	
 }
 
@@ -66,14 +70,15 @@ void SceneTerrain::drawScene() {
 	this->setMatrices(prog.getName());
 	this->m_terrain.render();
 
-
+	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	// render gum tree
 	this->progModel.use();
-	this->model = glm::translate(glm::mat4(1.0f), vec3(0.0, 50.0, 0.0));
+	this->model = glm::translate(glm::mat4(1.0f), vec3(0.0, this->m_terrain.getHeight(0.0, 0.0), 0.0));
 	this->setMatrices(progModel.getName());
 	this->m_gumTree.render(this->progModel.getHandle());
+
 	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
 
@@ -88,6 +93,7 @@ void SceneTerrain::setMatrices(string name) {
 	ShaderProgram* program = this->programsList[name];
 	glm::mat4 mv = this->view * this->model;
 	program->setUniform("ModelViewMatrix", mv);
+	program->setUniform("ModelMatrix", this->model);
 	program->setUniform("NormalMatrix",
 		glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]), glm::vec3(mv[2])));
 	program->setUniform("MVP", this->projection * mv);
@@ -115,5 +121,30 @@ void SceneTerrain::compileAndLinkShaders() {
 }
 
 void SceneTerrain::renderGUI() {
+
+	if (this->animating() == true) return;
+
+	ImGui_ImplGlfwGL3_NewFrame("Editor");
+
+	static float f = 0.0f;
+	static int counter = 0;
+	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+	string rate = "Frame Rate: " + to_string(ImGui::GetIO().Framerate);
+	ImGui::Begin("FPS:");
+	ImGui::Text("%.1f", ImGui::GetIO().Framerate);               // Display some text (you can use a format strings too)
+	//ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+	//ImGui::Checkbox("Another Window", &show_another_window);
+
+	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+	if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+		counter++;
+	ImGui::SameLine();
+	ImGui::Text("counter = %d", counter);
+	ImGui::End();
+
+	ImGui::Render();
 
 }

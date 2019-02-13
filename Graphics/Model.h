@@ -20,6 +20,7 @@ public:
 
 	void render(GLuint handle) const;
 	void renderInstances(GLuint handle, GLuint count) const;
+	void loadInstanceTranslationMat(glm::mat4 *modelMats, int count);
 
 private:
 	vector<mMesh> m_meshes;

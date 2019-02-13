@@ -5,7 +5,7 @@ layout (location = 1) in vec3 Normal;
 layout (location = 2) in vec2 TexCoord;
 
 uniform struct LightInfo {
-	vec4 Position;
+	vec4 Direction;
 	vec3 Intensity;
 
 } Light;
@@ -44,7 +44,7 @@ vec4 blend() {
 
 
 vec3 ads( ) {
-    vec3 s = normalize( vec3(Light.Position));
+    vec3 s = normalize( vec3(-Light.Direction));
     vec3 v = normalize(vec3(-Position));
     vec3 h = normalize( v + s );
 

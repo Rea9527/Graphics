@@ -23,6 +23,12 @@ void Model::renderInstances(GLuint handle, GLuint count) const {
 	}
 }
 
+void Model::loadInstanceTranslationMat(glm::mat4 *modelMats, int count) {
+	for (GLuint i = 0; i < this->m_meshes.size(); i++) {
+		this->m_meshes[i].loadInstance(modelMats, count);
+	}
+}
+
 void Model::loadModel(string path) {
 	Assimp::Importer importor;
 	const aiScene* scene = importor.ReadFile(path, aiProcess_FlipUVs | aiProcess_Triangulate);

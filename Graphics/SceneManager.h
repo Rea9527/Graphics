@@ -86,6 +86,9 @@ private:
 	GLFWwindow *window;
 	int frame_size_width, frame_size_height;
 
+	// GUI control
+	static bool GUI_shown;
+
 	//camera
 	static bool keys[1024];
 	static GLfloat deltaTime;
@@ -98,6 +101,14 @@ private:
 	void mainLoop(GLFWwindow* window, Scene &scene) {
 		while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)) {
 			//GLUtils::checkForOpenGLError(__FILE__, __LINE__);
+			if (this->GUI_shown == true) {
+				scene.animate(false);
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			}
+			else {
+				scene.animate(true);
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			}
 			glfwPollEvents();
 			updateMovement();
 			scene.update(float(glfwGetTime()));
@@ -107,9 +118,12 @@ private:
 	}
 
 	inline static void updateMovement() {
+		
 		GLfloat currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+
+		if (GUI_shown) return;
 
 		Camera* camera = Camera::getInstance();
 
@@ -128,6 +142,11 @@ private:
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, GLFW_TRUE);
 
+		if (key == GLFW_KEY_TAB) {
+			if (action == GLFW_PRESS)
+				GUI_shown = !GUI_shown;
+		}
+
 		if (action == GLFW_PRESS) {
 			keys[key] = true;
 		}
@@ -137,6 +156,7 @@ private:
 	}
 
 	inline static auto mouse_callback(GLFWwindow* window, double xpos, double ypos) -> void {
+
 		GLfloat offset_x, offset_y;
 		if (firstMouse) {
 			lastX = xpos;
@@ -148,10 +168,14 @@ private:
 		lastX = xpos;
 		lastY = ypos;
 
+		if (GUI_shown) return;
+
 		Camera* camera = Camera::getInstance();
 		camera->rotate(offset_x, offset_y);
 	}
 	inline static auto scroll_callback(GLFWwindow* window, double xoff, double yoff) -> void {
+		if (GUI_shown) return;
+
 		Camera* camera = Camera::getInstance();
 		camera->zoom(yoff);
 	}
@@ -159,6 +183,7 @@ private:
 
 };
 
+bool SceneManager::GUI_shown = false;
 
 // camera
 GLfloat SceneManager::deltaTime = 0.0f;

@@ -156,6 +156,9 @@
     <ClInclude Include="Loader.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="SceneShadowVolume.h">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -244,6 +247,9 @@
     </ClCompile>
     <ClCompile Include="Loader.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneShadowVolume.cpp">
+      <Filter>Source Files\scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -341,6 +347,9 @@
       <Filter>Source Files\medias</Filter>
     </None>
     <None Include="medias\modelShader.frag">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\modelInsShader.vert">
       <Filter>Source Files\medias</Filter>
     </None>
   </ItemGroup>
