@@ -159,6 +159,15 @@
     <ClInclude Include="SceneShadowVolume.h">
       <Filter>Source Files\scenes</Filter>
     </ClInclude>
+    <ClInclude Include="scenes\SceneDefer.h">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="SkeletalModel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SkBone.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -250,6 +259,15 @@
     </ClCompile>
     <ClCompile Include="SceneShadowVolume.cpp">
       <Filter>Source Files\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="scenes\SceneDefer.cpp">
+      <Filter>Source Files\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="SkeletalModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SkBone.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

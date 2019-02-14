@@ -16,11 +16,20 @@ using namespace glm;
 class Model {
 
 public:
+	Model() { }
 	Model(string path);
 
-	void render(GLuint handle) const;
-	void renderInstances(GLuint handle, GLuint count) const;
+	virtual void render(GLuint handle) const;
+	virtual void renderInstances(GLuint handle, GLuint count) const;
 	void loadInstanceTranslationMat(glm::mat4 *modelMats, int count);
+
+
+protected:
+	virtual vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName);
+
+	virtual void loadModel(string path);
+	virtual void processNode(aiNode* node, const aiScene* scene);
+	virtual mMesh processMesh(aiMesh* mesh, const aiScene* scene);
 
 private:
 	vector<mMesh> m_meshes;
@@ -29,10 +38,5 @@ private:
 	// directory of model
 	string m_dir;
 
-	
-	void loadModel(string path);
-	void processNode(aiNode* node, const aiScene* scene);
-	mMesh processMesh(aiMesh* mesh, const aiScene* scene);
 
-	vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName);
 };
