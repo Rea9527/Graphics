@@ -33,7 +33,7 @@ int main()
 	//=========================================================================================================================================
 	SceneManager manager(WIDTH, HEIGHT, "GLSL");
 	
-	std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneTerrain(WIDTH, HEIGHT));
+	std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneShadowMap(WIDTH, HEIGHT));
 	//std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneBloom(WIDTH, HEIGHT));
 	//std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneToon(WIDTH, HEIGHT));
 	//std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneCloth());
