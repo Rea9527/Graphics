@@ -94,8 +94,9 @@ void SceneTerrain::setMatrices(string name) {
 	glm::mat4 mv = this->view * this->model;
 	program->setUniform("ModelViewMatrix", mv);
 	program->setUniform("ModelMatrix", this->model);
+	glm::mat4 norm = glm::transpose(glm::inverse(mv));
 	program->setUniform("NormalMatrix",
-		glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]), glm::vec3(mv[2])));
+		glm::mat3(glm::vec3(norm[0]), glm::vec3(norm[1]), glm::vec3(norm[2])));
 	program->setUniform("MVP", this->projection * mv);
 }
 

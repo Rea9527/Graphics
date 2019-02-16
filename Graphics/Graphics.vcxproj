@@ -170,6 +170,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="mMesh.h" />
     <ClInclude Include="Plane.h" />
+    <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SceneShadowVolume.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="mMesh.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="SceneShadowVolume.cpp" />
     <ClCompile Include="scenes\SceneBloom.cpp" />
     <ClCompile Include="scenes\SceneDefer.cpp" />
@@ -241,6 +243,8 @@
     <None Include="imgui\stb_truetype.h.gch" />
     <None Include="medias\bloomShader.frag" />
     <None Include="medias\bloomShader.vert" />
+    <None Include="medias\deferShader.frag" />
+    <None Include="medias\deferShader.vert" />
     <None Include="medias\emptyShader.frag" />
     <None Include="medias\adsShader.frag" />
     <None Include="medias\adsShader.vert" />

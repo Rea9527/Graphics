@@ -168,6 +168,9 @@
     <ClInclude Include="SkBone.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Quaternion.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -269,6 +272,9 @@
     <ClCompile Include="SkBone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Quaternion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui\stb_rect_pack.h.gch">
@@ -368,6 +374,12 @@
       <Filter>Source Files\medias</Filter>
     </None>
     <None Include="medias\modelInsShader.vert">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\deferShader.vert">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\deferShader.frag">
       <Filter>Source Files\medias</Filter>
     </None>
   </ItemGroup>
