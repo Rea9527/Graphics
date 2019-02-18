@@ -1,12 +1,14 @@
 #include "SceneDefer.h"
 
 
-SceneDefer::SceneDefer() : m_teapot(20, mat4(1.0f)), m_sphere(2.0f, 50, 50), m_plane(40, 20, 1, 1),
-							prog("deferShader") { }
+SceneDefer::SceneDefer() : m_teapot(20, mat4(1.0f)), m_teapot_count(100),
+							m_sphere(2.0f, 50, 50), m_plane(200, 100, 1, 1),
+							prog("deferShader"), progIns("instancingShader") { }
 
 SceneDefer::SceneDefer(int w, int h) : Scene(w, h),
-										m_teapot(20, mat4(1.0f)), m_sphere(2.0f, 50, 50), m_plane(40, 20, 1, 1),
-										prog("deferShader") { }
+										m_teapot(20, mat4(1.0f)), m_teapot_count(100),
+										m_sphere(2.0f, 50, 50), m_plane(200, 100, 1, 1),
+										prog("deferShader"), progIns("instancingShader") { }
 
 
 void SceneDefer::initScene() {
@@ -23,14 +25,32 @@ void SceneDefer::initScene() {
 	this->geometryPassInx = glGetSubroutineIndex(handle, GL_FRAGMENT_SHADER, "geometryPass");
 	this->lightingPassInx = glGetSubroutineIndex(handle, GL_FRAGMENT_SHADER, "lightingPass");
 
-	this->prog.setUniform("Light.Direction", vec4(-1.0f, -1.0f, -1.0f, 1.0f));
+	this->prog.setUniform("Light.Direction", vec4(0.0f, -1.0f, -1.0f, 1.0f));
 	this->prog.setUniform("Light.Intensity", vec3(0.9f, 0.9f, 0.9f));
 
+	this->progIns.use();
+	this->progIns.setUniform("Light.Direction", vec4(0.0f, -1.0f, -1.0f, 1.0f));
+	this->progIns.setUniform("Light.Intensity", vec3(0.9f, 0.9f, 0.9f));
+
 	this->setupGBuffer();
+
+	// create instancing model mats for teapot
+	mat4 *modelMats = new mat4[m_teapot_count];
+	for (GLuint i = 0; i < m_teapot_count; i++) {
+		GLfloat x = (i % 10) * 10.0f - 20.0f;
+		GLfloat y = -10.0f;
+		GLfloat z = (i / 10) * (-10.0f) + 45.0f;
+		
+		mat4 m = glm::translate(mat4(1.0f), vec3(x, y, z));
+		m = glm::rotate(m, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelMats[i] = m;
+	}
+	this->m_teapot.loadInstanceMats(modelMats, m_teapot_count);
 
 
 	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
+
 
 void SceneDefer::setupGBuffer() {
 	glGenFramebuffers(1, &this->gBuffer);
@@ -71,10 +91,11 @@ void SceneDefer::update(float dt) {
 }
 
 void SceneDefer::render() {
-
 	// geometry pass
 	glBindFramebuffer(GL_FRAMEBUFFER, this->gBuffer);
-	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->geometryPassInx);
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glEnable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// active textures
 	glActiveTexture(GL_TEXTURE0);
@@ -84,17 +105,16 @@ void SceneDefer::render() {
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, this->gColor);
 
-	glEnable(GL_DEPTH_TEST);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	this->drawScene();
 
 	// lighting pass
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->lightingPassInx);
 
 	glDisable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	this->prog.use();
+	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->lightingPassInx);
 
 	view = mat4(1.0);
 	model = mat4(1.0);
@@ -106,13 +126,20 @@ void SceneDefer::render() {
 	glBindVertexArray(0);
 
 	this->renderGUI();
+
+	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
 
 void SceneDefer::drawScene() {
-	this->prog.setUniform("Material.Ka", glm::vec3(1.0, 0.2, 0.2));
-	this->prog.setUniform("Material.Kd", glm::vec3(0.25, 0.25, 0.25));
+
+	this->prog.use();
+	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->geometryPassInx);
+	//// ----- render without instancing -----
+	this->prog.setUniform("Material.Ka", glm::vec3(0.2, 0.2, 0.2));
+	this->prog.setUniform("Material.Kd", glm::vec3(0.8, 0.5, 0.6));
 	this->prog.setUniform("Material.Ks", glm::vec3(0.0, 0.0, 0.0));
-	this->prog.setUniform("Material.Shininess", 1.0f);
+	this->prog.setUniform("Material.Shininess", 10.0f);
+	this->prog.setUniform("Light.Direction", this->view * glm::vec4(0.0f, -1.0f, -1.0f, 1.0f));
 
 	// render planes
 	// bottom plane
@@ -121,33 +148,29 @@ void SceneDefer::drawScene() {
 	this->setMatrices(this->prog.getName());
 	this->m_plane.render();
 	// back plane
-	this->model = glm::translate(this->model, glm::vec3(0.0f, 10.0f, -10.0f));
+	this->model = glm::translate(this->model, glm::vec3(0.0f, 10.0f, -50.0f));
 	this->model = glm::rotate(this->model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	this->setMatrices(this->prog.getName());
 	this->m_plane.render();
+	//this->drawScene();
 
-	// terrain
-	//this->prog.setUniform("Material.Kd", glm::vec3(0.7f, 0.4f, 0.9f));
-	//this->model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -15.0f, 0.0f));
-	//this->setMatrices(this->prog.getName());
-	//this->terrain.render();
+	// ----- render with instancing -----
+	this->progIns.use();
+	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->geometryPassInx);
 
+	this->progIns.setUniform("Material.Ka", glm::vec3(0.1, 0.1, 0.1));
+	this->progIns.setUniform("Material.Ks", glm::vec3(0.2, 0.2, 0.2));
+	this->progIns.setUniform("Material.Shininess", 2.0f);
+	this->prog.setUniform("Light.Direction", this->view * glm::vec4(0.0f, -1.0f, -1.0f, 1.0f));
 
-	this->prog.setUniform("Material.Ka", glm::vec3(0.2, 0.2, 0.2));
-	this->prog.setUniform("Material.Ks", glm::vec3(0.2, 0.2, 0.2));
-	this->prog.setUniform("Material.Shininess", 2.0f);
 	// render teapot
-	this->prog.setUniform("Material.Kd", glm::vec3(0.4f, 0.9f, 0.4f));
-	this->model = glm::translate(glm::mat4(1.0f), glm::vec3(-10.0f, -10.0f, 0.0f));
-	this->model = glm::rotate(this->model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	this->setMatrices(this->prog.getName());
-	this->m_teapot.render();
+	this->progIns.setUniform("Material.Kd", glm::vec3(0.8f, 0.8f, 0.3f));
+	this->progIns.setUniform("ProjectionViewMatrix", this->projection * this->view);
+	this->progIns.setUniform("ViewMatrix", this->view);
+	this->m_teapot.renderInstances(this->m_teapot_count);
 
-	// render sphere
-	this->prog.setUniform("Material.Kd", glm::vec3(0.4f, 0.4f, 0.9f));
-	this->model = glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, -8.0f, 0.0f));
-	this->setMatrices(this->prog.getName());
-	this->m_sphere.render();
+
+	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
 
 
@@ -162,11 +185,11 @@ void SceneDefer::setMatrices(string progname) {
 	ShaderProgram *program = this->progList[progname];
 	mat4 mv = this->view * this->model;
 	program->setUniform("ModelViewMatrix", mv);
-	program->setUniform("ModelMatrix", this->model);
 	glm::mat4 norm = glm::transpose(glm::inverse(mv));
 	program->setUniform("NormalMatrix",
 		glm::mat3(glm::vec3(norm[0]), glm::vec3(norm[1]), glm::vec3(norm[2])));
 	program->setUniform("MVP", this->projection * mv);
+
 }
 
 void SceneDefer::compileAndLinkShaders() {
@@ -176,6 +199,14 @@ void SceneDefer::compileAndLinkShaders() {
 		this->prog.compileShader("./medias/deferShader.frag", GLSLShader::FRAGMENT);
 		this->prog.link();
 		this->progList.insert(std::pair<string, ShaderProgram*>(this->prog.getName(), &this->prog));
+
+		this->progIns.compileShader("./medias/instancingShader.vert", GLSLShader::VERTEX);
+		this->progIns.compileShader("./medias/deferShader.frag", GLSLShader::FRAGMENT);
+		this->progIns.link();
+		this->progList.insert(std::pair<string, ShaderProgram*>(this->progIns.getName(), &this->progIns));
+
+
+		GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 
 	}
 	catch (ShaderProgramException e) {

@@ -4,6 +4,7 @@ layout (location = 0) in vec3 Position;
 layout (location = 1) in vec3 Normal;
 layout (location = 2) in vec2 TexCoord;
 
+
 uniform struct LightInfo {
 	vec4 Direction;
 	vec3 Intensity;
@@ -35,18 +36,24 @@ vec3 ads(in vec3 pos, in vec3 norm, in vec3 color) {
     vec3 v = normalize(vec3(-pos));
     vec3 h = normalize( v + s );
 
+	vec3 spec = Material.Ks == vec3(0.0f) ? vec3(0.0f) : Material.Ks * pow( max( dot(h, norm), 0.0 ), Material.Shininess);
+
     return
         Light.Intensity * (Material.Ka +
-						  Material.Kd * max( dot(s, norm), 0.0 ) +
-						 Material. Ks * pow( max( dot(h, norm), 0.0 ), Material.Shininess ) );
+						   color * max( dot(s, norm), 0.0 ) +
+						   spec );
 }
+
 
 layout(index = 0) subroutine (RenderPassType)
 void geometryPass() {
 	PosData = Position;
 	NormData = Normal;
 	ColorData = Material.Kd;
+
+	//FragColor = vec4(ads(Position, Normal, Material.Kd), 1.0f);
 }
+
 
 layout(index = 1) subroutine (RenderPassType)
 void lightingPass() {

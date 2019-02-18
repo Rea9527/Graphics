@@ -31,9 +31,10 @@ public:
 
 private:
 	map<string, ShaderProgram*> progList;
-	ShaderProgram prog;
+	ShaderProgram prog, progIns;
 
 	Teapot m_teapot;
+	GLuint m_teapot_count;
 	Sphere m_sphere;
 	Plane m_plane;
 	// simple Quad for the second pass

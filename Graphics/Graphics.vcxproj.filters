@@ -373,13 +373,13 @@
     <None Include="medias\modelShader.frag">
       <Filter>Source Files\medias</Filter>
     </None>
-    <None Include="medias\modelInsShader.vert">
-      <Filter>Source Files\medias</Filter>
-    </None>
     <None Include="medias\deferShader.vert">
       <Filter>Source Files\medias</Filter>
     </None>
     <None Include="medias\deferShader.frag">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\instancingShader.vert">
       <Filter>Source Files\medias</Filter>
     </None>
   </ItemGroup>

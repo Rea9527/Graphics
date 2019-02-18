@@ -248,7 +248,7 @@
     <None Include="medias\emptyShader.frag" />
     <None Include="medias\adsShader.frag" />
     <None Include="medias\adsShader.vert" />
-    <None Include="medias\modelInsShader.vert" />
+    <None Include="medias\instancingShader.vert" />
     <None Include="medias\modelShader.frag" />
     <None Include="medias\modelShader.vert" />
     <None Include="medias\SceneBasic\plane.frag" />
