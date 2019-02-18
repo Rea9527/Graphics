@@ -24,12 +24,9 @@ void SceneDefer::initScene() {
 	GLuint handle = this->prog.getHandle();
 	this->geometryPassInx = glGetSubroutineIndex(handle, GL_FRAGMENT_SHADER, "geometryPass");
 	this->lightingPassInx = glGetSubroutineIndex(handle, GL_FRAGMENT_SHADER, "lightingPass");
-
-	this->prog.setUniform("Light.Direction", vec4(0.0f, -1.0f, -1.0f, 1.0f));
 	this->prog.setUniform("Light.Intensity", vec3(0.9f, 0.9f, 0.9f));
 
 	this->progIns.use();
-	this->progIns.setUniform("Light.Direction", vec4(0.0f, -1.0f, -1.0f, 1.0f));
 	this->progIns.setUniform("Light.Intensity", vec3(0.9f, 0.9f, 0.9f));
 
 	this->setupGBuffer();
@@ -116,6 +113,11 @@ void SceneDefer::render() {
 	this->prog.use();
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->lightingPassInx);
 
+	this->prog.setUniform("Material.Ka", glm::vec3(0.1, 0.1, 0.1));
+	this->prog.setUniform("Material.Ks", glm::vec3(0.2, 0.2, 0.2));
+	this->prog.setUniform("Material.Shininess", 50.0f);
+	this->prog.setUniform("Light.Position", this->view * glm::vec4(0.0f, 40.0f, 80.0f, 1.0f));
+
 	view = mat4(1.0);
 	model = mat4(1.0);
 	projection = mat4(1.0);
@@ -135,11 +137,7 @@ void SceneDefer::drawScene() {
 	this->prog.use();
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->geometryPassInx);
 	//// ----- render without instancing -----
-	this->prog.setUniform("Material.Ka", glm::vec3(0.2, 0.2, 0.2));
 	this->prog.setUniform("Material.Kd", glm::vec3(0.8, 0.5, 0.6));
-	this->prog.setUniform("Material.Ks", glm::vec3(0.0, 0.0, 0.0));
-	this->prog.setUniform("Material.Shininess", 10.0f);
-	this->prog.setUniform("Light.Direction", this->view * glm::vec4(0.0f, -1.0f, -1.0f, 1.0f));
 
 	// render planes
 	// bottom plane
@@ -157,14 +155,9 @@ void SceneDefer::drawScene() {
 	// ----- render with instancing -----
 	this->progIns.use();
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->geometryPassInx);
-
-	this->progIns.setUniform("Material.Ka", glm::vec3(0.1, 0.1, 0.1));
-	this->progIns.setUniform("Material.Ks", glm::vec3(0.2, 0.2, 0.2));
-	this->progIns.setUniform("Material.Shininess", 2.0f);
-	this->prog.setUniform("Light.Direction", this->view * glm::vec4(0.0f, -1.0f, -1.0f, 1.0f));
+	this->progIns.setUniform("Material.Kd", glm::vec3(0.8f, 0.8f, 0.3f));
 
 	// render teapot
-	this->progIns.setUniform("Material.Kd", glm::vec3(0.8f, 0.8f, 0.3f));
 	this->progIns.setUniform("ProjectionViewMatrix", this->projection * this->view);
 	this->progIns.setUniform("ViewMatrix", this->view);
 	this->m_teapot.renderInstances(this->m_teapot_count);
