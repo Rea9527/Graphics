@@ -1,17 +1,17 @@
-#include "SceneDefer.h"
+#include "SceneSSAO.h"
 
 
-SceneDefer::SceneDefer() : m_teapot(20, mat4(1.0f)), m_teapot_count(100),
-							m_sphere(2.0f, 50, 50), m_plane(200, 100, 1, 1),
-							prog("deferShader"), progIns("instancingShader") { }
+SceneSSAO::SceneSSAO() : m_teapot(20, mat4(1.0f)), m_teapot_count(100),
+						m_sphere(2.0f, 50, 50), m_plane(200, 100, 1, 1),
+						prog("ssaoShader"), progIns("instancingShader") { }
 
-SceneDefer::SceneDefer(int w, int h) : Scene(w, h),
-										m_teapot(20, mat4(1.0f)), m_teapot_count(100),
-										m_sphere(2.0f, 50, 50), m_plane(200, 100, 1, 1),
-										prog("deferShader"), progIns("instancingShader") { }
+SceneSSAO::SceneSSAO(int w, int h) : Scene(w, h),
+									m_teapot(20, mat4(1.0f)), m_teapot_count(100),
+									m_sphere(2.0f, 50, 50), m_plane(200, 100, 1, 1),
+									prog("ssaoShader"), progIns("instancingShader") { }
 
 
-void SceneDefer::initScene() {
+void SceneSSAO::initScene() {
 	this->compileAndLinkShaders();
 
 	Camera* camera = Camera::getInstance();
@@ -37,7 +37,7 @@ void SceneDefer::initScene() {
 		GLfloat x = (i % 10) * 10.0f - 20.0f;
 		GLfloat y = -10.0f;
 		GLfloat z = (i / 10) * (-10.0f) + 45.0f;
-		
+
 		mat4 m = glm::translate(mat4(1.0f), vec3(x, y, z));
 		m = glm::rotate(m, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		modelMats[i] = m;
@@ -49,7 +49,7 @@ void SceneDefer::initScene() {
 }
 
 
-void SceneDefer::setupGBuffer() {
+void SceneSSAO::setupGBuffer() {
 	glGenFramebuffers(1, &this->gBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, this->gBuffer);
 	unsigned int depthBuf;
@@ -73,21 +73,27 @@ void SceneDefer::setupGBuffer() {
 
 }
 
-void SceneDefer::createGBufferTex(GLenum format, GLuint &texId) {
+void SceneSSAO::setupFBO() {
+
+}
+
+void SceneSSAO::createGBufferTex(GLenum format, GLuint &texId) {
 	glGenTextures(1, &texId);
 	glBindTexture(GL_TEXTURE_2D, texId);
 	glTexStorage2D(GL_TEXTURE_2D, 1, format, this->width, this->height);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-void SceneDefer::update(float dt) {
+void SceneSSAO::update(float dt) {
 	Camera* camera = Camera::getInstance();
 	this->view = camera->getViewMat();
 	this->projection = glm::perspective(glm::radians(camera->getZoom()), (float)this->width / this->height, 0.1f, 1000.0f);
 }
 
-void SceneDefer::render() {
+void SceneSSAO::render() {
 	// geometry pass
 	glBindFramebuffer(GL_FRAMEBUFFER, this->gBuffer);
 	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -124,7 +130,7 @@ void SceneDefer::render() {
 	this->setMatrices(this->prog.getName());
 
 	glBindVertexArray(this->quadVAO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 
 	this->renderGUI();
@@ -132,7 +138,7 @@ void SceneDefer::render() {
 	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
 
-void SceneDefer::drawScene() {
+void SceneSSAO::drawScene() {
 
 	this->prog.use();
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->geometryPassInx);
@@ -167,14 +173,14 @@ void SceneDefer::drawScene() {
 }
 
 
-void SceneDefer::resize(int w, int h) {
+void SceneSSAO::resize(int w, int h) {
 	this->width = w;
 	this->height = h;
 	glViewport(0, 0, w, h);
 	this->projection = glm::perspective(glm::radians(Camera::getInstance()->getZoom()), (float)w / h, 0.1f, 1000.0f);
 }
 
-void SceneDefer::setMatrices(string progname) {
+void SceneSSAO::setMatrices(string progname) {
 	ShaderProgram *program = this->progList[progname];
 	mat4 mv = this->view * this->model;
 	program->setUniform("ModelViewMatrix", mv);
@@ -185,11 +191,11 @@ void SceneDefer::setMatrices(string progname) {
 
 }
 
-void SceneDefer::compileAndLinkShaders() {
+void SceneSSAO::compileAndLinkShaders() {
 
 	try {
-		this->prog.compileShader("./medias/deferShader.vert", GLSLShader::VERTEX);
-		this->prog.compileShader("./medias/deferShader.frag", GLSLShader::FRAGMENT);
+		this->prog.compileShader("./medias/ssaoShader.vert", GLSLShader::VERTEX);
+		this->prog.compileShader("./medias/ssaoShader.frag", GLSLShader::FRAGMENT);
 		this->prog.link();
 		this->progList.insert(std::pair<string, ShaderProgram*>(this->prog.getName(), &this->prog));
 
@@ -208,7 +214,7 @@ void SceneDefer::compileAndLinkShaders() {
 	}
 }
 
-void SceneDefer::renderGUI() {
+void SceneSSAO::renderGUI() {
 	if (this->animating() == true) return;
 
 	ImGui_ImplGlfwGL3_NewFrame("Editor");

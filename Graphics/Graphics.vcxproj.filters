@@ -171,6 +171,9 @@
     <ClInclude Include="Quaternion.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="scenes\SceneSSAO.h">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -274,6 +277,9 @@
     </ClCompile>
     <ClCompile Include="Quaternion.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scenes\SceneSSAO.cpp">
+      <Filter>Source Files\scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -380,6 +386,12 @@
       <Filter>Source Files\medias</Filter>
     </None>
     <None Include="medias\instancingShader.vert">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\ssaoShader.vert">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\ssaoShader.frag">
       <Filter>Source Files\medias</Filter>
     </None>
   </ItemGroup>

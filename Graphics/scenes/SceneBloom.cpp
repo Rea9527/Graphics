@@ -214,7 +214,7 @@ void SceneBloom::brightPass() {
 	this->setMatrices(this->progBloom.getName());
 
 	glBindVertexArray(this->quadVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 	glFinish();
 
@@ -227,7 +227,7 @@ void SceneBloom::verGaussPass() {
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->verGaussPassInx);
 
 	glBindVertexArray(this->quadVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void SceneBloom::horGaussPass() {
@@ -238,7 +238,7 @@ void SceneBloom::horGaussPass() {
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->horGaussPassInx);
 
 	glBindVertexArray(this->quadVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 }
 
@@ -254,7 +254,7 @@ void SceneBloom::tonePass() {
 	glBindSampler(1, linearSampler);
 
 	glBindVertexArray(quadVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 	glBindSampler(1, nearestSampler);
 }
