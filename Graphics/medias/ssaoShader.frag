@@ -6,8 +6,12 @@ layout (location = 2) in vec2 TexCoord;
 
 
 uniform struct LightInfo {
-	vec4 Position;
-	vec3 Intensity;
+	vec3 Position;
+	vec3 Color;
+
+	float Constant;
+	float Linear;
+	float Quadratic;
 
 } Light;
 
@@ -32,16 +36,21 @@ layout( location = 2 ) out vec3 gNormal;
 layout( location = 3 ) out vec3 gColor;
 
 vec3 ads(in vec3 pos, in vec3 norm, in vec3 color) {
-    vec3 s = normalize( vec3(Light.Position) - pos);
+    vec3 s = normalize( Light.Position - pos);
     vec3 v = normalize(vec3(-pos));
     vec3 h = normalize( v + s );
 
+	vec3 diff = color * max( dot(s, norm), 0.0 );
 	vec3 spec = Material.Ks == vec3(0.0f) ? vec3(0.0f) : Material.Ks * pow( max( dot(h, norm), 0.0 ), Material.Shininess);
 
+	// compute attenuation for point light
+	float dist = length(Light.Position - pos);
+	float attenuation = 1.0f / (Light.Constant + Light.Linear * dist + Light.Quadratic * dist * dist);
+
+	vec3 diffSpec = attenuation * (diff + spec);
+
     return
-        Light.Intensity * (Material.Ka +
-						   color * max( dot(s, norm), 0.0 ) +
-						   spec );
+        Light.Color * (Material.Ka + diffSpec);
 }
 
 

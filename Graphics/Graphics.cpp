@@ -22,6 +22,7 @@ using namespace std;
 #include "scenes/SceneShadowMap.h"
 #include "scenes/SceneTerrain.h"
 #include "scenes/SceneDefer.h"
+#include "scenes/SceneSSAO.h"
 
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -34,7 +35,7 @@ int main()
 	//=========================================================================================================================================
 	SceneManager manager(WIDTH, HEIGHT, "GLSL");
 	
-	std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneDefer(WIDTH, HEIGHT));
+	std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneSSAO(WIDTH, HEIGHT));
 	//std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneBloom(WIDTH, HEIGHT));
 	//std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneToon(WIDTH, HEIGHT));
 	//std::unique_ptr<Scene> scene = std::unique_ptr<Scene>(new SceneCloth());

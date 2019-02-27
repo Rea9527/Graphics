@@ -24,12 +24,19 @@ void SceneSSAO::initScene() {
 	GLuint handle = this->prog.getHandle();
 	this->geometryPassInx = glGetSubroutineIndex(handle, GL_FRAGMENT_SHADER, "geometryPass");
 	this->lightingPassInx = glGetSubroutineIndex(handle, GL_FRAGMENT_SHADER, "lightingPass");
-	this->prog.setUniform("Light.Intensity", vec3(0.9f, 0.9f, 0.9f));
+	this->prog.setUniform("Light.Color", vec3(0.9f, 0.9f, 0.9f));
+	this->prog.setUniform("Light.Constant", 1.0f);
+	this->prog.setUniform("Light.Linear", 0.007f);
+	this->prog.setUniform("Light.Quadratic", 0.0002f);
 
 	this->progIns.use();
-	this->progIns.setUniform("Light.Intensity", vec3(0.9f, 0.9f, 0.9f));
+	this->progIns.setUniform("Light.Color", vec3(0.9f, 0.9f, 0.9f));
+	this->progIns.setUniform("Light.Constant", 1.0f);
+	this->progIns.setUniform("Light.Linear", 0.007f);
+	this->progIns.setUniform("Light.Quadratic", 0.0002f);
 
 	this->setupGBuffer();
+	this->setupFBO();
 
 	// create instancing model mats for teapot
 	mat4 *modelMats = new mat4[m_teapot_count];
@@ -94,12 +101,6 @@ void SceneSSAO::update(float dt) {
 }
 
 void SceneSSAO::render() {
-	// geometry pass
-	glBindFramebuffer(GL_FRAMEBUFFER, this->gBuffer);
-	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glEnable(GL_DEPTH_TEST);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	// active textures
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, this->gPos);
@@ -108,9 +109,18 @@ void SceneSSAO::render() {
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, this->gColor);
 
+	// --------------geometry pass----------------
+	// bind the g-buffer
+	glBindFramebuffer(GL_FRAMEBUFFER, this->gBuffer);
+	glEnable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// draw the scene
 	this->drawScene();
+	// --------------End of geometry pass----------------
 
-	// lighting pass
+
+	// --------------lighting pass--------------
+	// Set the framebuffer to windows default buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glDisable(GL_DEPTH_TEST);
@@ -119,19 +129,24 @@ void SceneSSAO::render() {
 	this->prog.use();
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->lightingPassInx);
 
-	this->prog.setUniform("Material.Ka", glm::vec3(0.1, 0.1, 0.1));
-	this->prog.setUniform("Material.Ks", glm::vec3(0.2, 0.2, 0.2));
+	// set the lighting-relative uniforms
+	this->prog.setUniform("Material.Ka", glm::vec3(0.2, 0.2, 0.2));
+	this->prog.setUniform("Material.Ks", glm::vec3(0.5, 0.5, 0.5));
 	this->prog.setUniform("Material.Shininess", 50.0f);
-	this->prog.setUniform("Light.Position", this->view * glm::vec4(0.0f, 40.0f, 80.0f, 1.0f));
+	this->prog.setUniform("Light.Position", vec3(this->view * glm::vec4(20.0f, 40.0f, 20.0f, 1.0f)));
 
+	// set the MVP for the rendered quad
 	view = mat4(1.0);
 	model = mat4(1.0);
 	projection = mat4(1.0);
 	this->setMatrices(this->prog.getName());
 
+	// draw the single quad to full screen
 	glBindVertexArray(this->quadVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+
+	// --------------End of lighting pass--------------
 
 	this->renderGUI();
 
@@ -139,12 +154,10 @@ void SceneSSAO::render() {
 }
 
 void SceneSSAO::drawScene() {
-
+	//// ----- render without instancing -----
 	this->prog.use();
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->geometryPassInx);
-	//// ----- render without instancing -----
 	this->prog.setUniform("Material.Kd", glm::vec3(0.8, 0.5, 0.6));
-
 	// render planes
 	// bottom plane
 	this->model = glm::mat4(1.0f);
@@ -152,11 +165,10 @@ void SceneSSAO::drawScene() {
 	this->setMatrices(this->prog.getName());
 	this->m_plane.render();
 	// back plane
-	this->model = glm::translate(this->model, glm::vec3(0.0f, 10.0f, -50.0f));
+	this->model = glm::translate(this->model, glm::vec3(0.0f, 50.0f, -50.0f));
 	this->model = glm::rotate(this->model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	this->setMatrices(this->prog.getName());
 	this->m_plane.render();
-	//this->drawScene();
 
 	// ----- render with instancing -----
 	this->progIns.use();
@@ -200,7 +212,7 @@ void SceneSSAO::compileAndLinkShaders() {
 		this->progList.insert(std::pair<string, ShaderProgram*>(this->prog.getName(), &this->prog));
 
 		this->progIns.compileShader("./medias/instancingShader.vert", GLSLShader::VERTEX);
-		this->progIns.compileShader("./medias/deferShader.frag", GLSLShader::FRAGMENT);
+		this->progIns.compileShader("./medias/ssaoShader.frag", GLSLShader::FRAGMENT);
 		this->progIns.link();
 		this->progList.insert(std::pair<string, ShaderProgram*>(this->progIns.getName(), &this->progIns));
 
