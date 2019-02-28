@@ -88,7 +88,7 @@ void SceneDefer::update(float dt) {
 }
 
 void SceneDefer::render() {
-	// geometry pass
+	// ----------geometry pass------------
 	glBindFramebuffer(GL_FRAMEBUFFER, this->gBuffer);
 	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glEnable(GL_DEPTH_TEST);
@@ -102,11 +102,15 @@ void SceneDefer::render() {
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, this->gColor);
 
+	this->prog.use();
+	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->geometryPassInx);
+
 	this->drawScene();
-
-	// lighting pass
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// ----------end of geometry pass------------
 
+
+	// ----------lighting pass------------
 	glDisable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -126,6 +130,7 @@ void SceneDefer::render() {
 	glBindVertexArray(this->quadVAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+	// ----------end of geometry pass------------
 
 	this->renderGUI();
 
@@ -133,9 +138,6 @@ void SceneDefer::render() {
 }
 
 void SceneDefer::drawScene() {
-
-	this->prog.use();
-	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->geometryPassInx);
 	//// ----- render without instancing -----
 	this->prog.setUniform("Material.Kd", glm::vec3(0.8, 0.5, 0.6));
 

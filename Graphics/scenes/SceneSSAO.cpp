@@ -1,4 +1,5 @@
 #include "SceneSSAO.h"
+#include <random>
 
 
 SceneSSAO::SceneSSAO() : m_teapot(20, mat4(1.0f)), m_teapot_count(100),
@@ -23,20 +24,27 @@ void SceneSSAO::initScene() {
 	this->prog.use();
 	GLuint handle = this->prog.getHandle();
 	this->geometryPassInx = glGetSubroutineIndex(handle, GL_FRAGMENT_SHADER, "geometryPass");
+	this->ssaoPassInx = glGetSubroutineIndex(handle, GL_FRAGMENT_SHADER, "ssaoPass");
+	this->ssaoBlurPassInx = glGetSubroutineIndex(handle, GL_FRAGMENT_SHADER, "ssaoBlurPass");
 	this->lightingPassInx = glGetSubroutineIndex(handle, GL_FRAGMENT_SHADER, "lightingPass");
 	this->prog.setUniform("Light.Color", vec3(0.9f, 0.9f, 0.9f));
 	this->prog.setUniform("Light.Constant", 1.0f);
 	this->prog.setUniform("Light.Linear", 0.007f);
 	this->prog.setUniform("Light.Quadratic", 0.0002f);
+	this->prog.setUniform("uRadius", 0.5f);
+	// compute SSAO kernel and random rotation noises
+	this->computeSSAOKernelsAndNoises();
 
 	this->progIns.use();
 	this->progIns.setUniform("Light.Color", vec3(0.9f, 0.9f, 0.9f));
 	this->progIns.setUniform("Light.Constant", 1.0f);
 	this->progIns.setUniform("Light.Linear", 0.007f);
 	this->progIns.setUniform("Light.Quadratic", 0.0002f);
+	this->progIns.setUniform("uRadius", 0.5f);
 
 	this->setupGBuffer();
 	this->setupFBO();
+	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 
 	// create instancing model mats for teapot
 	mat4 *modelMats = new mat4[m_teapot_count];
@@ -51,11 +59,10 @@ void SceneSSAO::initScene() {
 	}
 	this->m_teapot.loadInstanceMats(modelMats, m_teapot_count);
 
-
 	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
 
-
+// create g-buffer for defer shading
 void SceneSSAO::setupGBuffer() {
 	glGenFramebuffers(1, &this->gBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, this->gBuffer);
@@ -66,32 +73,112 @@ void SceneSSAO::setupGBuffer() {
 	glBindRenderbuffer(GL_RENDERBUFFER, depthBuf);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, this->width, this->height);
 
-	this->createGBufferTex(GL_RGB32F, gPos);
-	this->createGBufferTex(GL_RGB32F, gNorm);
+	this->createGBufferTex(GL_RGB16F, gPos, true);
+	this->createGBufferTex(GL_RGB16F, gNorm);
 	this->createGBufferTex(GL_RGB8, gColor);
 
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuf);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPos, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNorm, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColor, 0);
-
+	
 	GLenum drawBufs[] = { GL_NONE, GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 	glDrawBuffers(4, drawBufs);
 
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		cout << "SSAO G-Buffer not complete!" << endl;
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+// setup FBO for SSAO
 void SceneSSAO::setupFBO() {
+	// ---setup SSAO pass framebuffer---
+	glGenFramebuffers(1, &ssaoFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+	// SSAO color buffer
+	this->createGBufferTex(GL_RGB8, ssaoBuf);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoBuf, 0);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		cout << "SSAO Framebuffer not complete!" << endl;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+	// ---setup SSAO blur pass framebuffer---
+	glGenFramebuffers(1, &ssaoBlurFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
+	// SSAO blur color buffer
+	this->createGBufferTex(GL_RGB8, ssaoBlurBuf);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoBlurBuf, 0);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		cout << "SSAO Framebuffer not complete!" << endl;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 
 }
 
-void SceneSSAO::createGBufferTex(GLenum format, GLuint &texId) {
+// compute SSAO kernels and random rotation noises
+void SceneSSAO::computeSSAOKernelsAndNoises() {
+	// use std:: uniform_real_distribution to uniformly produces random floats in [0, 1)
+	std::random_device rd;
+	std::default_random_engine gen(rd());
+	std::uniform_real_distribution<float> dis(0.0, 1.0);
+
+	// compute SSAO kernels
+	vector<vec3> ssaoKernel;
+	int kernelSize = 64;
+	for (int i = 0; i < kernelSize; i++) {
+		vec3 sample(dis(gen) * 2 - 1.0f, dis(gen) * 2 - 1.0f, dis(gen));
+		// normalize to get the sample points on the surface of the hemisphere (because length is 1 after normalize)
+		sample = glm::normalize(sample);
+		// scale to distribute the sample points within the hemisphere (instead of only on the surface)
+		sample *= dis(gen);
+		// more samples when closer to the hemisphere origin
+		float scale = (float)i / kernelSize;
+		scale = lerp(0.1f, 1.0f, scale * scale);
+		sample *= scale;
+
+		ssaoKernel.push_back(sample);
+	}
+	this->prog.use();
+	// set uniform
+	for (int i = 0; i < kernelSize; i++) {
+		string uname = "ssaoKernel[" + to_string(i) + "]";
+		this->prog.setUniform(uname.c_str(), ssaoKernel[i]);
+	}
+
+	// compute 4x4 SSAO noises (oriented around tangent-space normals, z = 0.0f)
+	vector<vec3> ssaoNoises;
+	for (int i = 0; i < 16; i++) {
+		vec3 noise(dis(gen) * 2 - 1.0f, dis(gen) * 2 - 1.0f, 0.0f);
+		ssaoNoises.push_back(noise);
+	}
+	// bind noise texture
+	glGenTextures(1,&this->noiseTex);
+	glBindTexture(GL_TEXTURE_2D, this->noiseTex);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB32F, 4, 4);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 4, 4, GL_RGB, GL_FLOAT, &ssaoNoises[0]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+}
+
+float SceneSSAO::lerp(float a, float b, float val) {
+	return a + val * (b - a);
+}
+
+void SceneSSAO::createGBufferTex(GLenum format, GLuint &texId, bool wrap) {
 	glGenTextures(1, &texId);
 	glBindTexture(GL_TEXTURE_2D, texId);
 	glTexStorage2D(GL_TEXTURE_2D, 1, format, this->width, this->height);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	if (wrap) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	}
 }
 
 void SceneSSAO::update(float dt) {
@@ -108,22 +195,86 @@ void SceneSSAO::render() {
 	glBindTexture(GL_TEXTURE_2D, this->gNorm);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, this->gColor);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, this->ssaoBuf);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, this->ssaoBlurBuf);
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, this->noiseTex);
 
 	// --------------geometry pass----------------
+	this->geometryPass();
+	glFlush();
+	// --------------End of geometry pass----------------
+
+
+	// --------------SSAO pass------------------
+	this->ssaoPass();
+	glFlush();
+	// --------------End of SSAO pass------------------
+
+
+	// --------------SSAO Blur pass------------------
+	
+	// --------------End of SSAO Blur pass------------------
+
+
+	// --------------Lighting pass--------------
+	
+	// --------------End of lighting pass--------------
+
+	this->renderGUI();
+
+	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
+}
+
+void SceneSSAO::geometryPass() {
 	// bind the g-buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, this->gBuffer);
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	this->prog.use();
+	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->geometryPassInx);
 	// draw the scene
 	this->drawScene();
-	// --------------End of geometry pass----------------
-
-
-	// --------------lighting pass--------------
-	// Set the framebuffer to windows default buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
+void SceneSSAO::ssaoPass() {
 	glDisable(GL_DEPTH_TEST);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	this->prog.use();
+	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->ssaoPassInx);
+	// draw the quad with the previous g-buffer and our ssaoKernel and random rotation noise in screen-space
+
+	this->model = glm::mat4(1.0f);
+	this->view = glm::mat4(1.0f);
+	this->projection = glm::mat4(1.0f);
+	this->setMatrices(this->prog.getName());
+
+	glBindVertexArray(this->quadVAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void SceneSSAO::ssaoBlurPass() {
+	glBindFramebuffer(GL_FRAMEBUFFER, this->ssaoBlurFBO);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	this->prog.use();
+	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->ssaoBlurPassInx);
+	// draw the quad with previous ssaoFBO output color buffer in screen-space
+	glBindVertexArray(this->quadVAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void SceneSSAO::lightingPass() {
+	// Set the framebuffer to windows default buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	this->prog.use();
@@ -145,19 +296,13 @@ void SceneSSAO::render() {
 	glBindVertexArray(this->quadVAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
-
-	// --------------End of lighting pass--------------
-
-	this->renderGUI();
-
-	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
 
 void SceneSSAO::drawScene() {
 	//// ----- render without instancing -----
 	this->prog.use();
-	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->geometryPassInx);
 	this->prog.setUniform("Material.Kd", glm::vec3(0.8, 0.5, 0.6));
+	this->prog.setUniform("ProjectionMatrix", this->projection);
 	// render planes
 	// bottom plane
 	this->model = glm::mat4(1.0f);
@@ -178,6 +323,7 @@ void SceneSSAO::drawScene() {
 	// render teapot
 	this->progIns.setUniform("ProjectionViewMatrix", this->projection * this->view);
 	this->progIns.setUniform("ViewMatrix", this->view);
+	this->progIns.setUniform("ProjectionMatrix", this->projection);
 	this->m_teapot.renderInstances(this->m_teapot_count);
 
 
@@ -200,6 +346,7 @@ void SceneSSAO::setMatrices(string progname) {
 	program->setUniform("NormalMatrix",
 		glm::mat3(glm::vec3(norm[0]), glm::vec3(norm[1]), glm::vec3(norm[2])));
 	program->setUniform("MVP", this->projection * mv);
+	//program->setUniform("ProjectionMatrix", this->projection);
 
 }
 

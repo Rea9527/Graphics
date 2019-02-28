@@ -22,12 +22,26 @@ uniform struct MaterialInfo {
 	float Shininess;
 } Material;
 
+// kernel for SSAO with kernel size 64
+uniform vec3 ssaoKernel[64];
+int kernelSize = 64;
+// hemisphere radius
+uniform float uRadius;
+// Tile noise texture over screen based on screen size(800*600) and noise size(4*4)
+const vec2 noiseScale = vec2(800.0 / 4.0, 600.0 / 4.0);
+
+// projection matrix
+uniform mat4 ProjectionMatrix;
+
 subroutine void RenderPassType();
 subroutine uniform RenderPassType renderPass;
 
 layout(binding = 0) uniform sampler2D posTex;
 layout(binding = 1) uniform sampler2D normTex;
 layout(binding = 2) uniform sampler2D colorTex;
+layout(binding = 3) uniform sampler2D ssaoBuf;
+layout(binding = 4) uniform sampler2D ssaoBlurBuf;
+layout(binding = 5) uniform sampler2D noiseTex;
 
 
 layout( location = 0 ) out vec4 FragColor;
@@ -53,21 +67,66 @@ vec3 ads(in vec3 pos, in vec3 norm, in vec3 color) {
         Light.Color * (Material.Ka + diffSpec);
 }
 
-
+// Geometry pass to store the geometric information into the user-defined framebuffer
 layout(index = 0) subroutine (RenderPassType)
 void geometryPass() {
 	gPos = Position;
 	gNormal = Normal;
 	gColor = Material.Kd;
-
-	//FragColor = vec4(ads(Position, Normal, Material.Kd), 1.0f);
 }
 
-
+// SSAO pass - get the ambient occulusion factor with kernel and random noise
 layout(index = 1) subroutine (RenderPassType)
+void ssaoPass() {
+	// get relevant value from texture
+	vec3 pos = texture(posTex, TexCoord).xyz; // view space position
+	vec3 normal = normalize(texture(normTex, TexCoord).rgb); // view space normal
+	vec3 noiseVec = normalize(texture(noiseTex, TexCoord * noiseScale).xyz); // view space? doesnt matter, it should be linear independent with normal!
+
+	// compute tangent space TBN Matrix using Gramm-Schmidt process for transforming kernel from tangent space to view space
+	vec3 tangent = normalize(noiseVec - normal * (dot(noiseVec, normal)));
+	vec3 bitangent = cross(normal, tangent);
+	mat3 TBN = mat3(tangent, bitangent, normal); // normal as the third column(z) because our kernel is orienting along the normal(z-axis)
+	
+	// compute the ambient occlusion factor
+	float occlusion = 0.0f;
+	for (int i = 0; i < kernelSize; i++) {
+		vec3 sp = TBN * ssaoKernel[i]; // transform from tangent space to view space and the random noise now is applied to the kernel;
+		sp = pos + sp * uRadius; // view space kernel
+
+		// apply perpective projection, to projection space
+		vec4 offset = vec4(sp, 1.0f);
+		offset = ProjectionMatrix * offset; // to clip space
+		offset.xyz /= offset.w; // perspective division
+		offset.xyz = offset.xyz * 0.5 + 0.5; // to 0.0 - 1.0, now offset is in screen space
+
+		// then we can get the depth from the position texture using the screen space offset
+		float sampleDepth = texture(posTex, offset.xy).z;
+
+		//float rangeCheck = abs(pos.z - sampleDepth) < uRadius ? 1.0 : 0.0;
+		float rangeCheck = smoothstep(0.0f, 1.0f, uRadius / abs(pos.z - sampleDepth));
+		occlusion += ((sampleDepth >= sp.z + 0.025) ? 1.0 : 0.0) * rangeCheck;
+	
+	}
+
+	// normalize occlusion factor and invert
+	occlusion = 1.0f - (occlusion / kernelSize);
+
+	FragColor = vec4(occlusion, 0.0f, 0.0f, 1.0f);
+}
+
+// SSAO blur pass - blur the SSAO texture from the previous pass to remove the noise
+layout(index = 2) subroutine (RenderPassType)
+void ssaoBlurPass() {
+	float greyVal = texture(ssaoBuf, TexCoord).r;
+	FragColor = vec4(vec3(greyVal), 1.0f);
+}
+
+// Final lighting pass
+layout(index = 3) subroutine (RenderPassType)
 void lightingPass() {
 	vec3 pos = vec3(texture(posTex, TexCoord));
-	vec3 norm = vec3(texture(normTex, TexCoord));
+	vec3 norm = normalize(vec3(texture(normTex, TexCoord)));
 	vec3 color = vec3(texture(colorTex, TexCoord));
 
 	FragColor = vec4(ads(pos, norm, color), 1.0f);

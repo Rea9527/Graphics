@@ -41,19 +41,27 @@ private:
 	GLuint quadVAO;
 
 	// two passed for defer shading
-	GLuint geometryPassInx, lightingPassInx;
+	GLuint geometryPassInx, ssaoPassInx, ssaoBlurPassInx, lightingPassInx;
 	// gbuffer
 	GLuint gBuffer;
 	// FBO
-	GLuint ssaoFBO, blurFBO;
+	GLuint ssaoFBO, ssaoBlurFBO;
 	// texture ids
 	GLuint gPos, gNorm, gColor;
-	GLuint ssaoColorBuf;
+	GLuint ssaoBuf, ssaoBlurBuf;
+	GLuint noiseTex;
 
 	// func
+	void computeSSAOKernelsAndNoises();
 	void setupGBuffer();
 	void setupFBO();
-	void createGBufferTex(GLenum format, GLuint &texId);
+	void createGBufferTex(GLenum format, GLuint &texId, bool wrap = false);
+	float lerp(float a, float b, float val);
+
+	void geometryPass();
+	void ssaoPass();
+	void ssaoBlurPass();
+	void lightingPass();
 
 	void compileAndLinkShaders();
 	void setMatrices(string name);
