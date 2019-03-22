@@ -58,14 +58,6 @@ GLuint Loader::loadCubeMap(const std::string &baseName) {
 	std::string texName = baseName + "_" + suffixes[0] + ".png";
 	GLubyte * data = Loader::loadPixels(texName.c_str(), w, h, bytesPerPix);
 
-	GLenum format;
-	if (bytesPerPix == 1)
-		format = GL_RED;
-	else if (bytesPerPix == 3)
-		format = GL_RGB;
-	else if (bytesPerPix == 4)
-		format = GL_RGBA;
-
 	// Allocate immutable storage for the whole cube map texture
 	glTexStorage2D(GL_TEXTURE_CUBE_MAP, 1, GL_RGBA8, w, h);
 
@@ -81,7 +73,7 @@ GLuint Loader::loadCubeMap(const std::string &baseName) {
 	}
 
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);

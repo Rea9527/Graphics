@@ -5,8 +5,10 @@
 using namespace std;
 
 // GL CORE
-#include <GL_CORE/gl_core_4_3.h>
-#include <GL_CORE/gl_core_4_3.c>
+//#include <gl/GL.h>
+#include <glad/include/glad/glad.h>
+
+//#include <glad/src/glad.c>
 // GLFW
 #include <GLFW/glfw3.h>
 
@@ -16,73 +18,23 @@ using namespace std;
 #include "GLGUI.h"
 
 
-
 class SceneManager {
 
 public:
 
-	SceneManager(int width, int height, const string title) {
-		if (!glfwInit()) { exit(EXIT_FAILURE); }
+	SceneManager(int width, int height, const string title);
 
-		// Set all the required options for GLFW, using OpenGL 4.3
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-		// Create window
-		this->window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(window);
-		// Ogl loader
-		int ogl_loaded = ogl_LoadFunctions();
-		if (ogl_loaded == ogl_LOAD_FAILED) {
-			glfwDestroyWindow(window);
-			exit(EXIT_FAILURE);
-		}
-		int num_failed = ogl_loaded - ogl_LOAD_SUCCEEDED;
-		cerr << "Number of functions that failed to load: " << num_failed << endl;
-		// get frame buffer size
-		glfwGetFramebufferSize(window, &frame_size_width, &frame_size_height);
-		glViewport(0, 0, frame_size_width, frame_size_height);
+	static SceneManager* getInstance();
 
-		// camera
-		this->deltaTime = 0.0f;
-		this->lastFrame = 0.0f;
-		this->lastX = frame_size_width / 2;
-		this->lastY = frame_size_height / 2;
-		this->firstMouse = true;
+	int run(Scene &scene);
 
-
-		//set keycallback
-		glfwSetKeyCallback(window, key_callback);
-		glfwSetCursorPosCallback(window, mouse_callback);
-		glfwSetScrollCallback(window, scroll_callback);
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		
-		
-		// init GUI
-		ImGui_ImplGlfwGL3_Init(window, false);
-	}
-
-	int run(Scene &scene) {
-		GLUtils::checkForOpenGLError(__FILE__, __LINE__);
-		scene.setDimensions(this->frame_size_width, this->frame_size_height);
-		scene.initScene();
-		scene.resize(this->frame_size_width, this->frame_size_height);
-		//main loop
-		Camera::getInstance()->use();
-		this->mainLoop(this->window, scene);
-
-		// shut down GUI
-		ImGui_ImplGlfwGL3_Shutdown();
-		//close window and stop glfw
-		glfwTerminate();
-		
-		return EXIT_SUCCESS;
-	}
+	GLFWwindow* getWindow();
 
 
 private:
+	
+	static SceneManager *m_sceneManager;
+
 	GLFWwindow *window;
 	int frame_size_width, frame_size_height;
 
@@ -183,12 +135,3 @@ private:
 
 };
 
-bool SceneManager::GUI_shown = false;
-
-// camera
-GLfloat SceneManager::deltaTime = 0.0f;
-GLfloat SceneManager::lastFrame = 0.0f;
-GLfloat SceneManager::lastX = 0.0f;
-GLfloat SceneManager::lastY = 0.0f;
-bool SceneManager::firstMouse = false;
-bool SceneManager::keys[1024] = {0};

@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 
-#include <GL_CORE/gl_core_4_3.h>
+#include <glad/include/glad/glad.h>
 #include <glm/glm.hpp>
 
 #include "Drawable.h"

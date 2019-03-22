@@ -88,8 +88,8 @@ void SceneBloom::initScene() {
 
 	this->progSkybox.use();
 	// bind cubemap texture
-	glActiveTexture(GL_TEXTURE0);
-	Loader::loadCubeMap("./medias/textures/cubemap_night/night");
+	GLuint skyboxId = Loader::loadCubeMap("./medias/textures/cubemap_night/night");
+	this->skybox.setCubeMapId(skyboxId);
 
 	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
@@ -153,17 +153,10 @@ void SceneBloom::update(float t) {
 void SceneBloom::render() {
 	
 
-	this->renderGUI();
-
-	//this->progSkybox.use();
-	//// render CubeMap
-	//this->model = glm::mat4(1.0f);
-	//this->setMatrices(this->progSkybox.getName());
-	//this->skybox.render();
 
 	//GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 
-	this->progBloom.use();
+	
 
 	this->renderPass();
 	this->computeLogAvgLuminance();
@@ -175,6 +168,8 @@ void SceneBloom::render() {
 	this->horGaussPass();
 	glFlush();
 	this->tonePass();
+
+	this->renderGUI();
 
 	//GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
@@ -282,6 +277,8 @@ void SceneBloom::computeLogAvgLuminance() {
 
 void SceneBloom::drawScene() {
 
+	this->progBloom.use();
+
 	glm::vec3 intense = glm::vec3(0.9f, 0.9f, 0.9f);
 	this->progBloom.setUniform("Light[0].Intensity", intense);
 	this->progBloom.setUniform("Light[1].Intensity", intense);
@@ -330,6 +327,15 @@ void SceneBloom::drawScene() {
 	this->model = glm::translate(glm::mat4(1.0f), glm::vec3(5.0f, -3.0f, 0.0f));
 	this->setMatrices(this->progBloom.getName());
 	this->sphere.render();
+
+	//this->progSkybox.use();
+	//// render CubeMap
+	//this->model = glm::mat4(1.0f);
+	//this->view = glm::mat4(glm::mat3(Camera::getInstance()->getViewMat()));
+	//this->setMatrices(this->progSkybox.getName());
+	//this->skybox.render();
+
+	this->progBloom.use();
 }
 
 float SceneBloom::gauss(int x, float sigma2) {
@@ -375,5 +381,28 @@ void SceneBloom::compileAndLinkShaders() {
 	}
 }
 void SceneBloom::renderGUI() {
+	if (this->animating() == true) return;
 
+	ImGui_ImplGlfwGL3_NewFrame("Editor");
+
+	static float f = 0.0f;
+	static int counter = 0;
+	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+	string rate = "Frame Rate: " + to_string(ImGui::GetIO().Framerate);
+	ImGui::Begin("FPS:");
+	ImGui::Text("%.1f", ImGui::GetIO().Framerate);               // Display some text (you can use a format strings too)
+	//ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+	//ImGui::Checkbox("Another Window", &show_another_window);
+
+	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+	if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+		counter++;
+	ImGui::SameLine();
+	ImGui::Text("counter = %d", counter);
+	ImGui::End();
+
+	ImGui::Render();
 }

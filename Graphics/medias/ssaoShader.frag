@@ -27,6 +27,8 @@ uniform vec3 ssaoKernel[64];
 int kernelSize = 64;
 // hemisphere radius
 uniform float uRadius;
+// blur filter size
+uniform int blurSize = 4;
 // Tile noise texture over screen based on screen size(800*600) and noise size(4*4)
 const vec2 noiseScale = vec2(800.0 / 4.0, 600.0 / 4.0);
 
@@ -112,24 +114,53 @@ void ssaoPass() {
 	// normalize occlusion factor and invert
 	occlusion = 1.0f - (occlusion / kernelSize);
 
-	FragColor = vec4(occlusion, 0.0f, 0.0f, 1.0f);
+	FragColor = vec4(occlusion, occlusion, occlusion, 1.0f);
 }
 
 // SSAO blur pass - blur the SSAO texture from the previous pass to remove the noise
 layout(index = 2) subroutine (RenderPassType)
 void ssaoBlurPass() {
-	float greyVal = texture(ssaoBuf, TexCoord).r;
-	FragColor = vec4(vec3(greyVal), 1.0f);
+	vec2 texelSize = 1.0f / textureSize(ssaoBuf, 0);
+	// move the filter (because the for loops are started from 0)
+	vec2 offset = vec2(-blurSize * 0.5 + 0.5);
+
+	float occlusion = 0.0f;
+	// blur filtering
+	for (int i = 0; i < blurSize; i++) {
+		for (int j = 0; j < blurSize; j++) {
+			vec2 coord = TexCoord + (offset + vec2(float(i), float(j))) * texelSize;
+			occlusion += texture(ssaoBuf, coord).r;
+		}
+	}
+	occlusion = occlusion / (blurSize * blurSize);
+	FragColor = vec4(vec3(occlusion), 1.0f);
 }
 
 // Final lighting pass
 layout(index = 3) subroutine (RenderPassType)
 void lightingPass() {
-	vec3 pos = vec3(texture(posTex, TexCoord));
-	vec3 norm = normalize(vec3(texture(normTex, TexCoord)));
-	vec3 color = vec3(texture(colorTex, TexCoord));
+	vec3 pos = texture(posTex, TexCoord).rgb;
+	vec3 norm = normalize(texture(normTex, TexCoord).rgb);
+	vec3 color = texture(colorTex, TexCoord).rgb;
 
-	FragColor = vec4(ads(pos, norm, color), 1.0f);
+	float occlusion = texture(ssaoBlurBuf, TexCoord).r;
+
+	vec3 ambient = Material.Ka * occlusion;
+
+	vec3 s = normalize( Light.Position - pos);
+    vec3 v = normalize(vec3(-pos));
+    vec3 h = normalize( v + s );
+
+	vec3 diff = color * max( dot(s, norm), 0.0 );
+	vec3 spec = Material.Ks == vec3(0.0f) ? vec3(0.0f) : Material.Ks * pow( max( dot(h, norm), 0.0 ), Material.Shininess);
+
+	// compute attenuation for point light
+	float dist = length(Light.Position - pos);
+	float attenuation = 1.0f / (Light.Constant + Light.Linear * dist + Light.Quadratic * dist * dist);
+
+	vec3 diffSpec = attenuation * (diff + spec);
+
+    FragColor =  vec4(Light.Color * (ambient + diffSpec), 1.0f);
 
 }
 

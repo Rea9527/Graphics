@@ -6,37 +6,49 @@ SkyBox::SkyBox() {
 	GLfloat side = 200.0f;
 	GLfloat side2 = side / 2.0f;
 
-	float vertices[24 * 3] = {
-		// Front
-	   -side2, -side2, side2,
-		side2, -side2, side2,
-		side2,  side2, side2,
-	   -side2,  side2, side2,
-	   // Right
-		side2, -side2, side2,
-		side2, -side2, -side2,
-		side2,  side2, -side2,
-		side2,  side2, side2,
-		// Back
-		-side2, -side2, -side2,
-		-side2,  side2, -side2,
-		 side2,  side2, -side2,
-		 side2, -side2, -side2,
-		 // Left
-		 -side2, -side2, side2,
-		 -side2,  side2, side2,
-		 -side2,  side2, -side2,
-		 -side2, -side2, -side2,
-		 // Bottom
-		 -side2, -side2, side2,
-		 -side2, -side2, -side2,
-		  side2, -side2, -side2,
-		  side2, -side2, side2,
-		  // Top
-		  -side2,  side2, side2,
-		   side2,  side2, side2,
-		   side2,  side2, -side2,
-		  -side2,  side2, -side2
+	float skyboxVertices[] = {
+		// positions          
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f
 	};
 
 	GLuint el[] = {
@@ -48,27 +60,35 @@ SkyBox::SkyBox() {
 		20,22,21,20,23,22
 	};
 
-	GLuint handle[2];
-	glGenBuffers(2, handle);
-
-	glBindBuffer(GL_ARRAY_BUFFER, handle[0]);
-	glBufferData(GL_ARRAY_BUFFER, 24 * 3 * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, handle[1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(GLuint), el, GL_STATIC_DRAW);
-
+	GLuint vbo;
+	glGenBuffers(1, &vbo);
 	glGenVertexArrays(1, &this->vao);
 	glBindVertexArray(this->vao);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
+	
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, handle[1]);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, handle[1]);
 
 	glBindVertexArray(0);
 
 }
 
+void SkyBox::setCubeMapId(GLuint id) {
+	this->cubeMapId = id;
+}
+
 void SkyBox::render() const {
+	glDepthFunc(GL_LEQUAL);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, this->cubeMapId);
+
 	glBindVertexArray(this->vao);
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+
+	glDepthFunc(GL_LESS);
 }

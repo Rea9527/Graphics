@@ -198,6 +198,7 @@
     <ClInclude Include="TriangleMesh.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\dependencies\includes\glad\src\glad.c" />
     <ClCompile Include="BufferObject.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
@@ -213,6 +214,7 @@
     <ClCompile Include="mMesh.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Quaternion.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneShadowVolume.cpp" />
     <ClCompile Include="scenes\SceneBloom.cpp" />
     <ClCompile Include="scenes\SceneDefer.cpp" />

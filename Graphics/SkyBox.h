@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Drawable.h"
-#include <GL_CORE/gl_core_4_3.h>
+#include <glad/include/glad/glad.h>
 
 
 class SkyBox : public Drawable {
@@ -11,7 +11,9 @@ public:
 
 	void render() const;
 
+	void setCubeMapId(GLuint id);
+
 private:
 	GLuint vao;
-
+	GLuint cubeMapId;
 };

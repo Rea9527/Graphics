@@ -4,7 +4,7 @@
 #include <map>
 using namespace std;
 
-#include <GL_CORE/gl_core_4_3.h>
+#include <glad/include/glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "GLUtils.h"

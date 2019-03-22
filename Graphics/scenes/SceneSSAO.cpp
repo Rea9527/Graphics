@@ -4,12 +4,12 @@
 
 SceneSSAO::SceneSSAO() : m_teapot(20, mat4(1.0f)), m_teapot_count(100),
 						m_sphere(2.0f, 50, 50), m_plane(200, 100, 1, 1),
-						prog("ssaoShader"), progIns("instancingShader") { }
+						prog("ssaoShader"), progIns("instancingShader"), progSkybox("skyboxShader") { }
 
 SceneSSAO::SceneSSAO(int w, int h) : Scene(w, h),
 									m_teapot(20, mat4(1.0f)), m_teapot_count(100),
 									m_sphere(2.0f, 50, 50), m_plane(200, 100, 1, 1),
-									prog("ssaoShader"), progIns("instancingShader") { }
+									prog("ssaoShader"), progIns("instancingShader"), progSkybox("skyboxShader") { }
 
 
 void SceneSSAO::initScene() {
@@ -41,6 +41,10 @@ void SceneSSAO::initScene() {
 	this->progIns.setUniform("Light.Linear", 0.007f);
 	this->progIns.setUniform("Light.Quadratic", 0.0002f);
 	this->progIns.setUniform("uRadius", 0.5f);
+
+	this->progSkybox.use();
+	GLuint skyboxId = Loader::loadCubeMap("./medias/textures/cubemap_night/night");
+	this->m_skybox.setCubeMapId(skyboxId);
 
 	this->setupGBuffer();
 	this->setupFBO();
@@ -102,7 +106,7 @@ void SceneSSAO::setupFBO() {
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		cout << "SSAO Framebuffer not complete!" << endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+	
 
 	// ---setup SSAO blur pass framebuffer---
 	glGenFramebuffers(1, &ssaoBlurFBO);
@@ -215,12 +219,14 @@ void SceneSSAO::render() {
 
 
 	// --------------SSAO Blur pass------------------
-	
+	this->ssaoBlurPass();
+	glFlush();
 	// --------------End of SSAO Blur pass------------------
 
 
 	// --------------Lighting pass--------------
-	
+	this->lightingPass();
+	glFlush();
 	// --------------End of lighting pass--------------
 
 	this->renderGUI();
@@ -242,8 +248,10 @@ void SceneSSAO::geometryPass() {
 
 void SceneSSAO::ssaoPass() {
 	glDisable(GL_DEPTH_TEST);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, this->ssaoFBO);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//glViewport(0, 0, this->width / 2.0f, this->height / 2.0f);
 	this->prog.use();
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->ssaoPassInx);
 	// draw the quad with the previous g-buffer and our ssaoKernel and random rotation noise in screen-space
@@ -262,21 +270,29 @@ void SceneSSAO::ssaoPass() {
 
 void SceneSSAO::ssaoBlurPass() {
 	glBindFramebuffer(GL_FRAMEBUFFER, this->ssaoBlurFBO);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glViewport(0, 0, width / 2, height / 2);
 	this->prog.use();
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->ssaoBlurPassInx);
-	// draw the quad with previous ssaoFBO output color buffer in screen-space
+	////// draw the quad with previous ssaoFBO output color buffer in screen-space
 	glBindVertexArray(this->quadVAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 void SceneSSAO::lightingPass() {
 	// Set the framebuffer to windows default buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	GLFWwindow *window = SceneManager::getInstance()->getWindow();
+	int w, h;
+	glfwGetFramebufferSize(window, &w, &h);
+	//printf("%d, %d\n", w, h);
+	glViewport(0, 0, width, height);
 	this->prog.use();
 	glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &this->lightingPassInx);
 
@@ -296,6 +312,7 @@ void SceneSSAO::lightingPass() {
 	glBindVertexArray(this->quadVAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+
 }
 
 void SceneSSAO::drawScene() {
@@ -325,7 +342,6 @@ void SceneSSAO::drawScene() {
 	this->progIns.setUniform("ViewMatrix", this->view);
 	this->progIns.setUniform("ProjectionMatrix", this->projection);
 	this->m_teapot.renderInstances(this->m_teapot_count);
-
 
 	GLUtils::checkForOpenGLError(__FILE__, __LINE__);
 }
@@ -362,6 +378,11 @@ void SceneSSAO::compileAndLinkShaders() {
 		this->progIns.compileShader("./medias/ssaoShader.frag", GLSLShader::FRAGMENT);
 		this->progIns.link();
 		this->progList.insert(std::pair<string, ShaderProgram*>(this->progIns.getName(), &this->progIns));
+
+		this->progSkybox.compileShader("./medias/skyboxShader.vert", GLSLShader::VERTEX);
+		this->progSkybox.compileShader("./medias/skyboxShader.frag", GLSLShader::FRAGMENT);
+		this->progSkybox.link();
+		this->progList.insert(std::pair<string, ShaderProgram*>(this->progSkybox.getName(), &this->progSkybox));
 
 
 		GLUtils::checkForOpenGLError(__FILE__, __LINE__);

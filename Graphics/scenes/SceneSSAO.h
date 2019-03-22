@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include "../SceneManager.h"
 #include "../Scene.h"
 #include "../Camera.h"
 #include "../shaderProgram.h"
@@ -11,6 +11,7 @@
 #include "../Sphere.h"
 #include "../Plane.h"
 #include "../Model.h"
+#include "../SkyBox.h"
 
 #include "../GLGUI.h"
 #include "../GLUtils.h"
@@ -31,12 +32,13 @@ public:
 
 private:
 	map<string, ShaderProgram*> progList;
-	ShaderProgram prog, progIns;
+	ShaderProgram prog, progIns, progSkybox;
 
 	Teapot m_teapot;
 	GLuint m_teapot_count;
 	Sphere m_sphere;
 	Plane m_plane;
+	SkyBox m_skybox;
 	// simple Quad for the second pass
 	GLuint quadVAO;
 

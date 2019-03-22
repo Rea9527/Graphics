@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GL_CORE/gl_core_4_3.h>
+#include <glad/include/glad/glad.h>
 
 #include <string>
 

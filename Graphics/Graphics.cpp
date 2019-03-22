@@ -8,13 +8,12 @@
 
 using namespace std;
 
-// GL CORE
-#include <GL_CORE/gl_core_4_3.h>
+#include <glad/include/glad/glad.h>
 // GLFW
 #include <GLFW/glfw3.h>
 
 // include user define files
-#include "SceneManager.h"
+//#include "SceneManager.h"
 #include "scenes/SceneToon.h"
 #include "scenes/SceneCloth.h"
 #include "scenes/SceneSPH.h"

@@ -34,9 +34,6 @@
     <Filter Include="Source Files\medias\SceneSPH">
       <UniqueIdentifier>{f0f9483f-f456-476d-b798-865d740aad68}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\renderers">
-      <UniqueIdentifier>{0ffc0fc0-5df3-4ba5-ba35-a960eafcb681}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -280,6 +277,12 @@
     </ClCompile>
     <ClCompile Include="scenes\SceneSSAO.cpp">
       <Filter>Source Files\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependencies\includes\glad\src\glad.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
