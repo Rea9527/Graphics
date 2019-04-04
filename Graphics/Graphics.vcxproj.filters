@@ -171,6 +171,9 @@
     <ClInclude Include="scenes\SceneSSAO.h">
       <Filter>Source Files\scenes</Filter>
     </ClInclude>
+    <ClInclude Include="scenes\ScenePBR.h">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -284,6 +287,9 @@
     <ClCompile Include="..\dependencies\includes\glad\src\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="scenes\ScenePBR.cpp">
+      <Filter>Source Files\scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui\stb_rect_pack.h.gch">
@@ -395,6 +401,12 @@
       <Filter>Source Files\medias</Filter>
     </None>
     <None Include="medias\ssaoShader.frag">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\pbrShader.vert">
+      <Filter>Source Files\medias</Filter>
+    </None>
+    <None Include="medias\pbrShader.frag">
       <Filter>Source Files\medias</Filter>
     </None>
   </ItemGroup>

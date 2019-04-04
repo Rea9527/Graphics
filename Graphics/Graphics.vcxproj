@@ -176,6 +176,7 @@
     <ClInclude Include="SceneShadowVolume.h" />
     <ClInclude Include="scenes\SceneBloom.h" />
     <ClInclude Include="scenes\SceneDefer.h" />
+    <ClInclude Include="scenes\ScenePBR.h" />
     <ClInclude Include="scenes\SceneShadowMap.h" />
     <ClInclude Include="scenes\SceneSSAO.h" />
     <ClInclude Include="scenes\SceneTerrain.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="SceneShadowVolume.cpp" />
     <ClCompile Include="scenes\SceneBloom.cpp" />
     <ClCompile Include="scenes\SceneDefer.cpp" />
+    <ClCompile Include="scenes\ScenePBR.cpp" />
     <ClCompile Include="scenes\SceneShadowMap.cpp" />
     <ClCompile Include="scenes\SceneSSAO.cpp" />
     <ClCompile Include="scenes\SceneTerrain.cpp" />
@@ -255,6 +257,8 @@
     <None Include="medias\instancingShader.vert" />
     <None Include="medias\modelShader.frag" />
     <None Include="medias\modelShader.vert" />
+    <None Include="medias\pbrShader.frag" />
+    <None Include="medias\pbrShader.vert" />
     <None Include="medias\SceneBasic\plane.frag" />
     <None Include="medias\SceneBasic\plane.vert" />
     <None Include="medias\SceneCloth\ads.frag" />
